@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bullet Storm - Official Website</title>
+<title>Gunfire - Official Website</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { background-color: #111; color: white; font-family: sans-serif; }
@@ -15,16 +15,16 @@
 
 <!-- Hero Section -->
 <section class="h-screen flex flex-col justify-center items-center bg-[url('https://i.ibb.co/1mzqBzt/bg-game.jpg')] bg-cover bg-center">
-  <h1 class="text-6xl font-bold mb-6 drop-shadow-lg">Bullet Storm</h1>
+  <h1 class="text-6xl font-bold mb-6 drop-shadow-lg">Gunfire</h1>
   <p class="text-xl mb-8 drop-shadow-md">2D Action Shooting Game</p>
   <button class="btn" onclick="scrollToGame()">Play Now</button>
 </section>
 
 <!-- About Game -->
 <section class="py-16 px-8 text-center bg-gray-900">
-  <h2 class="text-4xl font-bold mb-4">About Bullet Storm</h2>
+  <h2 class="text-4xl font-bold mb-4">About Gunfire</h2>
   <p class="max-w-2xl mx-auto text-lg mb-6">
-    Bullet Storm is an addictive 2D shooting game. Move with arrow keys and shoot with spacebar. Dodge enemies, collect power-ups and survive as long as you can!
+    Gunfire is an addictive 2D shooting game. Move with arrow keys and shoot with spacebar. Dodge enemies, collect power-ups and survive as long as you can!
   </p>
   <ul class="list-disc list-inside text-left max-w-md mx-auto space-y-2">
     <li>Top-down 2D shooter</li>
@@ -46,7 +46,7 @@
 
 <!-- Play Game -->
 <section id="gameSection" class="py-16 px-8 text-center bg-gray-900">
-  <h2 class="text-4xl font-bold mb-4">Play Bullet Storm</h2>
+  <h2 class="text-4xl font-bold mb-4">Play Gunfire</h2>
   <p class="mb-6">Arrow keys to move, Space to shoot</p>
   <canvas id="gameCanvas" width="600" height="400"></canvas>
   <div class="mt-4">
@@ -67,7 +67,7 @@
 
 <!-- Footer -->
 <footer class="py-8 bg-gray-800 text-center">
-  <p>© 2025 Bullet Storm | Developed by Suraj bhai</p>
+  <p>© 2025 Gunfire | Developed by Suraj bhai</p>
 </footer>
 
 <script>
@@ -78,8 +78,8 @@ function scrollToGame() {
 
 // Share Score
 function shareScore(platform) {
-  const score = localStorage.getItem('bulletStormScore') || 0;
-  const text = `I scored ${score} points in Bullet Storm! Can you beat me? 🚀`;
+  const score = localStorage.getItem('gunfireScore') || 0;
+  const text = `I scored ${score} points in Gunfire! Can you beat me? 🚀`;
   if(platform === 'whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
   else if(platform === 'telegram') window.open(`https://t.me/share/url?url=&text=${encodeURIComponent(text)}`);
   else navigator.clipboard.writeText(text).then(()=>alert('Score copied to clipboard!'));
@@ -145,7 +145,7 @@ function updateGame() {
         bullets.splice(j,1);
         enemies.splice(i,1);
         score+=10;
-        localStorage.setItem('bulletStormScore', score);
+        localStorage.setItem('gunfireScore', score);
         document.getElementById('scoreDisplay').innerText = 'Score: '+score;
         break;
       }

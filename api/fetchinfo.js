@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   try {
     // Call original API
     const apiRes = await fetch(
-      `https://danger-info-alpha.vercel.app/accinfo?uid=${encodeURIComponent(uid)}`
+      `https://danger-info-alpha.vercel.app/accinfo?uid=${encodeURIComponent(uid)}&key=DANGERxINFO`
     );
 
     if (!apiRes.ok) {

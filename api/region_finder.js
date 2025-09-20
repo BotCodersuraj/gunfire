@@ -1,14 +1,14 @@
 export default async function handler(req, res) {
-  const { uid, key } = req.query;
+  const { uid } = req.query;
 
-  if (!uid || !key) {
-    return res.status(400).json({ error: "uid and key are required!" });
+  if (!uid) {
+    return res.status(400).json({ error: "uid is required!" });
   }
 
   try {
-    // Call original API
+    // Call original API WITHOUT key
     const apiRes = await fetch(
-      `https://danger-region-check.vercel.app/region?uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(key)}`
+      `https://danger-region-check.vercel.app/region?uid=${encodeURIComponent(uid)}&key=DANGERxREGION`
     );
 
     if (!apiRes.ok) {

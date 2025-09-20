@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Fire Full Info</title>
+  <title>Free Fire Full Account Info</title>
   <style>
     body { font-family: Arial, sans-serif; background: #0d0d0d; color: #fff; padding: 20px; }
     h1 { color: #ff9800; text-align: center; }
@@ -13,18 +13,18 @@
     }
     button { background: #ff9800; color: #000; font-weight: bold; cursor: pointer; }
     button:hover { background: #e68900; }
-    .card {
+    .section {
       background: #1a1a1a; padding: 15px; margin: 15px auto;
       border-radius: 8px; max-width: 700px;
       box-shadow: 0 0 10px rgba(255,152,0,0.3);
     }
-    .card h2 { margin-top: 0; color: #ff9800; border-bottom: 1px solid #444; padding-bottom: 5px; }
+    .section h2 { margin-top: 0; color: #ff9800; border-bottom: 1px solid #444; padding-bottom: 5px; }
     .field { margin: 5px 0; }
     .field b { color: #ff9800; }
   </style>
 </head>
 <body>
-  <h1>🔥 Free Fire Full Info 🔥</h1>
+  <h1>🔥 Free Fire Full Account Info 🔥</h1>
   <div style="text-align:center;">
     <input type="text" id="uid" placeholder="Enter UID">
     <button onclick="fetchInfo()">Get Info</button>
@@ -37,7 +37,8 @@
       const uid = document.getElementById('uid').value.trim();
       if (!uid) return alert("Please enter a UID!");
 
-      const url = `https://gunfire.vercel.app/api/fetchinfo?uid=${uid}`;
+      // ⚠️ API URL ko yaha change karna
+      const url = `https://danger-info-alpha.vercel.app/accinfo?uid=${uid}&key=DANGERxINFO`;
 
       try {
         const res = await fetch(url);
@@ -45,73 +46,35 @@
         console.log("API Response:", data);
 
         const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `
-          <div class="card">
-            <h2>Basic Info</h2>
-            <p class="field"><b>Nickname:</b> ${data.basicInfo.nickname}</p>
-            <p class="field"><b>Account ID:</b> ${data.basicInfo.accountId}</p>
-            <p class="field"><b>Level:</b> ${data.basicInfo.level}</p>
-            <p class="field"><b>Rank:</b> ${data.basicInfo.rank} (Points: ${data.basicInfo.rankingPoints})</p>
-            <p class="field"><b>CS Rank:</b> ${data.basicInfo.csRank} (Points: ${data.basicInfo.csRankingPoints})</p>
-            <p class="field"><b>Region:</b> ${data.basicInfo.region}</p>
-            <p class="field"><b>Likes:</b> ${data.basicInfo.liked}</p>
-            <p class="field"><b>Title:</b> ${data.basicInfo.title}</p>
-          </div>
+        resultDiv.innerHTML = "";
 
-          <div class="card">
-            <h2>Captain Info</h2>
-            <p class="field"><b>Nickname:</b> ${data.captainBasicInfo.nickname}</p>
-            <p class="field"><b>Level:</b> ${data.captainBasicInfo.level}</p>
-            <p class="field"><b>Rank:</b> ${data.captainBasicInfo.rank} (Points: ${data.captainBasicInfo.rankingPoints})</p>
-            <p class="field"><b>Likes:</b> ${data.captainBasicInfo.liked}</p>
-          </div>
+        // Har ek section dikhane ke liye
+        for (const [key, value] of Object.entries(data)) {
+          resultDiv.innerHTML += renderSection(key, value);
+        }
 
-          <div class="card">
-            <h2>Clan Info</h2>
-            <p class="field"><b>Clan Name:</b> ${data.clanBasicInfo.clanName}</p>
-            <p class="field"><b>Clan Level:</b> ${data.clanBasicInfo.clanLevel}</p>
-            <p class="field"><b>Members:</b> ${data.clanBasicInfo.currentMembers}/${data.clanBasicInfo.maxMembers}</p>
-          </div>
-
-          <div class="card">
-            <h2>Credit Score</h2>
-            <p class="field"><b>Score:</b> ${data.creditScoreInfo.score}</p>
-            <p class="field"><b>Status:</b> ${data.creditScoreInfo.status}</p>
-            <p class="field"><b>Reason:</b> ${data.creditScoreInfo.reason}</p>
-          </div>
-
-          <div class="card">
-            <h2>Pet Info</h2>
-            <p class="field"><b>Pet ID:</b> ${data.petInfo.petId}</p>
-            <p class="field"><b>Level:</b> ${data.petInfo.level}</p>
-            <p class="field"><b>Skill ID:</b> ${data.petInfo.selectedSkillId}</p>
-          </div>
-
-          <div class="card">
-            <h2>Profile Info</h2>
-            <p class="field"><b>Avatar ID:</b> ${data.profileInfo.avatarId}</p>
-            <p class="field"><b>Equipped Skills:</b> ${data.profileInfo.equippedSkills.join(", ")}</p>
-            <p class="field"><b>Weapons:</b> ${data.profileInfo.pvePrimaryWeapon}</p>
-          </div>
-
-          <div class="card">
-            <h2>Social Info</h2>
-            <p class="field"><b>Gender:</b> ${data.socialInfo.gender}</p>
-            <p class="field"><b>Language:</b> ${data.socialInfo.language}</p>
-            <p class="field"><b>Privacy:</b> ${data.socialInfo.privacy}</p>
-            <p class="field"><b>Highlight:</b> ${data.socialInfo.socialHighlight}</p>
-          </div>
-
-          <div class="card">
-            <h2>Telegram</h2>
-            <p class="field"><b>Channel:</b> ${data.telegram.channel}</p>
-            <p class="field"><b>Group:</b> ${data.telegram.group}</p>
-          </div>
-        `;
       } catch (err) {
         console.error("Fetch Error:", err);
         alert("Error fetching data. Check console for details.");
       }
+    }
+
+    // Recursive function har ek field show karne ke liye
+    function renderSection(title, obj) {
+      if (typeof obj !== "object" || obj === null) {
+        return `<div class="field"><b>${title}:</b> ${obj}</div>`;
+      }
+
+      let html = `<div class="section"><h2>${title}</h2>`;
+      for (const [key, value] of Object.entries(obj)) {
+        if (typeof value === "object" && value !== null) {
+          html += renderSection(key, value);
+        } else {
+          html += `<div class="field"><b>${key}:</b> ${value}</div>`;
+        }
+      }
+      html += "</div>";
+      return html;
     }
   </script>
 </body>

@@ -58,7 +58,7 @@ async function fetchNickname(){
   if(!nickname){ alert("Enter a nickname to search!"); return;}
   
   try{
- const res = await fetch(`/api/searchNickname?nickname=${encodeURIComponent(nickname)}`);
+ const res = await fetch(`gunfire.vercel.app/api/searchNickname?nickname=${encodeURIComponent(nickname)}`);
     if(!res.ok){ alert("API Error! Check console."); return;}
     const data = await res.json();
     console.log(data);

@@ -37,7 +37,7 @@
       const uid = document.getElementById('uid').value.trim();
       if (!uid) return alert("Please enter a UID!");
 
-      const url = `https://danger-info-alpha.vercel.app/accinfo?uid=${uid}&key=DANGERxINFO`;
+      const url = `https://gunfire.vercel.app/api/fetchinfo?uid=${uid}`;
 
       try {
         const res = await fetch(url);

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FF Nickname Search</title>
+<style>
+body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; overflow-x:hidden;}
+/* Intro Screen */
+#intro { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; flex-direction:column; z-index:1000; transition:opacity 0.5s;}
+#intro h1 { color:#ff9800; font-size:3em; animation:fadeIn 2s ease-in-out;}
+@keyframes fadeIn {0%{opacity:0}50%{opacity:1}100%{opacity:1}}
+
+h1 { text-align:center; color:#ff9800; margin-top:20px;}
+input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
+button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { background:#e68900; }
+
+.card { background:#1a1a1a; padding:20px; margin:20px auto; border-radius:12px; max-width:700px; box-shadow:0 0 15px rgba(255,152,0,0.3); opacity:0; transform:translateY(20px); transition: all 0.3s, box-shadow 0.3s, border 0.3s; cursor:pointer; border:2px solid transparent;}
+.card.visible { opacity:1; transform:translateY(0);}
+.card:hover { box-shadow:0 0 30px rgba(255,180,0,0.7);}
+.card.active { background:#222; box-shadow:0 0 40px rgba(255,180,0,1); border:2px solid #ff9800;}
+.card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
+.field { margin:8px 0; }
+.field b { color:#ff9800; }
+#about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
+</style>
+</head>
+<body>
+
+<!-- Intro Screen -->
+<div id="intro">
+  <h1>Welcome To FF Nickname Search</h1>
+  <p style="color:#fff;">Created By Suraj Bhai</p>
+</div>
+
+<h1>🔥 Free Fire Nickname Search 🔥</h1>
+<div style="text-align:center;">
+  <input type="text" id="nickname" placeholder="Enter Nickname">
+  <button onclick="fetchNickname()">Search</button>
+</div>
+
+<div id="result"></div>
+
+<div id="about">
+  About: Search Free Fire accounts by nickname.<br>
+  Created & Coded By: Suraj Jangid
+</div>
+
+<script>
+setTimeout(()=>{
+  document.getElementById('intro').style.opacity='0';
+  setTimeout(()=>{document.getElementById('intro').style.display='none';},500);
+},2000);
+
+async function fetchNickname(){
+  const nickname = document.getElementById('nickname').value.trim();
+  if(!nickname){ alert("Enter a nickname to search!"); return;}
+  
+  try{
+    const res = await fetch(`https://danger-search-nickname.vercel.app/name/ind?nickname=${encodeURIComponent(nickname)}`);
+    if(!res.ok){ alert("API Error! Check console."); return;}
+    const data = await res.json();
+    console.log(data);
+
+    const r = document.getElementById('result');
+    r.innerHTML = "";
+
+    if(!data.results || data.results.length === 0){
+      r.innerHTML = `<p style="text-align:center; color:#ff4444;">No results found for "${nickname}"</p>`;
+      return;
+    }
+
+    function createCard(title, fields){
+      let html=`<div class="card"><h2>${title}</h2>`;
+      for(const [k,v] of Object.entries(fields)){
+        html+=`<div class="field"><b>${k}:</b> ${v}</div>`;
+      }
+      html+="</div>";
+      r.innerHTML+=html;
+      const card = r.lastChild;
+      card.classList.add('visible');
+
+      // Click highlight
+      card.addEventListener('click', ()=>{
+        document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    }
+
+    data.results.forEach((acc, index)=>{
+      createCard(`Result ${index+1}`, {
+        "Nickname": acc.nickname || "N/A",
+        "UID": acc.accountId || "N/A",
+        "Level": acc.level || "N/A",
+        "Last Login": acc.lastLogin || "N/A",
+        "Region": acc.region || "N/A"
+      });
+    });
+
+  } catch(err){
+    console.error(err);
+    alert("Error fetching data. Please try again or contact t.me/Zorvaxo for support.");
+  }
+}
+</script>
+
+</body>
+</html>

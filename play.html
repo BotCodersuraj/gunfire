@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play Gunfire</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="logo"><a href="index.html">Gunfire</a></div>
+  <div class="links">
+    <a href="about.html">About</a>
+    <a href="screenshots.html">Screenshots</a>
+    <a href="play.html">Play</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<section>
+  <h2>Play Gunfire</h2>
+  <p>Arrow keys to move, Space to shoot</p>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <div style="margin-top:1rem;">
+    <button class="btn" onclick="resetGame()">Restart Game</button>
+  </div>
+  <p id="scoreDisplay">Score: 0</p>
+</section>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let player = { x:280, y:350, w:40, h:40, speed:5 };
+let bullets = [];
+let enemies = [];
+let keys = {};
+let score = 0;
+let enemyInterval;
+
+document.addEventListener('keydown', e=>keys[e.code]=true);
+document.addEventListener('keyup', e=>keys[e.code]=false);
+
+function shoot(){ bullets.push({x:player.x+player.w/2-5, y:player.y, w:10,h:20,speed:7}); }
+function spawnEnemy(){ enemies.push({x:Math.random()*(canvas.width-30), y:-30, w:30,h:30,speed:2}); }
+function isColliding(a,b){return !(a.x+a.w<b.x||a.x>b.x+b.w||a.y+a.h<b.y||a.y>b.y+b.h);}
+
+function updateGame(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(keys['ArrowLeft'] && player.x>0) player.x-=player.speed;
+  if(keys['ArrowRight'] && player.x<canvas.width-player.w) player.x+=player.speed;
+  if(keys['ArrowUp'] && player.y>0) player.y-=player.speed;
+  if(keys['ArrowDown'] && player.y<canvas.height-player.h) player.y+=player.speed;
+  if(keys['Space']) shoot();
+
+  ctx.fillStyle='lime';
+  ctx.fillRect(player.x,player.y,player.w,player.h);
+
+  for(let i=bullets.length-1;i>=0;i--){ bullets[i].y-=bullets[i].speed; ctx.fillStyle='yellow'; ctx.fillRect(bullets[i].x,bullets[i].y,bullets[i].w,bullets[i].h); if(bullets[i].y<0) bullets.splice(i,1); }
+
+  for(let i=enemies.length-1;i>=0;i--){
+    enemies[i].y+=enemies[i].speed; ctx.fillStyle='red'; ctx.fillRect(enemies[i].x,enemies[i].y,enemies[i].w,enemies[i].h);
+    for(let j=bullets.length-1;j>=0;j--){ if(isColliding(bullets[j],enemies[i])){ bullets.splice(j,1); enemies.splice(i,1); score+=10; localStorage.setItem('gunfireScore',score); document.getElementById('scoreDisplay').innerText='Score: '+score; break; }}
+    if(isColliding(player,enemies[i])){ alert('Game Over! Score: '+score); resetGame(); return; }
+    if(enemies[i] && enemies[i].y>canvas.height) enemies.splice(i,1);
+  }
+  requestAnimationFrame(updateGame);
+}
+
+function resetGame(){ player={x:280,y:350,w:40,h:40,speed:5}; bullets=[]; enemies=[]; score=0; document.getElementById('scoreDisplay').innerText='Score: 0'; clearInterval(enemyInterval); enemyInterval=setInterval(spawnEnemy,1500);}
+resetGame(); updateGame();
+</script>
+</body>
+</html>

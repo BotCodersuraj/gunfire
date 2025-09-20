@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔥 Free Fire Pro Profile Viewer 🔥</title>
+<title>🔥 Free Fire Profile Viewer 🔥</title>
 <style>
 body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; overflow-x:hidden;}
 /* Intro Screen */
@@ -15,18 +15,13 @@ h1 { text-align:center; color:#ff9800; margin-top:20px;}
 input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
 button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#e68900; }
-.card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 20px rgba(255,152,0,0.5); opacity:0; transform:translateY(20px); transition: all 0.5s; }
+.card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 20px rgba(255,152,0,0.5); opacity:0; transform:translateY(20px); transition: all 0.3s; cursor:pointer;}
 .card.visible { opacity:1; transform:translateY(0);}
 .card:hover { transform:translateY(-5px); box-shadow:0 0 25px rgba(255,180,0,0.7);}
+.card.active { background:#333; box-shadow:0 0 30px rgba(255,180,0,1);}
 .card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
 .field { margin:5px 0; }
 .field b { color:#ff9800; }
-.avatar, .banner, .pet-img { text-align:center; margin-bottom:10px; }
-.avatar img, .banner img, .pet-img img { border-radius:10px; max-width:150px; transition: transform 0.3s;}
-.avatar img:hover, .banner img:hover, .pet-img img:hover { transform: scale(1.1); }
-.rank { display:inline-block; padding:2px 8px; border-radius:5px; font-weight:bold; margin-right:5px; }
-.rank-br { background:linear-gradient(90deg,#ff4d4d,#ff9800);}
-.rank-cs { background:linear-gradient(90deg,#4d79ff,#4dffff);}
 #about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
 </style>
 </head>
@@ -34,7 +29,7 @@ button:hover { background:#e68900; }
 
 <!-- Intro Screen -->
 <div id="intro">
-  <h1>🔥 Free Fire Pro Viewer 🔥</h1>
+  <h1>🔥 Free Fire Viewer 🔥</h1>
   <p style="color:#fff;">Created By Suraj Bhai</p>
 </div>
 
@@ -47,7 +42,7 @@ button:hover { background:#e68900; }
 <div id="result"></div>
 
 <div id="about">
-  About: Full Free Fire account info viewer. <br>
+  About: Full Free Fire account info viewer.<br>
   Created By: Suraj Bhai
 </div>
 
@@ -67,37 +62,34 @@ async function fetchInfo(){
     const r = document.getElementById('result');
     r.innerHTML = "";
 
-    function createCard(title, fields, images){
+    function createCard(title, fields){
       let html=`<div class="card"><h2>${title}</h2>`;
-      if(images){
-        for(const [label, url] of Object.entries(images)){
-          if(url) html+=`<div class="${label}"><img src="${url}" alt="${label}"></div>`;
-        }
-      }
       for(const [k,v] of Object.entries(fields)){
         html+=`<div class="field"><b>${k}:</b> ${v}</div>`;
       }
       html+="</div>";
       r.innerHTML+=html;
-      r.lastChild.classList.add('visible');
-    }
+      const card = r.lastChild;
+      card.classList.add('visible');
 
-    // Avatar & Banner URLs (replace with real CDN if needed)
-    const avatarUrl = data.profileInfo?.avatarId ? `https://firecdn.garena.com/avatar/${data.profileInfo.avatarId}.png` : null;
-    const bannerUrl = data.basicInfo?.bannerId ? `https://firecdn.garena.com/banner/${data.basicInfo.bannerId}.png` : null;
-    const petUrl = data.petInfo?.skinId ? `https://firecdn.garena.com/pet/${data.petInfo.skinId}.png` : null;
+      // Click to highlight
+      card.addEventListener('click', ()=>{
+        document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    }
 
     // Basic Info
     createCard("Basic Info", {
       "Nickname": data.basicInfo?.nickname || "N/A",
       "UID": data.basicInfo?.accountId || "N/A",
       "Level": data.basicInfo?.level || "N/A",
-      "Rank": `<span class="rank rank-br">${data.basicInfo?.rank || "N/A"}</span> Points: ${data.basicInfo?.rankingPoints || "N/A"}`,
-      "CS Rank": `<span class="rank rank-cs">${data.basicInfo?.csRank || "N/A"}</span> Points: ${data.basicInfo?.csRankingPoints || "N/A"}`,
+      "Rank": `${data.basicInfo?.rank || "N/A"} (Points: ${data.basicInfo?.rankingPoints || "N/A"})`,
+      "CS Rank": `${data.basicInfo?.csRank || "N/A"} (Points: ${data.basicInfo?.csRankingPoints || "N/A"})`,
       "Region": data.basicInfo?.region || "N/A",
       "Likes": data.basicInfo?.liked || "N/A",
       "Title": data.basicInfo?.title || "N/A"
-    }, {avatar: avatarUrl, banner: bannerUrl});
+    });
 
     // Captain Info
     createCard("Captain Info", {
@@ -126,7 +118,7 @@ async function fetchInfo(){
       "Pet ID": data.petInfo?.petId || "N/A",
       "Level": data.petInfo?.level || "N/A",
       "Selected Skill ID": data.petInfo?.selectedSkillId || "N/A"
-    }, { "pet-img": petUrl });
+    });
 
     // Profile Info
     createCard("Profile Info", {

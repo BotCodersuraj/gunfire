@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔥 Free Fire Profile Viewer 🔥</title>
+<title>FreeFire Information Website</title>
 <style>
 body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; overflow-x:hidden;}
 /* Intro Screen */
@@ -29,11 +29,11 @@ button:hover { background:#e68900; }
 
 <!-- Intro Screen -->
 <div id="intro">
-  <h1>🔥 Free Fire Viewer 🔥</h1>
+  <h1>Welocome To FF Information Web</h1>
   <p style="color:#fff;">Created By Suraj Bhai</p>
 </div>
 
-<h1>🔥 Free Fire Profile Viewer 🔥</h1>
+<h1> Free Fire Information Web</h1>
 <div style="text-align:center;">
   <input type="text" id="uid" placeholder="Enter UID">
   <button onclick="fetchInfo()">Get Info</button>
@@ -42,8 +42,8 @@ button:hover { background:#e68900; }
 <div id="result"></div>
 
 <div id="about">
-  About: Full Free Fire account info viewer.<br>
-  Created By: Suraj Bhai
+  About Website: This Website Give You FreeFire Full Profile Information By UID.<br>
+  Created By And Coder: Suraj Jangid
 </div>
 
 <script>
@@ -54,7 +54,7 @@ setTimeout(()=>{
 
 async function fetchInfo(){
   const uid = document.getElementById('uid').value.trim();
-  if(!uid){ alert("Enter UID!"); return;}
+  if(!uid){ alert("Please Enter Your FreeFire UID To Get FreeFire Profile Information. For Example: 8080519000"); return;}
   try{
     const res = await fetch(`/api/fetchinfo?uid=${uid}`);
     const data = await res.json();
@@ -100,14 +100,14 @@ async function fetchInfo(){
     });
 
     // Clan Info
-    createCard("Clan Info", {
-      "Clan Name": data.clanBasicInfo?.clanName || "N/A",
-      "Clan Level": data.clanBasicInfo?.clanLevel || "N/A",
-      "Members": `${data.clanBasicInfo?.currentMembers || "N/A"}/${data.clanBasicInfo?.maxMembers || "N/A"}`
+    createCard("Guild Info", {
+      "Guild Name": data.clanBasicInfo?.clanName || "N/A",
+      "Guild Level": data.clanBasicInfo?.clanLevel || "N/A",
+      "Members": `${data.clanBasicInfo?.currentMembers || "0"}/${data.clanBasicInfo?.maxMembers || "0"}`
     });
 
     // Credit Score
-    createCard("Credit Score", {
+    createCard("Honor Score", {
       "Score": data.creditScoreInfo?.score || "N/A",
       "Status": data.creditScoreInfo?.status || "N/A",
       "Reason": data.creditScoreInfo?.reason || "N/A"
@@ -129,7 +129,7 @@ async function fetchInfo(){
 
   } catch(err){
     console.error(err);
-    alert("Error fetching data. Check console for details.");
+    alert("Error Fetching Data. Please Wait For 1-12 Hours OR Get Telegram t.me/Zorvaxo And Report This Error.");
   }
 }
 </script>

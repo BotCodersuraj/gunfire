@@ -12,7 +12,11 @@ export default async function handler(req, res) {
     );
 
     if (!apiRes.ok) {
-      return res.status(500).json({ error: "Failed to fetch from source API" });
+      return res.status(500).json({
+  "credits": "t.me/zorvaxo",
+  "message": "invalid UID",
+  "status": "error"
+});
     }
 
     const data = await apiRes.json();

@@ -20,7 +20,7 @@ button:hover { background:#e68900; }
 .card.visible { opacity:1; transform:translateY(0);}
 .card:hover { box-shadow:0 0 30px rgba(255,180,0,0.7);}
 .card.active { background:#222; box-shadow:0 0 40px rgba(255,180,0,1); border:2px solid #ff9800;}
-.card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
+.card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; cursor:pointer;}
 .field { margin:8px 0; }
 .field b { color:#ff9800; }
 #about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
@@ -48,17 +48,20 @@ button:hover { background:#e68900; }
 </div>
 
 <script>
+// Intro fade out
 setTimeout(()=>{
   document.getElementById('intro').style.opacity='0';
   setTimeout(()=>{document.getElementById('intro').style.display='none';},500);
 },2000);
 
+// Fetch Nickname
 async function fetchNickname(){
   const nickname = document.getElementById('nickname').value.trim();
   if(!nickname){ alert("Enter a nickname to search!"); return;}
   
   try{
- const res = await fetch(`gunfire.vercel.app/api/searchNickname?nickname=${encodeURIComponent(nickname)}`);
+    // ✅ Proxy fetch route (CORS fix)
+    const res = await fetch(`/api/searchNickname?nickname=${encodeURIComponent(nickname)}`);
     if(!res.ok){ alert("API Error! Check console."); return;}
     const data = await res.json();
     console.log(data);
@@ -71,6 +74,7 @@ async function fetchNickname(){
       return;
     }
 
+    // Create cards
     function createCard(title, fields){
       let html=`<div class="card"><h2>${title}</h2>`;
       for(const [k,v] of Object.entries(fields)){
@@ -100,7 +104,7 @@ async function fetchNickname(){
 
   } catch(err){
     console.error(err);
-    alert("Error fetching data. Please try again or contact t.me/Zorvaxo for support.");
+    alert("Error fetching data. Please contact t.me/Zorvaxo for support.");
   }
 }
 </script>

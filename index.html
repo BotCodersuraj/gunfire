@@ -15,12 +15,12 @@ h1 { text-align:center; color:#ff9800; margin-top:20px;}
 input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
 button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#e68900; }
-.card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 20px rgba(255,152,0,0.5); opacity:0; transform:translateY(20px); transition: all 0.3s; cursor:pointer;}
+.card { background:#1a1a1a; padding:20px; margin:20px auto; border-radius:12px; max-width:700px; box-shadow:0 0 15px rgba(255,152,0,0.3); opacity:0; transform:translateY(20px); transition: all 0.3s, box-shadow 0.3s, border 0.3s; cursor:pointer; border:2px solid transparent;}
 .card.visible { opacity:1; transform:translateY(0);}
-.card:hover { transform:translateY(-5px); box-shadow:0 0 25px rgba(255,180,0,0.7);}
-.card.active { background:#333; box-shadow:0 0 30px rgba(255,180,0,1);}
+.card:hover { box-shadow:0 0 30px rgba(255,180,0,0.7);}
+.card.active { background:#222; box-shadow:0 0 40px rgba(255,180,0,1); border:2px solid #ff9800;}
 .card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
-.field { margin:5px 0; }
+.field { margin:8px 0; }
 .field b { color:#ff9800; }
 #about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
 </style>
@@ -29,11 +29,11 @@ button:hover { background:#e68900; }
 
 <!-- Intro Screen -->
 <div id="intro">
-  <h1>Welocome To FF Information Web</h1>
+  <h1>Welcome To FF Info Web</h1>
   <p style="color:#fff;">Created By Suraj Bhai</p>
 </div>
 
-<h1> Free Fire Information Web</h1>
+<h1>🔥 Free Fire Profile Viewer 🔥</h1>
 <div style="text-align:center;">
   <input type="text" id="uid" placeholder="Enter UID">
   <button onclick="fetchInfo()">Get Info</button>
@@ -42,8 +42,8 @@ button:hover { background:#e68900; }
 <div id="result"></div>
 
 <div id="about">
-  About Website: This Website Give You FreeFire Full Profile Information By UID.<br>
-  Created By And Coder: Suraj Jangid
+  About: Full Free Fire account info viewer by UID.<br>
+  Created & Coded By: Suraj Jangid
 </div>
 
 <script>
@@ -54,13 +54,21 @@ setTimeout(()=>{
 
 async function fetchInfo(){
   const uid = document.getElementById('uid').value.trim();
-  if(!uid){ alert("Please Enter Your FreeFire UID To Get FreeFire Profile Information. For Example: 8080519000"); return;}
+  if(!uid){ alert("Please enter your Free Fire UID! Example: 8080519000"); return;}
   try{
     const res = await fetch(`/api/fetchinfo?uid=${uid}`);
+    if(!res.ok){ alert("API Error! Check console."); return; }
     const data = await res.json();
     console.log(data);
+
     const r = document.getElementById('result');
     r.innerHTML = "";
+
+    // Invalid UID check
+    if(data.status === "error"){
+      alert("Invalid UID! Player not found or does not exist in Free Fire.");
+      return;
+    }
 
     function createCard(title, fields){
       let html=`<div class="card"><h2>${title}</h2>`;
@@ -72,7 +80,7 @@ async function fetchInfo(){
       const card = r.lastChild;
       card.classList.add('visible');
 
-      // Click to highlight
+      // Click highlight
       card.addEventListener('click', ()=>{
         document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
         card.classList.add('active');
@@ -100,13 +108,13 @@ async function fetchInfo(){
     });
 
     // Clan Info
-    createCard("Guild Info", {
-      "Guild Name": data.clanBasicInfo?.clanName || "N/A",
-      "Guild Level": data.clanBasicInfo?.clanLevel || "N/A",
+    createCard("Clan Info", {
+      "Clan Name": data.clanBasicInfo?.clanName || "N/A",
+      "Clan Level": data.clanBasicInfo?.clanLevel || "N/A",
       "Members": `${data.clanBasicInfo?.currentMembers || "0"}/${data.clanBasicInfo?.maxMembers || "0"}`
     });
 
-    // Credit Score
+    // Honor Score
     createCard("Honor Score", {
       "Score": data.creditScoreInfo?.score || "N/A",
       "Status": data.creditScoreInfo?.status || "N/A",
@@ -129,7 +137,7 @@ async function fetchInfo(){
 
   } catch(err){
     console.error(err);
-    alert("Error Fetching Data. Please Wait For 1-12 Hours OR Get Telegram t.me/Zorvaxo And Report This Error.");
+    alert("Error Fetching Data. Please try again or contact t.me/Zorvaxo for support.");
   }
 }
 </script>

@@ -3,20 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FF Info Viewer</title>
+  <title>Free Fire Account Info</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #121212; color: #fff; padding: 20px; }
-    h1 { color: #00e676; }
-    input, button { padding: 10px; margin: 5px 0; width: 100%; max-width: 300px; border-radius: 5px; border: none; }
-    button { background: #00e676; color: #000; font-weight: bold; cursor: pointer; }
-    button:hover { background: #00c853; }
-    .info-box { background: #1f1f1f; padding: 15px; margin: 10px 0; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; background: #0d0d0d; color: #fff; padding: 20px; }
+    h1 { color: #ff9800; text-align: center; }
+    input, button {
+      padding: 10px; margin: 5px 0; width: 100%; max-width: 300px;
+      border-radius: 5px; border: none;
+    }
+    button { background: #ff9800; color: #000; font-weight: bold; cursor: pointer; }
+    button:hover { background: #e68900; }
+    .info-box {
+      background: #1a1a1a; padding: 15px; margin: 10px auto;
+      border-radius: 8px; max-width: 500px;
+      box-shadow: 0 0 10px rgba(255,152,0,0.3);
+    }
+    .info-box h2 { margin-top: 0; color: #ff9800; }
+    .avatar { text-align: center; margin-bottom: 10px; }
+    .avatar img { border-radius: 10px; width: 150px; }
   </style>
 </head>
 <body>
-  <h1>Free Fire Account Info</h1>
-  <input type="text" id="uid" placeholder="Enter UID">
-  <button onclick="fetchInfo()">Get Info</button>
+  <h1>🔥 Free Fire Account Info 🔥</h1>
+  <div style="text-align:center;">
+    <input type="text" id="uid" placeholder="Enter UID">
+    <button onclick="fetchInfo()">Get Info</button>
+  </div>
 
   <div id="result"></div>
 
@@ -29,23 +41,41 @@
 
       try {
         const res = await fetch(url);
-        if (!res.ok) throw new Error("Network response not ok");
-
         const data = await res.json();
-        console.log("API Response:", data); // Debugging
+        console.log("API Response:", data);
 
-        // Kabhi kabhi data direct nahi hota, andar nested hota hai
-        const info = data.basicInfo ? data : (data.data || {});  
+        const info = data.basicInfo ? data : (data.data || {});
 
         const resultDiv = document.getElementById('result');
         resultDiv.innerHTML = `
           <div class="info-box">
+            <div class="avatar">
+              <img src="${info.basicInfo?.avatar || "https://i.imgur.com/4M34hi2.png"}" alt="Avatar">
+            </div>
             <h2>Basic Info</h2>
             <p><b>Nickname:</b> ${info.basicInfo?.nickname || "N/A"}</p>
+            <p><b>UID:</b> ${uid}</p>
             <p><b>Level:</b> ${info.basicInfo?.level || "N/A"}</p>
-            <p><b>Rank:</b> ${info.basicInfo?.rank || "N/A"}</p>
+            <p><b>Rank (BR):</b> ${info.rank?.brRank || info.basicInfo?.rank || "N/A"}</p>
+            <p><b>Rank (CS):</b> ${info.rank?.csRank || "N/A"}</p>
             <p><b>Region:</b> ${info.basicInfo?.region || "N/A"}</p>
             <p><b>Likes:</b> ${info.basicInfo?.liked || "N/A"}</p>
+          </div>
+
+          <div class="info-box">
+            <h2>Stats</h2>
+            <p><b>Total Matches:</b> ${info.stats?.matches || "N/A"}</p>
+            <p><b>Kills:</b> ${info.stats?.kills || "N/A"}</p>
+            <p><b>Headshots:</b> ${info.stats?.headshots || "N/A"}</p>
+            <p><b>Win Rate:</b> ${info.stats?.winRate || "N/A"}%</p>
+            <p><b>K/D Ratio:</b> ${info.stats?.kd || "N/A"}</p>
+          </div>
+
+          <div class="info-box">
+            <h2>Clan / Guild</h2>
+            <p><b>Guild Name:</b> ${info.guild?.name || "N/A"}</p>
+            <p><b>Guild ID:</b> ${info.guild?.id || "N/A"}</p>
+            <p><b>Role:</b> ${info.guild?.role || "N/A"}</p>
           </div>
         `;
       } catch (err) {

@@ -3,33 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔥 Free Fire Profile Viewer 🔥</title>
+<title>🔥 Free Fire Pro Profile Viewer 🔥</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; overflow-x:hidden;}
-  /* Intro Screen */
-  #intro { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; flex-direction:column; z-index:1000; transition:opacity 0.5s;}
-  #intro h1 { color:#ff9800; font-size:3em; animation:fadeIn 2s ease-in-out;}
-  @keyframes fadeIn { 0%{opacity:0} 50%{opacity:1} 100%{opacity:1} }
+body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; overflow-x:hidden;}
+/* Intro Screen */
+#intro { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; flex-direction:column; z-index:1000; transition:opacity 0.5s;}
+#intro h1 { color:#ff9800; font-size:3em; animation:fadeIn 2s ease-in-out;}
+@keyframes fadeIn { 0%{opacity:0} 50%{opacity:1} 100%{opacity:1} }
 
-  h1 { text-align:center; color:#ff9800; margin-top:20px;}
-  input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
-  button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
-  button:hover { background:#e68900; }
-  .card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 20px rgba(255,152,0,0.5); opacity:0; transform:translateY(20px); transition: all 0.5s; }
-  .card.visible { opacity:1; transform:translateY(0);}
-  .card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
-  .field { margin:5px 0; }
-  .field b { color:#ff9800; }
-  .avatar, .banner, .pet-img { text-align:center; margin-bottom:10px; }
-  .avatar img, .banner img, .pet-img img { border-radius:10px; max-width:150px; }
-  #about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
+h1 { text-align:center; color:#ff9800; margin-top:20px;}
+input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
+button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { background:#e68900; }
+.card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 20px rgba(255,152,0,0.5); opacity:0; transform:translateY(20px); transition: all 0.5s; }
+.card.visible { opacity:1; transform:translateY(0);}
+.card:hover { transform:translateY(-5px); box-shadow:0 0 25px rgba(255,180,0,0.7);}
+.card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
+.field { margin:5px 0; }
+.field b { color:#ff9800; }
+.avatar, .banner, .pet-img { text-align:center; margin-bottom:10px; }
+.avatar img, .banner img, .pet-img img { border-radius:10px; max-width:150px; transition: transform 0.3s;}
+.avatar img:hover, .banner img:hover, .pet-img img:hover { transform: scale(1.1); }
+.rank { display:inline-block; padding:2px 8px; border-radius:5px; font-weight:bold; margin-right:5px; }
+.rank-br { background:linear-gradient(90deg,#ff4d4d,#ff9800);}
+.rank-cs { background:linear-gradient(90deg,#4d79ff,#4dffff);}
+#about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
 </style>
 </head>
 <body>
 
 <!-- Intro Screen -->
 <div id="intro">
-  <h1>🔥 Free Fire Viewer 🔥</h1>
+  <h1>🔥 Free Fire Pro Viewer 🔥</h1>
   <p style="color:#fff;">Created By Suraj Bhai</p>
 </div>
 
@@ -42,88 +47,99 @@
 <div id="result"></div>
 
 <div id="about">
-  About: This website shows full Free Fire account info including Basic, Captain, Clan, Credit, Pet, Profile Info.<br>
+  About: Full Free Fire account info viewer. <br>
   Created By: Suraj Bhai
 </div>
 
 <script>
-  // Intro hide after 2 seconds
-  setTimeout(()=>{ document.getElementById('intro').style.opacity='0'; setTimeout(()=>{document.getElementById('intro').style.display='none';},500); },2000);
+setTimeout(()=>{
+  document.getElementById('intro').style.opacity='0';
+  setTimeout(()=>{document.getElementById('intro').style.display='none';},500);
+},2000);
 
-  async function fetchInfo(){
-    const uid = document.getElementById('uid').value.trim();
-    if(!uid){ alert("Enter UID!"); return;}
-    try{
-      const res = await fetch(`/api/fetchinfo?uid=${uid}`);
-      const data = await res.json();
-      console.log(data);
-      const r = document.getElementById('result');
-      r.innerHTML = "";
+async function fetchInfo(){
+  const uid = document.getElementById('uid').value.trim();
+  if(!uid){ alert("Enter UID!"); return;}
+  try{
+    const res = await fetch(`/api/fetchinfo?uid=${uid}`);
+    const data = await res.json();
+    console.log(data);
+    const r = document.getElementById('result');
+    r.innerHTML = "";
 
-      function createCard(title, fields){
-        let html=`<div class="card"><h2>${title}</h2>`;
-        for(const [k,v] of Object.entries(fields)){
-          html+=`<div class="field"><b>${k}:</b> ${v}</div>`;
+    function createCard(title, fields, images){
+      let html=`<div class="card"><h2>${title}</h2>`;
+      if(images){
+        for(const [label, url] of Object.entries(images)){
+          if(url) html+=`<div class="${label}"><img src="${url}" alt="${label}"></div>`;
         }
-        html+="</div>";
-        r.innerHTML+=html;
-        r.lastChild.classList.add('visible');
       }
-
-      // Basic Info
-      createCard("Basic Info", {
-        "Nickname": data.basicInfo?.nickname || "N/A",
-        "UID": data.basicInfo?.accountId || "N/A",
-        "Level": data.basicInfo?.level || "N/A",
-        "Rank": `${data.basicInfo?.rank || "N/A"} (Points: ${data.basicInfo?.rankingPoints || "N/A"})`,
-        "CS Rank": `${data.basicInfo?.csRank || "N/A"} (Points: ${data.basicInfo?.csRankingPoints || "N/A"})`,
-        "Region": data.basicInfo?.region || "N/A",
-        "Likes": data.basicInfo?.liked || "N/A",
-        "Title": data.basicInfo?.title || "N/A"
-      });
-
-      // Captain Info
-      createCard("Captain Info", {
-        "Nickname": data.captainBasicInfo?.nickname || "N/A",
-        "Level": data.captainBasicInfo?.level || "N/A",
-        "Rank": `${data.captainBasicInfo?.rank || "N/A"} (Points: ${data.captainBasicInfo?.rankingPoints || "N/A"})`,
-        "Likes": data.captainBasicInfo?.liked || "N/A"
-      });
-
-      // Clan Info
-      createCard("Clan Info", {
-        "Clan Name": data.clanBasicInfo?.clanName || "N/A",
-        "Clan Level": data.clanBasicInfo?.clanLevel || "N/A",
-        "Members": `${data.clanBasicInfo?.currentMembers || "N/A"}/${data.clanBasicInfo?.maxMembers || "N/A"}`
-      });
-
-      // Credit Score
-      createCard("Credit Score", {
-        "Score": data.creditScoreInfo?.score || "N/A",
-        "Status": data.creditScoreInfo?.status || "N/A",
-        "Reason": data.creditScoreInfo?.reason || "N/A"
-      });
-
-      // Pet Info
-      createCard("Pet Info", {
-        "Pet ID": data.petInfo?.petId || "N/A",
-        "Level": data.petInfo?.level || "N/A",
-        "Selected Skill ID": data.petInfo?.selectedSkillId || "N/A"
-      });
-
-      // Profile Info
-      createCard("Profile Info", {
-        "Avatar ID": data.profileInfo?.avatarId || "N/A",
-        "Equipped Skills": (data.profileInfo?.equippedSkills || []).join(", "),
-        "Primary Weapon": data.profileInfo?.pvePrimaryWeapon || "N/A"
-      });
-
-    } catch(err){
-      console.error(err);
-      alert("Error fetching data. Check console for details.");
+      for(const [k,v] of Object.entries(fields)){
+        html+=`<div class="field"><b>${k}:</b> ${v}</div>`;
+      }
+      html+="</div>";
+      r.innerHTML+=html;
+      r.lastChild.classList.add('visible');
     }
-  }
-</script>
 
+    // Avatar & Banner URLs (replace with real CDN if needed)
+    const avatarUrl = data.profileInfo?.avatarId ? `https://firecdn.garena.com/avatar/${data.profileInfo.avatarId}.png` : null;
+    const bannerUrl = data.basicInfo?.bannerId ? `https://firecdn.garena.com/banner/${data.basicInfo.bannerId}.png` : null;
+    const petUrl = data.petInfo?.skinId ? `https://firecdn.garena.com/pet/${data.petInfo.skinId}.png` : null;
+
+    // Basic Info
+    createCard("Basic Info", {
+      "Nickname": data.basicInfo?.nickname || "N/A",
+      "UID": data.basicInfo?.accountId || "N/A",
+      "Level": data.basicInfo?.level || "N/A",
+      "Rank": `<span class="rank rank-br">${data.basicInfo?.rank || "N/A"}</span> Points: ${data.basicInfo?.rankingPoints || "N/A"}`,
+      "CS Rank": `<span class="rank rank-cs">${data.basicInfo?.csRank || "N/A"}</span> Points: ${data.basicInfo?.csRankingPoints || "N/A"}`,
+      "Region": data.basicInfo?.region || "N/A",
+      "Likes": data.basicInfo?.liked || "N/A",
+      "Title": data.basicInfo?.title || "N/A"
+    }, {avatar: avatarUrl, banner: bannerUrl});
+
+    // Captain Info
+    createCard("Captain Info", {
+      "Nickname": data.captainBasicInfo?.nickname || "N/A",
+      "Level": data.captainBasicInfo?.level || "N/A",
+      "Rank": `${data.captainBasicInfo?.rank || "N/A"} (Points: ${data.captainBasicInfo?.rankingPoints || "N/A"})`,
+      "Likes": data.captainBasicInfo?.liked || "N/A"
+    });
+
+    // Clan Info
+    createCard("Clan Info", {
+      "Clan Name": data.clanBasicInfo?.clanName || "N/A",
+      "Clan Level": data.clanBasicInfo?.clanLevel || "N/A",
+      "Members": `${data.clanBasicInfo?.currentMembers || "N/A"}/${data.clanBasicInfo?.maxMembers || "N/A"}`
+    });
+
+    // Credit Score
+    createCard("Credit Score", {
+      "Score": data.creditScoreInfo?.score || "N/A",
+      "Status": data.creditScoreInfo?.status || "N/A",
+      "Reason": data.creditScoreInfo?.reason || "N/A"
+    });
+
+    // Pet Info
+    createCard("Pet Info", {
+      "Pet ID": data.petInfo?.petId || "N/A",
+      "Level": data.petInfo?.level || "N/A",
+      "Selected Skill ID": data.petInfo?.selectedSkillId || "N/A"
+    }, { "pet-img": petUrl });
+
+    // Profile Info
+    createCard("Profile Info", {
+      "Avatar ID": data.profileInfo?.avatarId || "N/A",
+      "Equipped Skills": (data.profileInfo?.equippedSkills || []).join(", "),
+      "Primary Weapon": data.profileInfo?.pvePrimaryWeapon || "N/A"
+    });
+
+  } catch(err){
+    console.error(err);
+    alert("Error fetching data. Check console for details.");
+  }
+}
+</script>
 </body>
 </html>

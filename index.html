@@ -1,81 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Free Fire Full Account Info</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #0d0d0d; color: #fff; padding: 20px; }
-    h1 { color: #ff9800; text-align: center; }
-    input, button {
-      padding: 10px; margin: 5px 0; width: 100%; max-width: 300px;
-      border-radius: 5px; border: none;
-    }
-    button { background: #ff9800; color: #000; font-weight: bold; cursor: pointer; }
-    button:hover { background: #e68900; }
-    .section {
-      background: #1a1a1a; padding: 15px; margin: 15px auto;
-      border-radius: 8px; max-width: 700px;
-      box-shadow: 0 0 10px rgba(255,152,0,0.3);
-    }
-    .section h2 { margin-top: 0; color: #ff9800; border-bottom: 1px solid #444; padding-bottom: 5px; }
-    .field { margin: 5px 0; }
-    .field b { color: #ff9800; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 Free Fire Profile Viewer 🔥</title>
+<style>
+body { font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; padding:20px; }
+h1 { text-align:center; color:#ff9800; }
+input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
+button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; }
+button:hover { background:#e68900; }
+.card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 15px rgba(255,152,0,0.3);}
+.card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
+.field { margin:5px 0; }
+.field b { color:#ff9800; }
+.avatar, .banner, .pet-img { text-align:center; margin-bottom:10px; }
+.avatar img, .banner img, .pet-img img { border-radius:10px; max-width:150px; }
+</style>
 </head>
 <body>
-  <h1>🔥 Free Fire Full Account Info 🔥</h1>
-  <div style="text-align:center;">
-    <input type="text" id="uid" placeholder="Enter UID">
-    <button onclick="fetchInfo()">Get Info</button>
-  </div>
+<h1>🔥 Free Fire Profile Viewer 🔥</h1>
+<div style="text-align:center;">
+<input type="text" id="uid" placeholder="Enter UID">
+<button onclick="fetchInfo()">Get Info</button>
+</div>
+<div id="result"></div>
 
-  <div id="result"></div>
+<script>
+async function fetchInfo(){
+  const uid = document.getElementById('uid').value.trim();
+  if(!uid){ alert("Enter UID!"); return;}
 
-  <script>
-    async function fetchInfo() {
-      const uid = document.getElementById('uid').value.trim();
-      if (!uid) return alert("Please enter a UID!");
+  try{
+    const res = await fetch(`/api/fetchinfo?uid=${uid}`);
+    const data = await res.json();
+    console.log(data);
 
-      // ⚠️ API URL ko yaha change karna
-      const url = `https://danger-info-alpha.vercel.app/accinfo?uid=${uid}&key=DANGERxINFO`;
+    const r = document.getElementById('result');
+    r.innerHTML = "";
 
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        console.log("API Response:", data);
+    // Basic Info Card
+    r.innerHTML += `<div class="card">
+      <h2>Basic Info</h2>
+      <p class="field"><b>Nickname:</b> ${data.basicInfo?.nickname || "N/A"}</p>
+      <p class="field"><b>UID:</b> ${data.basicInfo?.accountId || "N/A"}</p>
+      <p class="field"><b>Level:</b> ${data.basicInfo?.level || "N/A"}</p>
+      <p class="field"><b>Rank:</b> ${data.basicInfo?.rank || "N/A"} (Points: ${data.basicInfo?.rankingPoints || "N/A"})</p>
+      <p class="field"><b>CS Rank:</b> ${data.basicInfo?.csRank || "N/A"} (Points: ${data.basicInfo?.csRankingPoints || "N/A"})</p>
+      <p class="field"><b>Region:</b> ${data.basicInfo?.region || "N/A"}</p>
+      <p class="field"><b>Likes:</b> ${data.basicInfo?.liked || "N/A"}</p>
+      <p class="field"><b>Title:</b> ${data.basicInfo?.title || "N/A"}</p>
+    </div>`;
 
-        const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = "";
+    // Captain Info
+    r.innerHTML += `<div class="card">
+      <h2>Captain Info</h2>
+      <p class="field"><b>Nickname:</b> ${data.captainBasicInfo?.nickname || "N/A"}</p>
+      <p class="field"><b>Level:</b> ${data.captainBasicInfo?.level || "N/A"}</p>
+      <p class="field"><b>Rank:</b> ${data.captainBasicInfo?.rank || "N/A"} (Points: ${data.captainBasicInfo?.rankingPoints || "N/A"})</p>
+      <p class="field"><b>Likes:</b> ${data.captainBasicInfo?.liked || "N/A"}</p>
+    </div>`;
 
-        // Har ek section dikhane ke liye
-        for (const [key, value] of Object.entries(data)) {
-          resultDiv.innerHTML += renderSection(key, value);
-        }
+    // Clan Info
+    r.innerHTML += `<div class="card">
+      <h2>Clan Info</h2>
+      <p class="field"><b>Clan Name:</b> ${data.clanBasicInfo?.clanName || "N/A"}</p>
+      <p class="field"><b>Clan Level:</b> ${data.clanBasicInfo?.clanLevel || "N/A"}</p>
+      <p class="field"><b>Members:</b> ${data.clanBasicInfo?.currentMembers || "N/A"}/${data.clanBasicInfo?.maxMembers || "N/A"}</p>
+    </div>`;
 
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        alert("Error fetching data. Check console for details.");
-      }
-    }
+    // Credit Score
+    r.innerHTML += `<div class="card">
+      <h2>Credit Score</h2>
+      <p class="field"><b>Score:</b> ${data.creditScoreInfo?.score || "N/A"}</p>
+      <p class="field"><b>Status:</b> ${data.creditScoreInfo?.status || "N/A"}</p>
+      <p class="field"><b>Reason:</b> ${data.creditScoreInfo?.reason || "N/A"}</p>
+    </div>`;
 
-    // Recursive function har ek field show karne ke liye
-    function renderSection(title, obj) {
-      if (typeof obj !== "object" || obj === null) {
-        return `<div class="field"><b>${title}:</b> ${obj}</div>`;
-      }
+    // Pet Info
+    r.innerHTML += `<div class="card">
+      <h2>Pet Info</h2>
+      <p class="field"><b>Pet ID:</b> ${data.petInfo?.petId || "N/A"}</p>
+      <p class="field"><b>Level:</b> ${data.petInfo?.level || "N/A"}</p>
+      <p class="field"><b>Selected Skill ID:</b> ${data.petInfo?.selectedSkillId || "N/A"}</p>
+    </div>`;
 
-      let html = `<div class="section"><h2>${title}</h2>`;
-      for (const [key, value] of Object.entries(obj)) {
-        if (typeof value === "object" && value !== null) {
-          html += renderSection(key, value);
-        } else {
-          html += `<div class="field"><b>${key}:</b> ${value}</div>`;
-        }
-      }
-      html += "</div>";
-      return html;
-    }
-  </script>
+    // Profile Info
+    r.innerHTML += `<div class="card">
+      <h2>Profile Info</h2>
+      <p class="field"><b>Avatar ID:</b> ${data.profileInfo?.avatarId || "N/A"}</p>
+      <p class="field"><b>Equipped Skills:</b> ${(data.profileInfo?.equippedSkills || []).join(", ")}</p>
+      <p class="field"><b>Primary Weapon:</b> ${data.profileInfo?.pvePrimaryWeapon || "N/A"}</p>
+    </div>`;
+
+  } catch(err){
+    console.error(err);
+    alert("Error fetching data. Check console for details.");
+  }
+}
+</script>
 </body>
 </html>

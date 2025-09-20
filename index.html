@@ -15,12 +15,12 @@ h1 { text-align:center; color:#ff9800; margin-top:20px;}
 input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
 button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#e68900; }
-.card { background:#1a1a1a; padding:20px; margin:20px auto; border-radius:12px; max-width:700px; box-shadow:0 0 15px rgba(255,152,0,0.3); opacity:0; transform:translateY(20px); transition: all 0.3s, box-shadow 0.3s, border 0.3s; cursor:pointer; border:2px solid transparent;}
+.card { background:#1a1a1a; padding:15px; margin:15px auto; border-radius:10px; max-width:700px; box-shadow:0 0 20px rgba(255,152,0,0.5); opacity:0; transform:translateY(20px); transition: all 0.3s; cursor:pointer;}
 .card.visible { opacity:1; transform:translateY(0);}
-.card:hover { box-shadow:0 0 30px rgba(255,180,0,0.7);}
-.card.active { background:#222; box-shadow:0 0 40px rgba(255,180,0,1); border:2px solid #ff9800;}
+.card:hover { transform:translateY(-5px); box-shadow:0 0 25px rgba(255,180,0,0.7);}
+.card.active { background:#333; box-shadow:0 0 30px rgba(255,180,0,1);}
 .card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
-.field { margin:8px 0; }
+.field { margin:5px 0; }
 .field b { color:#ff9800; }
 #about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
 </style>
@@ -72,7 +72,7 @@ async function fetchInfo(){
       const card = r.lastChild;
       card.classList.add('visible');
 
-      // Click to highlight section
+      // Click to highlight
       card.addEventListener('click', ()=>{
         document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
         card.classList.add('active');

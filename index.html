@@ -57,7 +57,7 @@
       if(!uid){ alert("Please enter your Free Fire UID! Example: 8080519000"); return;}
       try{
         const res = await fetch(`/api/fetchinfo?uid=${uid}`);
-        if(!res.ok){ alert("API Error! Check console."); return; }
+        if(!res.ok){ alert("Invalid UID! Player not found or does not exist in Free Fire."); return; }
         const data = await res.json();
         console.log(data);
 

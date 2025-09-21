@@ -64,14 +64,21 @@ async function fetchInfo(){
     const r = document.getElementById('result');
     r.innerHTML = "";
 
-    // Invalid UID check
     if(data.status === "error"){
       alert("Invalid UID! Player not found or does not exist in Free Fire.");
       return;
     }
 
-    function createCard(title, fields){
+    function createCard(title, fields, avatarUrl=null){
       let html=`<div class="card"><h2>${title}</h2>`;
+      
+      // Agar avatar image hai to upar show karega
+      if(avatarUrl){
+        html+=`<div style="text-align:center; margin-bottom:15px;">
+                  <img src="${avatarUrl}" alt="Avatar" style="width:120px;height:120px;border-radius:50%;border:3px solid #ff9800;">
+               </div>`;
+      }
+
       for(const [k,v] of Object.entries(fields)){
         html+=`<div class="field"><b>${k}:</b> ${v}</div>`;
       }
@@ -80,14 +87,18 @@ async function fetchInfo(){
       const card = r.lastChild;
       card.classList.add('visible');
 
-      // Click highlight
       card.addEventListener('click', ()=>{
         document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
         card.classList.add('active');
       });
     }
 
-    // Basic Info
+    // Avatar link banate hain (agar avatarId available hai to, warna default image)
+    let avatarImg = data.profileInfo?.avatarId 
+      ? `https://cdn.freefireapi.com/avatar/${data.profileInfo.avatarId}.png`
+      : "https://i.ibb.co/4pDNDk1/default-avatar.png"; // Example default image
+
+    // Basic Info (with Avatar)
     createCard("Basic Info", {
       "Nickname": data.basicInfo?.nickname || "N/A",
       "UID": data.basicInfo?.accountId || "N/A",
@@ -97,7 +108,7 @@ async function fetchInfo(){
       "Region": data.basicInfo?.region || "N/A",
       "Likes": data.basicInfo?.liked || "N/A",
       "Title": data.basicInfo?.title || "N/A"
-    });
+    }, avatarImg);
 
     // Captain Info
     createCard("Captain Info", {

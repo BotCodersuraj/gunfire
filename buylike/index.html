@@ -1,161 +1,233 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Fire Likes Packages</title>
 <style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background: #f5f5f5;
-        color: #333;
-        margin: 0;
-        padding: 20px;
-    }
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #222;
-    }
-    .package-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    .package {
-        background: #fff;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        padding: 20px;
-        text-align: center;
-        transition: box-shadow 0.3s;
-    }
-    .package:hover {
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    .package h2 {
-        font-size: 20px;
-        margin-bottom: 10px;
-        color: #222;
-    }
-    .package p {
-        font-size: 16px;
-        margin-bottom: 15px;
-    }
-    .button-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .select-btn, .details-btn {
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
-    .select-btn {
-        background: #ffcc00;
-        color: #000;
-    }
-    .select-btn:hover {
-        background: #e6b800;
-    }
-    .details-btn {
-        background: #007bff;
-        color: #fff;
-    }
-    .details-btn:hover {
-        background: #0056b3;
-    }
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #0b0c10;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffdd00;
+    text-shadow: 2px 2px #ff0000;
+}
+.package-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.package {
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: #fff;
+    font-weight: bold;
+    position: relative;
+}
+.package:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(255,255,255,0.4);
+}
+.package h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px #000;
+}
+.package p {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.select-btn, .details-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+.select-btn {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    color: #fff;
+}
+.select-btn:hover {
+    transform: scale(1.1);
+}
+.details-btn {
+    background: linear-gradient(45deg, #ff6a00, #ff0000);
+    color: #fff;
+}
+.details-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Price-wise color coding */
+.package[data-price="19"],
+.package[data-price="38"],
+.package[data-price="57"] { background: linear-gradient(45deg, #00ff00, #00cc00); }
+.package[data-price="76"],
+.package[data-price="95"],
+.package[data-price="114"] { background: linear-gradient(45deg, #ffcc00, #ff9900); }
+.package[data-price="133"],
+.package[data-price="152"],
+.package[data-price="171"],
+.package[data-price="190"] { background: linear-gradient(45deg, #ff33cc, #ff0000); }
+
+/* Most Purchased Live Tag */
+.most-purchased {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(45deg, #ff00ff, #ffdd00);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #ffdd00;
+    animation: pulseGlow 1s infinite alternate;
+}
+@keyframes pulseGlow {
+    0% { transform: scale(1); box-shadow: 0 0 15px #ff00ff, 0 0 30px #ffdd00; }
+    50% { transform: scale(1.1); box-shadow: 0 0 25px #ff00ff, 0 0 50px #ffdd00; }
+    100% { transform: scale(1); box-shadow: 0 0 15px #ff00ff, 0 0 30px #ffdd00; }
+}
 </style>
 </head>
 <body>
-<h1>Free Fire Likes Packages</h1>
+<h1>🔥 Free Fire Likes Packages 🔥</h1>
 <div class="package-container">
-    <div class="package">
+
+    <div class="package" data-price="19" data-planname="3000Likes">
         <h2>3,000 Likes</h2>
         <p>Price: 19₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="38" data-planname="6000Likes">
         <h2>6,000 Likes</h2>
         <p>Price: 38₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="57" data-planname="9000Likes">
         <h2>9,000 Likes</h2>
         <p>Price: 57₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="76" data-planname="12000Likes">
         <h2>12,000 Likes</h2>
         <p>Price: 76₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <!-- Most Purchased -->
+    <div class="package" data-price="95" data-planname="15000Likes">
+        <div class="most-purchased">Most Purchased</div>
         <h2>15,000 Likes</h2>
         <p>Price: 95₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="114" data-planname="18000Likes">
         <h2>18,000 Likes</h2>
         <p>Price: 114₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="133" data-planname="21000Likes">
         <h2>21,000 Likes</h2>
         <p>Price: 133₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="152" data-planname="24000Likes">
         <h2>24,000 Likes</h2>
         <p>Price: 152₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="171" data-planname="27000Likes">
         <h2>27,000 Likes</h2>
         <p>Price: 171₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
-    <div class="package">
+
+    <div class="package" data-price="190" data-planname="30000Likes">
         <h2>30,000 Likes</h2>
         <p>Price: 190₹</p>
         <div class="button-group">
-            <button class="select-btn">Select Package</button>
+            <a class="select-btn">BUY</a>
             <button class="details-btn">Details</button>
         </div>
     </div>
+
 </div>
+
+<script>
+// Project name variable
+let projectname = "bjs";
+
+// Set BUY button href dynamically
+const buyButtons = document.querySelectorAll(".select-btn");
+buyButtons.forEach(btn => {
+    let packageDiv = btn.closest(".package");
+    let planname = packageDiv.getAttribute("data-planname");
+    let planprice = packageDiv.getAttribute("data-price");
+    btn.href = `https://${projectname}.vercel.app/buy?planname=${planname}&planlikesamount=${planprice}`;
+    btn.target = "_blank"; // optional: open in new tab
+});
+
+// Example JS print
+let msg = "message";
+console.log(msg);
+</script>
+
 </body>
 </html>

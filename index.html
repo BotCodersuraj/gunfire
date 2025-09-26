@@ -1,159 +1,186 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FreeFire Information Website</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspect & Edit HTML Live — Single file</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
   <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; overflow-x:hidden;}
-    /* Intro Screen */
-    #intro { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; display:flex; justify-content:center; align-items:center; flex-direction:column; z-index:1000; transition:opacity 0.5s;}
-    #intro h1 { color:#ff9800; font-size:3em; animation:fadeIn 2s ease-in-out;}
-    @keyframes fadeIn { 0%{opacity:0} 50%{opacity:1} 100%{opacity:1} }
-
-    h1 { text-align:center; color:#ff9800; margin-top:20px;}
-    input, button { padding:10px; margin:5px 0; width:100%; max-width:300px; border-radius:5px; border:none; }
-    button { background:#ff9800; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
-    button:hover { background:#e68900; }
-    .card { background:#1a1a1a; padding:20px; margin:20px auto; border-radius:12px; max-width:700px; box-shadow:0 0 15px rgba(255,152,0,0.3); opacity:0; transform:translateY(20px); transition: all 0.3s, box-shadow 0.3s, border 0.3s; cursor:pointer; border:2px solid transparent;}
-    .card.visible { opacity:1; transform:translateY(0);}
-    .card:hover { box-shadow:0 0 30px rgba(255,180,0,0.7);}
-    .card.active { background:#222; box-shadow:0 0 40px rgba(255,180,0,1); border:2px solid #ff9800;}
-    .card h2 { margin-top:0; color:#ff9800; border-bottom:1px solid #444; padding-bottom:5px; }
-    .field { margin:8px 0; }
-    .field b { color:#ff9800; }
-    #about { text-align:center; margin-top:20px; font-size:0.9em; color:#aaa;}
+    :root{--bg:#0f1724;--panel:#0b1220;--muted:#9aa4b2;--accent:#06b6d4}
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Roboto,-apple-system; background:linear-gradient(180deg,#071025 0%, #071826 100%);color:#e6eef6}
+    .app{display:grid;grid-template-columns:520px 1fr;gap:12px;height:100vh;padding:14px}
+    header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:6px}
+    .controls{display:flex;gap:8px}
+    button{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;cursor:pointer}
+    button.primary{background:var(--accent);color:#052025;border:none}
+    .editor-pane{display:flex;flex-direction:column;gap:8px}
+    .editor-toolbar{display:flex;align-items:center;justify-content:space-between}
+    .editor-toolbar .left{display:flex;gap:8px;align-items:center}
+    .preview{height:calc(100vh - 140px);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
+    iframe{width:100%;height:100%;border:0;background:white}
+    .inspect-panel{position:fixed;right:18px;bottom:18px;width:420px;background:rgba(2,6,23,0.95);border:1px solid rgba(255,255,255,0.03);padding:12px;border-radius:10px;box-shadow:0 6px 30px rgba(2,6,23,0.6)}
+    .inspect-panel h4{margin:0 0 8px 0;color:#fff}
+    .inspect-panel textarea{width:100%;height:160px;background:#071026;color:#e6eef6;border:1px solid rgba(255,255,255,0.03);border-radius:6px;padding:8px}
+    .small{font-size:13px;color:var(--muted)}
+    @media(max-width:980px){.app{grid-template-columns:1fr;}
+      header{position:sticky;top:0;z-index:5}
+      .preview{height:360px}
+    }
   </style>
 </head>
 <body>
-
-  <!-- Intro Screen -->
-  <div id="intro">
-    <h1>Welcome To FF Info Web</h1>
-    <p style="color:#fff;">Created By Suraj Bhai</p>
+  <div class="app">
+    <header>
+      <div>
+        <strong>Inspect & Edit HTML Live</strong>
+        <div class="small">Single-file demo — edit code, live preview, inspect elements & edit them</div>
+      </div>
+      <div class="controls">
+        <button id="runBtn" class="primary">Run / Apply</button>
+        <button id="toggleInspect">Toggle Inspect</button>
+        <button id="beautifyBtn">Beautify HTML</button>
+        <button id="downloadBtn">Download</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </header><section class="editor-pane">
+  <div class="editor-toolbar">
+    <div class="left"><span class="small">HTML Editor</span></div>
+    <div class="small">Tip: Toggle Inspect and click elements in preview to edit them.</div>
   </div>
+  <textarea id="code" spellcheck="false">
 
-  <h1>🔥 Free Fire Profile Viewer 🔥</h1>
-  <div style="text-align:center;">
-    <input type="text" id="uid" placeholder="Enter UID">
-    <button onclick="fetchInfo()">Get Info</button>
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Demo Page</title>
+    <style>
+      body{font-family:Inter,system-ui,Arial;padding:28px;line-height:1.6}
+      .card{padding:18px;border-radius:10px;box-shadow:0 4px 18px rgba(2,6,23,0.25);background:linear-gradient(90deg,#fff,#f1f5f9);color:#07203a}
+      .btn{display:inline-block;padding:8px 12px;border-radius:8px;background:#06b6d4;color:white;text-decoration:none}
+    </style>
+  </head>
+  <body>
+    <h1>Hello — edit me!</h1>
+    <p>This is a small demo page. Click the blue card to edit it using the inspector.</p><div class="card">
+  <h3>Card title</h3>
+  <p>Some content inside the card. <a href="#" class="btn">Click</a></p>
+</div>
+
+  </body>
+</html>
+      </textarea>
+    </section><section>
+  <div class="preview" id="previewWrap">
+    <iframe id="preview" sandbox="allow-scripts allow-forms"></iframe>
   </div>
+</section>
 
-  <div id="result"></div>
+  </div>  <div id="inspectPanel" class="inspect-panel" style="display:none">
+    <h4>Inspect & Edit Element</h4>
+    <div class="small" id="selectedPath">Selected: <span style="opacity:0.9">—</span></div>
+    <textarea id="elementHtml"></textarea>
+    <div style="display:flex;justify-content:space-between;gap:8px;margin-top:8px">
+      <button id="replaceBtn">Replace element in preview</button>
+      <button id="closePanel">Close</button>
+    </div>
+  </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>  <script>
+    // Initialize CodeMirror
+    const textarea = document.getElementById('code');
+    const editor = CodeMirror.fromTextArea(textarea, {
+      mode: 'xml', htmlMode: true, lineNumbers: true, tabSize:2, indentWithTabs:false
+    });
 
-  <div id="about">
-    About: Full Free Fire account info viewer by UID.<br>
-    Created & Coded By: Suraj Jangid
-  </div>
+    const preview = document.getElementById('preview');
+    const runBtn = document.getElementById('runBtn');
+    const toggleInspect = document.getElementById('toggleInspect');
+    const beautifyBtn = document.getElementById('beautifyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const resetBtn = document.getElementById('resetBtn');
 
-  <script>
-    setTimeout(()=>{
-      document.getElementById('intro').style.opacity='0';
-      setTimeout(()=>{document.getElementById('intro').style.display='none';},500);
-    },2000);
+    const inspectPanel = document.getElementById('inspectPanel');
+    const elementHtml = document.getElementById('elementHtml');
+    const selectedPath = document.getElementById('selectedPath');
+    const replaceBtn = document.getElementById('replaceBtn');
+    const closePanel = document.getElementById('closePanel');
 
-    async function fetchInfo(){
-      const uid = document.getElementById('uid').value.trim();
-      if(!uid){ alert("Please enter your Free Fire UID! Example: 8080519000"); return;}
-      try{
-        const res = await fetch(`/api/fetchinfo?uid=${uid}`);
-        if(!res.ok){ alert("Invalid UID! Player not found or does not exist in Free Fire."); return; }
-        const data = await res.json();
-        console.log(data);
+    let inspectEnabled = false;
+    let lastSelectedPath = null;
 
-        const r = document.getElementById('result');
-        r.innerHTML = "";
-
-        if(data.status === "error"){
-          alert("Invalid UID! Player not found or does not exist in Free Fire.");
-          return;
-        }
-
-        function createCard(title, fields, avatarUrl=null){
-          let html=`<div class="card"><h2>${title}</h2>`;
-          
-          // Agar avatarUrl milti hai to image dikhayega
-          if(avatarUrl){
-            html+=`<div style="text-align:center; margin-bottom:15px;">
-                      <img src="${avatarUrl}" alt="Avatar" style="width:120px;height:120px;border-radius:50%;border:3px solid #ff9800;">
-                   </div>`;
-          }
-
-          for(const [k,v] of Object.entries(fields)){
-            html+=`<div class="field"><b>${k}:</b> ${v}</div>`;
-          }
-          html+="</div>";
-          r.innerHTML+=html;
-          const card = r.lastChild;
-          card.classList.add('visible');
-
-          card.addEventListener('click', ()=>{
-            document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
-            card.classList.add('active');
-          });
-        }
-
-        // Avatar URL banane ka logic
-        let avatarImg = null;
-        if(data.profileInfo?.avatarId){
-          avatarImg = `https://gunfire.vercel.app/api/images?object=${data.profileInfo.avatarId}`;
-        } else {
-          avatarImg = "https://i.ibb.co/4pDNDk1/default-avatar.png"; // default example image
-        }
-
-        // Basic Info (with Avatar)
-        createCard("Basic Info", {
-          "Nickname": data.basicInfo?.nickname || "N/A",
-          "UID": data.basicInfo?.accountId || "N/A",
-          "Level": data.basicInfo?.level || "N/A",
-          "Rank": `${data.basicInfo?.rank || "N/A"} (Points: ${data.basicInfo?.rankingPoints || "N/A"})`,
-          "CS Rank": `${data.basicInfo?.csRank || "N/A"} (Points: ${data.basicInfo?.csRankingPoints || "N/A"})`,
-          "Region": data.basicInfo?.region || "N/A",
-          "Likes": data.basicInfo?.liked || "N/A",
-          "Title": data.basicInfo?.title || "N/A"
-        }, avatarImg);
-
-        // Captain Info
-        createCard("Captain Info", {
-          "Nickname": data.captainBasicInfo?.nickname || "N/A",
-          "Level": data.captainBasicInfo?.level || "N/A",
-          "Rank": `${data.captainBasicInfo?.rank || "N/A"} (Points: ${data.captainBasicInfo?.rankingPoints || "N/A"})`,
-          "Likes": data.captainBasicInfo?.liked || "N/A"
-        });
-
-        // Clan Info
-        createCard("Clan Info", {
-          "Clan Name": data.clanBasicInfo?.clanName || "N/A",
-          "Clan Level": data.clanBasicInfo?.clanLevel || "N/A",
-          "Members": `${data.clanBasicInfo?.currentMembers || "0"}/${data.clanBasicInfo?.maxMembers || "0"}`
-        });
-
-        // Honor Score
-        createCard("Honor Score", {
-          "Score": data.creditScoreInfo?.score || "N/A",
-          "Status": data.creditScoreInfo?.status || "N/A",
-          "Reason": data.creditScoreInfo?.reason || "N/A"
-        });
-
-        // Pet Info
-        createCard("Pet Info", {
-          "Pet ID": data.petInfo?.petId || "N/A",
-          "Level": data.petInfo?.level || "N/A",
-          "Selected Skill ID": data.petInfo?.selectedSkillId || "N/A"
-        });
-
-        // Profile Info
-        createCard("Profile Info", {
-          "Avatar ID": data.profileInfo?.avatarId || "N/A",
-          "Equipped Skills": (data.profileInfo?.equippedSkills || []).join(", "),
-          "Primary Weapon": data.profileInfo?.pvePrimaryWeapon || "N/A"
-        });
-
-      } catch(err){
-        console.error(err);
-        alert("Error Fetching Data. Please try again or contact t.me/Zorvaxo for support.");
-      }
+    function buildPreviewContent(html){
+      // inject small script into the HTML that sets up inspection listeners and highlights
+      const inspectorScript = `\n<script>\n(function(){\n  function getSelector(el){\n    if(!el) return '';\n    let path = [];\n    while(el && el.nodeType===1 && el.tagName.toLowerCase() !== 'html'){\n      let name = el.tagName.toLowerCase();\n      if(el.id) { name += '#'+el.id; path.unshift(name); break;}\n      let sib = el, idx = 1;\n      while(sib.previousElementSibling){ sib = sib.previousElementSibling; if(sib.tagName === el.tagName) idx++; }
+      if(idx > 1) name += ':nth-of-type('+idx+')';\n      path.unshift(name); el = el.parentElement;\n    }\n    return path.join(' > ');\n  }\n  var overlay = null;\n  function ensureOverlay(){n if(overlay) return;}
+  window.addEventListener('mousemove', function(e){ if(window._inspectActive){ var el = e.target; el.style.outline = '3px solid rgba(6,182,212,0.6)'; setTimeout(function(){ try{el.style.outline=''}catch(_){} }, 120); } }, true);
+  document.addEventListener('click', function(ev){ if(window._inspectActive){ ev.preventDefault(); ev.stopPropagation(); var el = ev.target; var sel = getSelector(el); var payload = {type:'inspect-click', selector: sel, outer: el.outerHTML}; parent.postMessage(payload, '*'); } }, true);
+  // listen for messages from parent to toggle inspect
+  window.addEventListener('message', function(ev){ try{ var d=ev.data; if(d && d.type==='toggle-inspect'){ window._inspectActive = !!d.on; } if(d && d.type==='replace' && d.selector){ try{ var target = document.querySelector(d.selector); if(target){ target.outerHTML = d.newHtml; parent.postMessage({type:'replace-done', selector:d.selector, success:true}, '*'); } else parent.postMessage({type:'replace-done', selector:d.selector, success:false}, '*'); }catch(err){ parent.postMessage({type:'replace-done', selector:d.selector, success:false, error:String(err)}, '*'); } } }catch(e){} }, false);
+})();\n<\/script>\n`;
+      return html + inspectorScript;
     }
-  </script>
-</body>
+
+    function runPreview(){
+      const html = editor.getValue();
+      preview.srcdoc = buildPreviewContent(html);
+    }
+
+    runBtn.addEventListener('click', runPreview);
+
+    toggleInspect.addEventListener('click', ()=>{
+      inspectEnabled = !inspectEnabled;
+      toggleInspect.style.opacity = inspectEnabled ? '1' : '0.8';
+      // send message to iframe to enable inspect
+      try{ preview.contentWindow.postMessage({type:'toggle-inspect', on:inspectEnabled}, '*'); }catch(e){}
+    });
+
+    beautifyBtn.addEventListener('click', ()=>{
+      const content = editor.getValue();
+      const pretty = html_beautify(content, {indent_size:2});
+      editor.setValue(pretty);
+    });
+
+    downloadBtn.addEventListener('click', ()=>{
+      const blob = new Blob([editor.getValue()], {type:'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'page.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      if(confirm('Reset editor to the default demo HTML?')){
+        editor.setValue(document.querySelector('#code').value);
+        runPreview();
+      }
+    });
+
+    // listen to messages from iframe
+    window.addEventListener('message', function(ev){
+      const d = ev.data || {};
+      if(d.type === 'inspect-click'){
+        lastSelectedPath = d.selector;
+        selectedPath.querySelector('span').textContent = d.selector;
+        elementHtml.value = d.outer;
+        inspectPanel.style.display = 'block';
+      }
+      if(d.type === 'replace-done'){
+        if(d.success){
+          // refresh editor to current iframe HTML
+          try{ const doc = preview.contentDocument || preview.contentWindow.document; const full = doc.documentElement.outerHTML; editor.setValue(full); alert('Replaced successfully — editor updated'); }catch(e){ alert('Replaced, but unable to sync editor: '+e); }
+        } else { alert('Replace failed'); }
+      }
+    }, false);
+
+    replaceBtn.addEventListener('click', ()=>{
+      if(!lastSelectedPath){ alert('No element selected'); return; }
+      const newHtml = elementHtml.value;
+      // send message to iframe to replace
+      try{ preview.contentWindow.postMessage({type:'replace', selector:lastSelectedPath, newHtml:newHtml}, '*'); }catch(e){ alert('Unable to send replace message'); }
+    });
+
+    closePanel.addEventListener('click', ()=>{ inspectPanel.style.display='none'; });
+
+    // initial run
+    setTimeout(runPreview, 100);
+  </script></body>
 </html>

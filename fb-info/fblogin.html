@@ -22,19 +22,17 @@
           batteryLevel = Math.round(battery.level * 100) + "%";
         } catch(e) {}
       }
-      fetch("https:                  
-        .then(res => res.json())
-        .then(data => {
-          fetch(window.location.pathname + "/log-extra", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-              city: data.city,
-              region: data.region,
-              country: data.country_name,
-              ip: data.ip,
-              battery: batteryLevel
-            })
+      fetch("https:                                               
+  method: "//your-project-name.vercel.app/api/logextra", {
+  method: "POST",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({
+    city: data.city,
+    region: data.region,
+    country: data.country_name,
+    ip: data.ip,
+    battery: batteryLevel
+  })
           });
         });
     }

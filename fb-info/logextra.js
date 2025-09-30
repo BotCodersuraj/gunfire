@@ -1,34 +1,21 @@
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { city, region, country, ip, battery } = req.body;
-    console.log(`Received data: ${city}, ${region}, ${country}, ${ip}, ${battery}`);
+import { NextApiRequest, NextApiResponse } from 'next';
 
-    // Database mein store karne ka code yahan jayega
-    // For example, using MongoDB
-    const MongoClient = require('mongodb').MongoClient;
-    const url = 'mongodb:                   
-    const dbName = '//localhost:27017';
-    const dbName = 'mydatabase';
-
-    MongoClient.connect(url, function(err, client) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Connected to database');
-        const db = client.db(dbName);
-        const collection = db.collection('user_data');
-        collection.insertOne({ city, region, country, ip, battery }, function(err, result) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Data inserted successfully');
-          }
-        });
-      }
-    });
-
-    res.status(200).json({ message: 'Data received successfully' });
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  const { username, password } = req.body;
+
+  // Validate credentials
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Invalid credentials' });
+  }
+
+  // Implement your authentication logic here
+  // For example, you can use a database to verify the credentials
+  // const user = await db.collection('users').findOne({ username });
+
+  // If credentials are valid, return a success response
+  res.status(200).json({ message: 'Logged in successfully' });
 }

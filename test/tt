@@ -1,0 +1,27 @@
+// command.js
+
+function parseCommand(queryString) {
+  const params = new URLSearchParams(queryString);
+
+  const formessage = params.get("formessage");
+  const example = params.get("example");
+
+  if (!formessage || !example) {
+    return "Bhai kuch daal";
+  }
+
+  return {
+    formessage: formessage,
+    example: example
+  };
+}
+
+// Example runs
+console.log(parseCommand("formessage=hello&example=forexample"));
+// { formessage: 'hello', example: 'forexample' }
+
+console.log(parseCommand("formessage=hello2&example=forexample2"));
+// { formessage: 'hello2', example: 'forexample2' }
+
+console.log(parseCommand("formessage=only"));
+// Bhai kuch daal

@@ -1,4 +1,3 @@
-// Memory store (server restart pe reset ho jaayega)
 let messages = {};
 
 export default function handler(req, res) {
@@ -8,7 +7,7 @@ export default function handler(req, res) {
     return res.status(400).json({ error: "id parameter required" });
   }
 
-  // Agar ?message=... bhi diya hai to update kar do
+  // Agar message parameter aaya hai → update kar do
   if (message) {
     messages[id] = {
       text: message.replace(/_/g, " "),
@@ -22,17 +21,19 @@ export default function handler(req, res) {
     });
   }
 
-  // Nahi to sirf last message dikhao
+  // Agar sirf id diya hai → check karo message aya tha ya nahi
   if (messages[id]) {
     return res.status(200).json({
       id,
+      has_message: true,
       last_updated_message: messages[id].text,
       updated_at: messages[id].updated_at
     });
   } else {
     return res.status(200).json({
       id,
-      last_updated_message: "No message yet",
+      has_message: false,
+      last_updated_message: null,
       updated_at: null
     });
   }

@@ -1,12 +1,12 @@
-let lastMessage = "";   // memory me store hoga
-let lastUpdated = null; // kab update hua
+let lastMessage = "No message yet";
+let lastUpdated = null;
 
 export default function handler(req, res) {
   const { message } = req.query;
 
-  // Agar query me ?message=... diya ho to update kar do
   if (message) {
-    lastMessage = message.replace(/_/g, " "); 
+    // update message
+    lastMessage = message.replace(/_/g, " ");
     lastUpdated = new Date().toISOString();
 
     return res.status(200).json({
@@ -15,9 +15,9 @@ export default function handler(req, res) {
     });
   }
 
-  // Nahi to sirf last message return karo
+  // get last message
   return res.status(200).json({
-    last_updated_message: lastMessage || "No message yet",
+    last_updated_message: lastMessage,
     updated_at: lastUpdated
   });
 }

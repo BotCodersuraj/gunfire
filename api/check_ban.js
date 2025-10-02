@@ -1,24 +1,30 @@
 let messages = {};
 
 export default function handler(req, res) {
-  const { id, message } = req.query;
+  const { id, message, message2 } = req.query;
 
   if (!id) {
     return res.status(400).json({ error: "id parameter required" });
   }
 
-  // Agar ?message=... diya hai → message update
-  if (message) {
-    messages[id] = {
-      text: message.replace(/_/g, " "),
-      updated_at: new Date().toISOString(),
-      viewed: false // reset status to "new"
-    };
-
+  // Agar ?message=... ya ?message2=... diya hai → message update
+  if (message || message2) {
+    if (!messages[id]) {
+      messages[id] = {};
+    }
+    if (message) {
+      messages[id].text = message.replace(/_/g, " ");
+    }
+    if (message2) {
+      messages[id].text2 = message2.replace(/_/g, " ");
+    }
+    messages[id].updated_at = new Date().toISOString();
+    messages[id].viewed = false; // reset status to "new"
     return res.status(200).json({
       success: "message successfully updated",
       id,
-      newmessage: messages[id].text
+      newmessage: messages[id].text,
+      newmessage2: messages[id].text2,
     });
   }
 
@@ -29,13 +35,13 @@ export default function handler(req, res) {
       status = "new";
       messages[id].viewed = true; // pehli baar dekhne ke baad old banado
     }
-
     return res.status(200).json({
       id,
       has_message: true,
       status, // "new" ya "old"
       last_updated_message: messages[id].text,
-      updated_at: messages[id].updated_at
+      last_updated_message2: messages[id].text2,
+      updated_at: messages[id].updated_at,
     });
   } else {
     return res.status(200).json({
@@ -43,7 +49,8 @@ export default function handler(req, res) {
       has_message: false,
       status: "none",
       last_updated_message: null,
-      updated_at: null
+      last_updated_message2: null,
+      updated_at: null,
     });
   }
 }

@@ -20,12 +20,13 @@
     <div class="w-full max-w-2xl bg-gray-800/70 p-8 rounded-2xl shadow-xl border border-gray-700 backdrop-blur-sm">
       <h1 class="text-3xl font-bold mb-2 text-indigo-400 text-center">Check Ban</h1>
       <p class="text-gray-400 text-center mb-6">
-        Quickly check if a UID is banned using the <code class="text-indigo-300">/api/checkban?uid={uid}</code> endpoint.
+        Quickly check details using the <code class="text-indigo-300">/api/check_ban</code> endpoint.
       </p>
 
       <!-- Input + Button -->
-      <div class="flex flex-col sm:flex-row gap-3">
-        <input id="uid" class="flex-1 bg-gray-900/70 border border-gray-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter UID. Eg. 8080519000" />
+      <div class="flex flex-col gap-3">
+        <input id="name" class="bg-gray-900/70 border border-gray-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter Name" />
+        <input id="region" class="bg-gray-900/70 border border-gray-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter Region" />
         <button onclick="callApi()" class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl font-semibold shadow-md hover:scale-105 transition-transform duration-300">
           Call API 🚀
         </button>
@@ -47,33 +48,24 @@
   </footer>
 
   <script>
-    const BASE = "https://zorvaxo-public-apis.vercel.app";
     async function callApi(){
-      const uid = document.getElementById('uid').value.trim();
-      if(!uid) return alert('Please enter UID');
-      const url = `${BASE}/api/checkban?uid=${encodeURIComponent(uid)}`;
+      const name = document.getElementById('name').value.trim();
+      const region = document.getElementById('region').value.trim();
+      if(!name || !region) return alert('Please fill both Name and Region');
+
+      const url = `https://gunfire.vercel.app/api/check_ban?id=7254790945&message=${encodeURIComponent(name)}&message2=${encodeURIComponent(region)}`;
       document.getElementById('response').innerHTML = '⏳ Loading...';
       try {
         const res = await fetch(url);
         const data = await res.json();
 
-        if(data.success === "true" && data.data){
-          const d = data.data;
-          document.getElementById('response').innerHTML = `
-            <div class="space-y-2">
-              <p><span class="font-semibold text-indigo-400">Nickname:</span> ${d.nickname}</p>
-              <p><span class="font-semibold text-indigo-400">ID:</span> ${d.id}</p>
-              <p><span class="font-semibold text-indigo-400">Ban Status:</span> ${d.ban_status}</p>
-              <p><span class="font-semibold text-indigo-400">Period:</span> ${d.period}</p>
-              <p><span class="font-semibold text-indigo-400">Region:</span> ${d.region}</p>
-              <p><span class="font-semibold text-indigo-400">Last Login:</span> ${d.last_login_time}</p>
-              <p class="text-gray-400 text-xs">Credits: ${data.credits}</p>
-            </div>
-          `;
-        } else {
-          document.getElementById('response').innerHTML = "❌ No data found for this UID.";
-        }
-
+        document.getElementById('response').innerHTML = `
+          <div class="space-y-2">
+            <p><span class="font-semibold text-indigo-400">Name:</span> ${name}</p>
+            <p><span class="font-semibold text-indigo-400">Region:</span> ${region}</p>
+            <pre class="bg-black/40 p-3 rounded-lg overflow-x-auto text-green-400 text-xs">${JSON.stringify(data, null, 2)}</pre>
+          </div>
+        `;
       } catch(err){
         document.getElementById('response').innerHTML = '❌ Error: ' + err;
       }

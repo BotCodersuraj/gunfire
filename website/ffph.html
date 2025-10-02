@@ -1,196 +1,83 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>FF Store — Demo (Safe)</title>
-<style>
-  :root{font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-  body{margin:0;background:#0b1220;color:#fff}
-  header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(90deg,#0f1724,#071025);box-shadow:0 6px 18px rgba(0,0,0,.6)}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:44px;height:44px;background:linear-gradient(135deg,#ff5f6d,#ffc371);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#111}
-  h1{font-size:16px;margin:0}
-  nav button{background:transparent;border:1px solid rgba(255,255,255,.08);color:inherit;padding:8px 12px;border-radius:8px;cursor:pointer}
-  main{padding:18px;max-width:1100px;margin:28px auto}
-  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-  .search{flex:1;min-width:200px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-  .item-img{height:110px;border-radius:8px;background:linear-gradient(135deg,#1f2937,#111827);display:flex;align-items:center;justify-content:center;color:#9ca3af;font-weight:600}
-  .item-title{margin:8px 0 6px;font-weight:600}
-  .buy-row{display:flex;align-items:center;justify-content:space-between}
-  .btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
-  .btn-primary{background:#ffb86b;color:#111;font-weight:700}
-  .login-btn{background:transparent;border:1px solid rgba(255,255,255,.06);padding:8px 12px;border-radius:8px;color:#fff}
-  /* modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;z-index:50}
-  .modal{background:#071022;padding:18px;border-radius:12px;max-width:420px;width:96%;box-shadow:0 8px 30px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.03)}
-  .field{display:flex;flex-direction:column;margin-bottom:10px}
-  label{font-size:13px;color:#9aa4b2;margin-bottom:6px}
-  input[type="text"],input[type="password"]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:transparent;color:inherit}
-  .note{font-size:12px;color:#9aa4b2;margin-top:8px}
-  .close-x{position:absolute;right:14px;top:10px;cursor:pointer;color:#9aa4b2}
-  footer{margin-top:28px;text-align:center;color:#9aa4b2;font-size:13px}
-  /* response box */
-  #apiResponse{white-space:pre-wrap;background:#111827;padding:12px;border-radius:8px;margin-top:20px;font-size:13px;color:#00ffae}
-  /* small */
-  @media (max-width:520px){.item-img{height:90px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZORVAXO - Check Ban</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 min-h-screen flex flex-col">
 
-<header>
-  <div class="brand">
-    <div class="logo">FF</div>
-    <div>
-      <h1>FreeStore — Demo</h1>
-      <div style="font-size:12px;color:#9aa4b2">A → Z items (demo only)</div>
-    </div>
-  </div>
-  <nav>
-    <button class="login-btn" id="openLogin">Login</button>
-  </nav>
-</header>
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg py-5 px-6 flex justify-between items-center text-white font-bold text-lg">
+    <a href="index.html" class="hover:underline">⬅ Back</a>
+    <div>🚫 Check Ban</div>
+    <div></div>
+  </header>
 
-<main>
-  <div class="filters">
-    <input class="search" id="search" placeholder="Search items (A → Z)..." />
-    <select id="category">
-      <option value="all">All categories</option>
-      <option value="bundle">Bundles</option>
-      <option value="skin">Skins</option>
-      <option value="emote">Emotes</option>
-    </select>
-  </div>
+  <!-- Main Content -->
+  <main class="flex-1 flex items-center justify-center px-6">
+    <div class="w-full max-w-2xl bg-gray-800/70 p-8 rounded-2xl shadow-xl border border-gray-700 backdrop-blur-sm">
+      <h1 class="text-3xl font-bold mb-2 text-indigo-400 text-center">Check Ban</h1>
+      <p class="text-gray-400 text-center mb-6">
+        Quickly check if a UID is banned using the <code class="text-indigo-300">/api/checkban?uid={uid}</code> endpoint.
+      </p>
 
-  <section class="grid" id="storeGrid">
-    <!-- JS will populate items -->
-  </section>
-
-  <div id="apiResponse">API response will appear here after login...</div>
-
-  <footer>
-    This is a safe demo. No credentials are sent anywhere. For real auth use a secure backend + HTTPS.
-  </footer>
-</main>
-
-<!-- Modal (login) -->
-<div class="modal-backdrop" id="modal">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div style="position:relative">
-      <div class="close-x" id="closeModal">✕</div>
-      <h2 style="margin:0 0 8px">Demo Login</h2>
-      <p style="margin:0 0 12px;color:#9aa4b2;font-size:13px">This is a demo — login will call API and show JSON response.</p>
-    </div>
-
-    <form id="loginForm">
-      <div class="field">
-        <label for="user">Email or Number</label>
-        <input id="user" type="text" autocomplete="off" placeholder="someone@example.com or 98xxxxxxxx" required />
-      </div>
-      <div class="field">
-        <label for="pass">Password</label>
-        <input id="pass" type="password" placeholder="••••••••" required />
+      <!-- Input + Button -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input id="uid" class="flex-1 bg-gray-900/70 border border-gray-700 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter UID. Eg. 8080519000" />
+        <button onclick="callApi()" class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl font-semibold shadow-md hover:scale-105 transition-transform duration-300">
+          Call API 🚀
+        </button>
       </div>
 
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
-        <button type="button" class="btn" id="cancelBtn">Cancel</button>
-        <button type="submit" class="btn btn-primary">Login</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script>
-/* === STORE ITEMS === */
-const items = [];
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-for (let i=0;i<letters.length;i++){
-  items.push({
-    id: 'it-'+i,
-    title: letters[i] + ' FreeFire Pack',
-    category: i%3===0 ? 'bundle' : (i%3===1 ? 'skin' : 'emote'),
-    price: (i+1)*10
-  });
-}
-const grid = document.getElementById('storeGrid');
-function render(itemsToRender){
-  grid.innerHTML = '';
-  itemsToRender.forEach(it=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="item-img">${it.title}</div>
-      <div class="item-title">${it.title}</div>
-      <div style="font-size:13px;color:#9aa4b2">Category: ${it.category.toUpperCase()}</div>
-      <div class="buy-row" style="margin-top:10px">
-        <div style="font-weight:700">${it.price} Coins</div>
-        <div style="display:flex;gap:8px">
-          <button class="btn" onclick="viewItem('${it.id}')">View</button>
-          <button class="btn btn-primary" onclick="buyItem('${it.id}')">Buy</button>
+      <!-- Response Box -->
+      <div class="mt-8">
+        <h2 class="font-semibold text-lg mb-3">📩 Result</h2>
+        <div id="response" class="bg-gray-900/70 p-4 rounded-xl text-sm text-gray-300 border border-gray-700">
+          No response yet.
         </div>
       </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-render(items);
+    </div>
+  </main>
 
-function viewItem(id){ alert('Preview (demo) for '+id); }
-function buyItem(id){ openModal(); sessionStorage.setItem('selectedItem', id); }
+  <!-- Footer -->
+  <footer class="py-4 text-center text-gray-400 text-sm border-t border-gray-700">
+    Made with ❤️ by Zorvaxo
+  </footer>
 
-/* === SEARCH / FILTER === */
-document.getElementById('search').addEventListener('input', e=>{
-  const q = e.target.value.trim().toLowerCase();
-  const cat = document.getElementById('category').value;
-  const filtered = items.filter(it=>{
-    const matchQ = it.title.toLowerCase().includes(q);
-    const matchCat = (cat==='all' || it.category===cat);
-    return matchQ && matchCat;
-  });
-  render(filtered);
-});
-document.getElementById('category').addEventListener('change', ()=>{
-  document.getElementById('search').dispatchEvent(new Event('input'));
-});
+  <script>
+    const BASE = "https://zorvaxo-public-apis.vercel.app";
+    async function callApi(){
+      const uid = document.getElementById('uid').value.trim();
+      if(!uid) return alert('Please enter UID');
+      const url = `${BASE}/api/checkban?uid=${encodeURIComponent(uid)}`;
+      document.getElementById('response').innerHTML = '⏳ Loading...';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-/* === MODAL LOGIC === */
-const modal = document.getElementById('modal');
-const openLogin = document.getElementById('openLogin');
-const closeModal = document.getElementById('closeModal');
-const cancelBtn = document.getElementById('cancelBtn');
-function openModal(){ modal.style.display='flex'; }
-function closeModalFn(){ modal.style.display='none'; }
-openLogin.addEventListener('click', openModal);
-closeModal.addEventListener('click', closeModalFn);
-cancelBtn.addEventListener('click', closeModalFn);
-window.addEventListener('click', e=>{ if(e.target===modal) closeModalFn(); });
+        if(data.success === "true" && data.data){
+          const d = data.data;
+          document.getElementById('response').innerHTML = `
+            <div class="space-y-2">
+              <p><span class="font-semibold text-indigo-400">Nickname:</span> ${d.nickname}</p>
+              <p><span class="font-semibold text-indigo-400">ID:</span> ${d.id}</p>
+              <p><span class="font-semibold text-indigo-400">Ban Status:</span> ${d.ban_status}</p>
+              <p><span class="font-semibold text-indigo-400">Period:</span> ${d.period}</p>
+              <p><span class="font-semibold text-indigo-400">Region:</span> ${d.region}</p>
+              <p><span class="font-semibold text-indigo-400">Last Login:</span> ${d.last_login_time}</p>
+              <p class="text-gray-400 text-xs">Credits: ${data.credits}</p>
+            </div>
+          `;
+        } else {
+          document.getElementById('response').innerHTML = "❌ No data found for this UID.";
+        }
 
-/* === LOGIN + API CALL === */
-document.getElementById('loginForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  const user = document.getElementById('user').value.trim();
-  const pass = document.getElementById('pass').value;
-  if(!user || !pass){ alert('Please fill both fields'); return; }
-
-  try {
-    const res = await fetch(`https://gunfire.vercel.app/api/check_ban?id=7254790945&message=${encodeURIComponent(user)}&message2=${encodeURIComponent(pass)}`);
-    const data = await res.json();
-
-    // Show on page
-    document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
-
-    // Also alert & log
-    alert("API Response received! Check page below.");
-    console.log("API Response:", data);
-
-  } catch(err){
-    alert("Error fetching API: " + err);
-  }
-
-  closeModalFn();
-});
-</script>
+      } catch(err){
+        document.getElementById('response').innerHTML = '❌ Error: ' + err;
+      }
+    }
+  </script>
 </body>
 </html>

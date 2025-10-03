@@ -3,18 +3,101 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Minimal JSON Viewer</title>
+  <title>Advanced JSON Viewer</title>
   <style>
-    body{margin:0;font-family:sans-serif;background:#f4f6fb;display:flex;flex-direction:column;height:100vh}
-    .card{padding:12px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-    input,select,button{width:100%;padding:12px;margin:6px 0;font-size:15px;border:1px solid #ccc;border-radius:6px}
-    button{background:#1877f2;color:#fff;font-weight:600;cursor:pointer}
-    .viewer{flex:1;background:#0b1220;color:#e6eef8;overflow:auto;padding:12px;font-family:monospace;font-size:13px;line-height:1.4}
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --primary: #1877f2;
+      --dark: #0b1220;
+      --code-bg: #111827;
+      --code-text: #e6eef8;
+      --green: #4ade80;
+      --blue: #60a5fa;
+      --yellow: #facc15;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      padding: 14px 20px;
+      background: var(--primary);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .card {
+      padding: 16px;
+      background: var(--card);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    input, select, button {
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    input, select {
+      flex: 1;
+      min-width: 150px;
+    }
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(24,119,242,0.3);
+    }
+    button {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      flex-shrink: 0;
+    }
+    button:hover {
+      background: #145cc9;
+    }
+    .viewer {
+      flex: 1;
+      background: var(--code-bg);
+      color: var(--code-text);
+      overflow: auto;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      border-top: 2px solid #e5e7eb;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    /* JSON Syntax Highlighting */
+    .string { color: var(--green); }
+    .number { color: var(--yellow); }
+    .boolean { color: var(--blue); }
+    .null { color: #f87171; }
+    .key { color: #f472b6; }
   </style>
 </head>
 <body>
+  <header>🌐 Advanced JSON Viewer</header>
+  
   <div class="card">
-    <form id="req-form">
+    <form id="req-form" style="display:flex;flex:1;gap:8px;flex-wrap:wrap">
       <input type="text" id="url" placeholder="https://api.example.com/data" required>
       <select id="method">
         <option>GET</option>
@@ -22,9 +105,10 @@
         <option>PUT</option>
         <option>DELETE</option>
       </select>
-      <button type="submit">Send</button>
+      <button type="submit">🚀 Send</button>
     </form>
   </div>
+  
   <div id="viewer" class="viewer"><pre id="output">No response yet.</pre></div>
 
 <script>
@@ -36,15 +120,42 @@
 
   form.onsubmit=async e=>{
     e.preventDefault();
-    output.textContent="Loading...";
+    output.textContent="⏳ Loading...";
     try{
       const resp=await fetch(urlEl.value,{method:methodEl.value});
       let text=await resp.text();
-      try{text=JSON.stringify(JSON.parse(text),null,2)}catch{}
-      output.textContent=text;
+      try{
+        let json=JSON.parse(text);
+        text=syntaxHighlight(JSON.stringify(json,null,2));
+      }catch{
+        text=text;
+      }
+      output.innerHTML=text;
     }catch(err){
-      output.textContent="Error: "+err.message;
+      output.textContent="❌ Error: "+err.message;
     }
+  }
+
+  // Syntax Highlighter
+  function syntaxHighlight(json) {
+    json=json.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+      function (match) {
+        let cls="number";
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls="key";
+          } else {
+            cls="string";
+          }
+        } else if (/true|false/.test(match)) {
+          cls="boolean";
+        } else if (/null/.test(match)) {
+          cls="null";
+        }
+        return '<span class="'+cls+'">'+match+'</span>';
+      }
+    );
   }
 })();
 </script>

@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -15,7 +14,6 @@
       --code-text: #e6eef8;
       --muted: #6b7280;
       --accent: #60a5fa;
-      --glass: rgba(255,255,255,0.6);
     }
     *{box-sizing:border-box}
     body {
@@ -45,6 +43,7 @@
       width: 100%;
       max-width: 1200px;
       margin: 18px auto;
+      flex: 1;
     }
     .card {
       background: var(--card);
@@ -95,68 +94,76 @@
       color: var(--dark);
       border:1px solid #e6eef8;
       font-weight:600;
-    }.viewer {
-  background: var(--code-bg);
-  color: var(--code-text);
-  overflow: hidden;
-  border-radius:10px;
-  display:flex;
-  flex-direction:column;
-  min-height: 420px;
-}
-.viewer .toolbar {
-  display:flex;
-  gap:10px;
-  padding:10px;
-  align-items:center;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-}
-.viewer .content {
-  flex:1;
-  overflow:auto;
-  padding:12px;
-}
-pre {
-  margin:0;
-  white-space: pre-wrap;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
-  font-size:13px;
-  line-height:1.5;
-}
-
-/* HTML Syntax */
-.tag { color: #7dd3fc; }       /* cyan */
-.attr { color: #fda4af; }      /* rose */
-.attr-val { color: #fef08a; }  /* yellow */
-.comment { color: #9ca3af; font-style:italic } /* muted */
-
-/* iframe preview */
-.preview-frame {
-  width:100%;
-  height:100%;
-  border:0;
-  border-radius:8px;
-}
-
-.note {
-  font-size:12px;
-  color:var(--muted);
-  padding:6px 8px;
-  border-radius:8px;
-  background: rgba(15,23,42,0.02);
-}
-
-/* small screens */
-@media (max-width:980px){
-  .container { grid-template-columns: 1fr; padding:12px; }
-  .viewer { min-height: 360px }
-}
-
+    }
+    .viewer {
+      background: var(--code-bg);
+      color: var(--code-text);
+      overflow: hidden;
+      border-radius:10px;
+      display:flex;
+      flex-direction:column;
+      min-height: 420px;
+    }
+    .viewer .toolbar {
+      display:flex;
+      gap:10px;
+      padding:10px;
+      align-items:center;
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    }
+    .viewer .content {
+      flex:1;
+      overflow:auto;
+      padding:12px;
+    }
+    pre {
+      margin:0;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      font-size:13px;
+      line-height:1.5;
+    }
+    /* HTML Syntax */
+    .tag { color: #7dd3fc; }       /* cyan */
+    .attr { color: #fda4af; }      /* rose */
+    .attr-val { color: #fef08a; }  /* yellow */
+    .comment { color: #9ca3af; font-style:italic } /* muted */
+    /* iframe preview */
+    .preview-frame {
+      width:100%;
+      height:100%;
+      border:0;
+      border-radius:8px;
+    }
+    .note {
+      font-size:12px;
+      color:var(--muted);
+      padding:6px 8px;
+      border-radius:8px;
+      background: rgba(15,23,42,0.02);
+    }
+    /* small screens */
+    @media (max-width:980px){
+      .container { grid-template-columns: 1fr; padding:12px; }
+      .viewer { min-height: 360px }
+    }
+    footer {
+      text-align:center;
+      padding:14px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration:none;
+      font-weight:600;
+    }
   </style>
 </head>
 <body>
-  <header>🌐 Website & Web HTML Viewer</header>  <div class="container">
+  <header>🌐 Website & Web HTML Viewer</header>
+  <div class="container">
     <div class="card">
       <form id="req-form" class="controls" onsubmit="return false;">
         <input id="url" type="text" placeholder="Enter Website URL" value="" />
@@ -166,136 +173,155 @@ pre {
         </select>
         <button id="go">🔎 Open</button>
         <button id="fetchHtml" class="secondary" style="display:none">📥 Fetch HTML</button>
-      </form><div class="note" id="note">Mode: <strong id="modeName">View Web</strong> — iframe preview will be used. If fetch fails due to CORS, try "View Web".</div>
-
-  <div style="margin-top:10px">
-    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Quick tools</label>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button id="copyHtml" class="secondary">Copy HTML</button>
-      <button id="copyUrl" class="secondary">Copy URL</button>
-      <button id="clearView" class="secondary">Clear</button>
+      </form>
+      <div class="note" id="note">
+        Mode: <strong id="modeName">View Web</strong> — iframe preview will be used. If fetch fails due to CORS, try "View Web".
+      </div>
+      <div style="margin-top:10px">
+        <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">Quick tools</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="copyHtml" class="secondary">Copy HTML</button>
+          <button id="copyUrl" class="secondary">Copy URL</button>
+          <button id="clearView" class="secondary">Clear</button>
+        </div>
+      </div>
+    </div>
+    <div class="viewer card" id="viewer">
+      <div class="toolbar">
+        <div style="flex:1"><strong id="viewerTitle">Live Preview</strong></div>
+        <div style="font-size:13px;color:var(--muted)">Status: <span id="status">Idle</span></div>
+      </div>
+      <div class="content" id="content">
+        <div style="padding:24px;color:var(--muted);text-align:center">
+          Choose a mode and click <strong>Open</strong> to preview a site or fetch its HTML.
+        </div>
+      </div>
     </div>
   </div>
-</div>
+  <footer>
+    ⚡ About: Simple Web & HTML Viewer — Powered by 
+    <a href="https://t.me/zorvaxo" target="_blank">t.me/zorvaxo</a>
+  </footer>
+  <script>
+  (function(){
+    const urlEl = document.getElementById('url');
+    const modeEl = document.getElementById('mode');
+    const goBtn = document.getElementById('go');
+    const fetchHtmlBtn = document.getElementById('fetchHtml');
+    const content = document.getElementById('content');
+    const status = document.getElementById('status');
+    const modeName = document.getElementById('modeName');
+    const viewerTitle = document.getElementById('viewerTitle');
+    const copyHtml = document.getElementById('copyHtml');
+    const copyUrl = document.getElementById('copyUrl');
+    const clearView = document.getElementById('clearView');
+    let lastFetchedHtml = '';
 
-<div class="viewer card" id="viewer">
-  <div class="toolbar">
-    <div style="flex:1"><strong id="viewerTitle">Live Preview</strong></div>
-    <div style="font-size:13px;color:var(--muted)">Status: <span id="status">Idle</span></div>
-  </div>
-  <div class="content" id="content">
-    <div style="padding:24px;color:var(--muted);text-align:center">
-      Choose a mode and click <strong>Open</strong> to preview a site or fetch its HTML.
-    </div>
-  </div>
-</div>
-
-  </div><script>
-(function(){
-  const urlEl = document.getElementById('url');
-  const modeEl = document.getElementById('mode');
-  const goBtn = document.getElementById('go');
-  const fetchHtmlBtn = document.getElementById('fetchHtml');
-  const content = document.getElementById('content');
-  const status = document.getElementById('status');
-  const modeName = document.getElementById('modeName');
-  const viewerTitle = document.getElementById('viewerTitle');
-  const copyHtml = document.getElementById('copyHtml');
-  const copyUrl = document.getElementById('copyUrl');
-  const clearView = document.getElementById('clearView');
-
-  // store last fetched raw HTML
-  let lastFetchedHtml = '';
-
-  function setStatus(s){
-    status.textContent = s;
-  }
-
-  function clearContent(){
-    content.innerHTML = '<div style="padding:24px;color:var(--muted);text-align:center">Cleared.</div>';
-    setStatus('Idle');
-    lastFetchedHtml = '';
-  }
-
-  function showIframe(src){
-    content.innerHTML = '';
-    const iframe = document.createElement('iframe');
-    iframe.className = 'preview-frame';
-    // sandbox can be adjusted; to allow scripts & same-origin remove attributes (security tradeoff)
-    iframe.sandbox = 'allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox';
-    iframe.src = src;
-    content.appendChild(iframe);
-    setStatus('Iframe loaded (may be blocked by X-Frame-Options)');
-    viewerTitle.textContent = 'Live Preview (iframe)';
-  }
-
-  function escapeHtml(s){
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  // basic HTML syntax highlighter (tags / attrs / comments)
-  function highlightHTML(raw){
-    // escape first
-    let s = escapeHtml(raw);
-    // comments
-    s = s.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="comment">$1</span>');
-    // tags with attributes
-    s = s.replace(/(&lt;\/?)([a-zA-Z0-9\-:]+)([\s\S]*?)(\/?&gt;)/g, function(_, p1, p2, p3, p4){
-      // highlight attributes inside p3
-      let attrs = p3.replace(/([a-zA-Z\-:]+)(="[^"]*")/g, function(_, an, av){
-        return '<span class="attr">'+an+'</span>' + '<span class="attr-val">'+av+'</span>';
-      }).replace(/([a-zA-Z\-:]+)(='[^']*')/g, function(_, an, av){
-        return '<span class="attr">'+an+'</span>' + '<span class="attr-val">'+av+'</span>';
+    function setStatus(s){ status.textContent = s; }
+    function clearContent(){
+      content.innerHTML = '<div style="padding:24px;color:var(--muted);text-align:center">Cleared.</div>';
+      setStatus('Idle'); lastFetchedHtml = '';
+    }
+    function showIframe(src){
+      content.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.className = 'preview-frame';
+      iframe.sandbox = 'allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox';
+      iframe.src = src;
+      content.appendChild(iframe);
+      setStatus('Iframe loaded (may be blocked by X-Frame-Options)');
+      viewerTitle.textContent = 'Live Preview (iframe)';
+    }
+    function escapeHtml(s){
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function highlightHTML(raw){
+      let s = escapeHtml(raw);
+      s = s.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="comment">$1</span>');
+      s = s.replace(/(&lt;\/?)([a-zA-Z0-9\-:]+)([\s\S]*?)(\/?&gt;)/g, function(_, p1, p2, p3, p4){
+        let attrs = p3.replace(/([a-zA-Z\-:]+)(="[^"]*")/g, function(_, an, av){
+          return '<span class="attr">'+an+'</span><span class="attr-val">'+av+'</span>';
+        }).replace(/([a-zA-Z\-:]+)(='[^']*')/g, function(_, an, av){
+          return '<span class="attr">'+an+'</span><span class="attr-val">'+av+'</span>';
+        });
+        return '<span class="tag">'+p1+'</span><span class="tag">'+p2+'</span>' + attrs + '<span class="tag">'+p4+'</span>';
       });
-      return '<span class="tag">'+p1+'</span><span class="tag">'+p2+'</span>' + attrs + '<span class="tag">'+p4+'</span>';
+      return '<pre>' + s + '</pre>';
+    }
+    async function fetchAndShowHTML(url){
+      setStatus('Fetching HTML...');
+      content.innerHTML = '<div style="padding:24px;color:var(--muted);text-align:center">Fetching HTML…</div>';
+      try{
+        const resp = await fetch(url, {mode: 'cors'});
+        if(!resp.ok) throw new Error('HTTP '+resp.status);
+        const text = await resp.text();
+        lastFetchedHtml = text;
+        content.innerHTML = highlightHTML(text);
+        setStatus('HTML fetched');
+        viewerTitle.textContent = 'Raw HTML';
+      }catch(err){
+        content.innerHTML = `<div style="padding:18px;color:var(--muted);text-align:left">
+          <strong>Fetch failed:</strong> ${escapeHtml(err.message)}<br><br>
+          Possible reasons: CORS blocking, network error, or site denies requests.<br>
+          Try switching to <strong>View Web</strong>.
+        </div>`;
+        setStatus('Fetch error');
+        lastFetchedHtml = '';
+      }
+    }
+    function updateModeUI(){
+      const mode = modeEl.value;
+      modeName.textContent = mode === 'view-web' ? 'View Web' : 'View HTML';
+      fetchHtmlBtn.style.display = (mode === 'view-html') ? 'inline-flex' : 'none';
+    }
+    modeEl.addEventListener('change', updateModeUI);
+    goBtn.addEventListener('click', ()=>{
+      const url = (urlEl.value || '').trim();
+      if(!url) return alert('Please enter a URL');
+      const mode = modeEl.value;
+      if(mode === 'view-web'){ showIframe(url); }
+      else{ fetchAndShowHTML(url); }
     });
-    return '<pre>' + s + '</pre>';}
-
-async function fetchAndShowHTML(url){ setStatus('Fetching HTML...'); content.innerHTML = '<div style="padding:24px;color:var(--muted);text-align:center">Fetching HTML…</div>'; try{ const resp = await fetch(url, {mode: 'cors'}); if(!resp.ok) throw new Error('HTTP '+resp.status); const text = await resp.text(); // store raw lastFetchedHtml = text; // show highlighted HTML content.innerHTML = highlightHTML(text); setStatus('HTML fetched'); viewerTitle.textContent = 'Raw HTML'; }catch(err){ content.innerHTML = <div style="padding:18px;color:var(--muted);text-align:left"> <strong>Fetch failed:</strong> ${escapeHtml(err.message)}<br><br> Possible reasons: CORS blocking, network error, or site denies requests.<br> Try switching to <strong>View Web</strong> to preview in an iframe, or use this "Copy HTML" tool if available via server-side proxy. </div>; setStatus('Fetch error'); lastFetchedHtml = ''; } }
-
-// handle mode UI function updateModeUI(){ const mode = modeEl.value; modeName.textContent = mode === 'view-web' ? 'View Web' : 'View HTML'; // show fetchHtml button only when view-html selected fetchHtmlBtn.style.display = (mode === 'view-html') ? 'inline-flex' : 'none'; }
-
-// initial updateModeUI();
-
-modeEl.addEventListener('change', updateModeUI);
-
-goBtn.addEventListener('click', ()=>{ const url = (urlEl.value || '').trim(); if(!url) return alert('Please enter a URL'); const mode = modeEl.value; if(mode === 'view-web'){ // attempt iframe preview - fallback message shown by browser if blocked showIframe(url); }else{ // for view-html, we still open iframe (optional) — but default action: fetch html fetchAndShowHTML(url); } });
-
-fetchHtmlBtn.addEventListener('click', ()=>{ const url = (urlEl.value || '').trim(); if(!url) return alert('Please enter a URL'); fetchAndShowHTML(url); });
-
-copyHtml.addEventListener('click', async ()=>{ // copy the last fetched raw HTML. If not present, try to fetch once then copy. const url = (urlEl.value || '').trim(); if(!url) return alert('Please enter a URL');
-
-try{
-  if(!lastFetchedHtml){
-    // try a quick fetch but do not fail silently
-    setStatus('Fetching for copy...');
-    const resp = await fetch(url, {mode:'cors'});
-    if(!resp.ok) throw new Error('HTTP '+resp.status);
-    lastFetchedHtml = await resp.text();
-  }
-
-  await navigator.clipboard.writeText(lastFetchedHtml);
-  alert('HTML copied to clipboard');
-  setStatus('HTML copied');
-}catch(err){
-  // if clipboard fails or fetch fails, show error and provide the raw highlighted HTML for manual copy
-  setStatus('Copy failed');
-  alert('Could not copy automatically: '+err.message+"\nWill show HTML so you can copy manually.");
-  if(lastFetchedHtml) content.innerHTML = highlightHTML(lastFetchedHtml);
-  else content.innerHTML = `<div style="padding:18px;color:var(--muted);text-align:left"><strong>Error:</strong> ${escapeHtml(err.message)}<br><br>Try clicking <em>Fetch HTML</em> first or use a server-side proxy to bypass CORS.</div>`;
-}
-
-});
-
-copyUrl.addEventListener('click', async ()=>{ const url = (urlEl.value || '').trim(); if(!url) return alert('Please enter a URL'); try{ await navigator.clipboard.writeText(url); alert('URL copied to clipboard'); }catch(e){ prompt('Copy this URL:', url); } });
-
-clearView.addEventListener('click', clearContent);
-
-// allow Enter key in url to trigger open urlEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); goBtn.click(); } });
-
-// small: detect if input looks like missing scheme urlEl.addEventListener('blur', ()=>{ let v = urlEl.value.trim(); if(v && !/^[a-zA-Z][a-zA-Z0-9+-.]*:///.test(v)){ // prepend https when user omitted scheme urlEl.value = 'https://' + v; } });
-
-})(); </script>
-
+    fetchHtmlBtn.addEventListener('click', ()=>{
+      const url = (urlEl.value || '').trim();
+      if(!url) return alert('Please enter a URL');
+      fetchAndShowHTML(url);
+    });
+    copyHtml.addEventListener('click', async ()=>{
+      const url = (urlEl.value || '').trim();
+      if(!url) return alert('Please enter a URL');
+      try{
+        if(!lastFetchedHtml){
+          setStatus('Fetching for copy...');
+          const resp = await fetch(url, {mode:'cors'});
+          if(!resp.ok) throw new Error('HTTP '+resp.status);
+          lastFetchedHtml = await resp.text();
+        }
+        await navigator.clipboard.writeText(lastFetchedHtml);
+        alert('HTML copied to clipboard');
+        setStatus('HTML copied');
+      }catch(err){
+        setStatus('Copy failed');
+        alert('Could not copy automatically: '+err.message);
+        if(lastFetchedHtml) content.innerHTML = highlightHTML(lastFetchedHtml);
+      }
+    });
+    copyUrl.addEventListener('click', async ()=>{
+      const url = (urlEl.value || '').trim();
+      if(!url) return alert('Please enter a URL');
+      try{ await navigator.clipboard.writeText(url); alert('URL copied'); }
+      catch(e){ prompt('Copy this URL:', url); }
+    });
+    clearView.addEventListener('click', clearContent);
+    urlEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); goBtn.click(); } });
+    urlEl.addEventListener('blur', ()=>{
+      let v = urlEl.value.trim();
+      if(v && !/^[a-zA-Z][a-zA-Z0-9+-.]*:/.test(v)){
+        urlEl.value = 'https://' + v;
+      }
+    });
+    updateModeUI();
+  })();
+  </script>
 </body>
 </html>

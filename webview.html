@@ -1,381 +1,126 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Web / JSON Viewer — Advanced Debug Panel</title>
+  <title>JSON Viewer</title>
   <style>
-    :root{
-      --bg:#f4f6fb;
-      --card:#ffffff;
-      --accent:#1877f2;
-      --muted:#6b7280;
-      --danger:#ef4444;
-      --shadow: 0 6px 22px rgba(20,30,50,0.06);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 100%);
-      color:#0f172a;
-      padding:28px;
-    }.app{
-  max-width:1200px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:420px 1fr;
-  gap:20px;
-  align-items:start;
-}
-
-.card{
-  background:var(--card);
-  border-radius:12px;
-  padding:18px;
-  box-shadow:var(--shadow);
-}
-
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px}
-h1{margin:0;font-size:18px}
-p.lead{margin:6px 0 18px;color:var(--muted);font-size:13px}
-
-form{display:flex;flex-direction:column;gap:12px}
-input[type="text"], textarea, select{
-  width:100%;padding:12px 14px;border-radius:10px;border:1px solid #e6e9ef;outline:none;font-size:14px;
-}
-input:focus, textarea:focus, select:focus{box-shadow:0 0 0 4px rgba(24,119,242,0.06);border-color:rgba(24,119,242,0.8)}
-
-.row{display:flex;gap:10px}
-.btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
-.btn-primary{background:var(--accent);color:white}
-.btn-ghost{background:transparent;border:1px solid #e6e9ef;color:var(--muted)}
-.small{font-size:13px;padding:8px 10px;border-radius:8px}
-
-.meta{font-size:12px;color:var(--muted);margin-top:6px}
-
-/* JSON viewer column */
-.json-panel{display:flex;flex-direction:column;height:100%;min-height:420px}
-.panel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-.controls{display:flex;gap:8px;align-items:center}
-.status{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e6e9ef;background:#fff}
-
-.viewer{background:#0b1220;color:#e6eef8;padding:12px;border-radius:10px;flex:1;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;font-size:13px;line-height:1.45;border:1px solid rgba(255,255,255,0.03)}
-
-/* collapsible JSON tree */
-.json-tree{color:#e6eef8}
-.node{margin-left:12px}
-.collapsible{cursor:pointer;user-select:none}
-.key{color:#9ad3ff}
-.string{color:#c7f9a9}
-.number{color:#ffd58a}
-.boolean{color:#ffb86b}
-.null{color:#f38ba8}
-
-pre.json{white-space:pre-wrap;word-break:break-word;margin:0}
-.muted{color:var(--muted);font-size:13px}
-.hint{font-size:12px;color:var(--muted);margin-top:10px}
-
-.spinner{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,0.15);border-top-color:white;animation:spin .8s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.footer-row{display:flex;gap:8px;margin-top:12px;align-items:center;justify-content:space-between}
-
-/* responsive */
-@media (max-width:980px){.app{grid-template-columns:1fr;padding-bottom:40px}.json-panel{min-height:260px}}
-
+    body{margin:0;font-family:sans-serif;background:#f4f6fb;padding:20px}
+    .app{display:grid;grid-template-columns:350px 1fr;gap:20px}
+    .card{background:#fff;padding:16px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+    input,textarea,select,button{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
+    button{cursor:pointer;margin-top:8px;background:#1877f2;color:#fff;font-weight:600}
+    .viewer{background:#0b1220;color:#e6eef8;padding:12px;border-radius:8px;overflow:auto;font-family:monospace;font-size:13px;line-height:1.4}
+    .json-tree{color:#e6eef8;font-family:monospace;font-size:13px;line-height:1.4}
+    .node{margin-left:12px}
+    .collapsible{cursor:pointer}
+    .key{color:#9ad3ff}
+    .string{color:#c7f9a9}
+    .number{color:#ffd58a}
+    .boolean{color:#ffb86b}
+    .null{color:#f38ba8}
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- left: form -->
+    <!-- Left: form -->
     <div class="card">
-      <div class="brand">
-        <div class="logo">JSON</div>
-        <div>
-          <h1>Web / JSON Viewer</h1>
-          <p class="lead">Send requests, inspect & explore JSON with collapsible tree, copy/download, headers & body support.</p>
-        </div>
-      </div><form id="req-form" autocomplete="off">
-    <label class="muted">Endpoint URL</label>
-    <input type="text" id="url" placeholder="https://api.example.com/data" required />
-
-    <div class="row">
-      <select id="method" aria-label="method">
-        <option>GET</option>
-        <option>POST</option>
-        <option>PUT</option>
-        <option>DELETE</option>
-      </select>
-      <input type="text" id="timeout" placeholder="Timeout ms (optional)" />
+      <form id="req-form">
+        <label>URL</label>
+        <input type="text" id="url" placeholder="https://api.example.com/data" required>
+        
+        <label>Method</label>
+        <select id="method">
+          <option>GET</option>
+          <option>POST</option>
+          <option>PUT</option>
+          <option>DELETE</option>
+        </select>
+        
+        <label>Headers</label>
+        <textarea id="headers" rows="3" placeholder="key: value"></textarea>
+        
+        <label>Body</label>
+        <textarea id="body" rows="4" placeholder='{"name":"john"}'></textarea>
+        
+        <button type="submit">Send</button>
+        <button type="button" id="toggle">Raw / Tree</button>
+      </form>
     </div>
 
-    <label class="muted">Custom Headers (one per line, e.g. Authorization: Bearer ...)</label>
-    <textarea id="headers" rows="3" placeholder="Content-Type: application/json\nX-Api-Key: ..."></textarea>
-
-    <label class="muted">Request body (for POST/PUT)</label>
-    <textarea id="body" rows="5" placeholder='{"name":"john"}'></textarea>
-
-    <div class="row">
-      <button id="send" class="btn btn-primary" type="submit">Send Request</button>
-      <button id="example" type="button" class="btn btn-ghost small">Load Example</button>
-      <button id="clear" type="button" class="btn btn-ghost small">Reset</button>
-    </div>
-
-    <div class="meta">Note: If fetch fails due to CORS, enable CORS on the API or use a server-side proxy / CORS proxy. For local testing run a simple local server (python -m http.server).</div>
-  </form>
-
-  <div class="hint">Tip: Use the headers field to send Authorization tokens. Body is sent as-is (you can type raw JSON).</div>
-</div>
-
-<!-- right: json viewer -->
-<div class="card json-panel">
-  <div class="panel-header">
-    <div>
-      <div style="font-weight:700">Response</div>
-      <div class="muted" id="endpoint-display">Endpoint: <span id="endpoint-text">-</span></div>
-    </div>
-
-    <div class="controls">
-      <div id="status-box" class="status muted">Idle</div>
-      <button id="copy-btn" class="btn small btn-ghost">Copy</button>
-      <button id="download-btn" class="btn small btn-ghost">Download</button>
-      <button id="toggle-view" class="btn small btn-ghost">Raw / Tree</button>
+    <!-- Right: viewer -->
+    <div class="card">
+      <div id="viewer" class="viewer"><pre id="raw">No response yet.</pre></div>
+      <div id="tree" class="json-tree" style="display:none"></div>
     </div>
   </div>
 
-  <div id="viewer" class="viewer">
-    <pre id="raw-output" class="json">No response yet.</pre>
-    <div id="tree-output" class="json-tree" style="display:none;padding:8px;"></div>
-  </div>
+<script>
+(function(){
+  const form=document.getElementById('req-form');
+  const urlEl=document.getElementById('url');
+  const methodEl=document.getElementById('method');
+  const headersEl=document.getElementById('headers');
+  const bodyEl=document.getElementById('body');
+  const rawOut=document.getElementById('raw');
+  const treeOut=document.getElementById('tree');
+  const toggle=document.getElementById('toggle');
+  let last=null,isJSON=false,treeMode=false;
 
-  <div class="footer-row">
-    <div class="muted" id="meta-info">Status: - • Time: - • Size: -</div>
-    <div class="muted" id="raw-size"></div>
-  </div>
-</div>
+  function parseHeaders(txt){
+    const o={}; if(!txt) return o;
+    txt.split('\n').forEach(l=>{
+      const i=l.indexOf(':'); if(i>-1) o[l.slice(0,i).trim()]=l.slice(i+1).trim();
+    }); return o;
+  }
+  function pretty(o){try{return JSON.stringify(o,null,2)}catch{return String(o)}}
 
-  </div>  <script>
-    (function(){
-      const form = document.getElementById('req-form');
-      const urlEl = document.getElementById('url');
-      const methodEl = document.getElementById('method');
-      const headersEl = document.getElementById('headers');
-      const bodyEl = document.getElementById('body');
-      const jsonRaw = document.getElementById('raw-output');
-      const treeOut = document.getElementById('tree-output');
-      const statusBox = document.getElementById('status-box');
-      const endpointText = document.getElementById('endpoint-text');
-      const copyBtn = document.getElementById('copy-btn');
-      const downloadBtn = document.getElementById('download-btn');
-      const toggleBtn = document.getElementById('toggle-view');
-      const metaInfo = document.getElementById('meta-info');
-      const exampleBtn = document.getElementById('example');
-      const clearBtn = document.getElementById('clear');
-
-      let lastResponse = null;
-      let lastIsJSON = false;
-      let treeMode = false;
-
-      function setStatus(text, busy=false){
-        statusBox.innerHTML = busy ? '<span class="spinner"></span> ' + text : text;
+  function createTree(p,d){
+    p.innerHTML='';
+    function addNode(c,k,v){
+      if(typeof v==='object'&&v!==null){
+        const head=document.createElement('div');
+        head.className='collapsible';
+        head.innerHTML=`<span class="key">${k}</span>: <span class="muted">${Array.isArray(v)?'[Array]':'{Object}'}</span>`;
+        const ch=document.createElement('div');ch.style.display='none';
+        head.onclick=()=>ch.style.display=ch.style.display==='none'?'block':'none';
+        c.append(head,ch);
+        (Array.isArray(v)?v:Object.entries(v)).forEach((x,i)=>addNode(ch,Array.isArray(v)?i:x[0],Array.isArray(v)?x:i[1]));
+      }else{
+        let cls=typeof v; if(v===null)cls='null';
+        const span=document.createElement('div');
+        span.innerHTML=`<span class="key">${k}</span>: <span class="${cls}">${v}</span>`;
+        c.appendChild(span);
       }
+    }
+    const root=document.createElement('div'); 
+    (Array.isArray(d)?d:Object.entries(d)).forEach((x,i)=>addNode(root,Array.isArray(d)?i:x[0],Array.isArray(d)?x:i[1]));
+    p.appendChild(root);
+  }
 
-      function parseHeaders(text){
-        const out = {};
-        if(!text) return out;
-        text.split('\n').map(l=>l.trim()).filter(Boolean).forEach(line=>{
-          const idx = line.indexOf(':');
-          if(idx === -1) return;
-          const k = line.slice(0,idx).trim();
-          const v = line.slice(idx+1).trim();
-          out[k] = v;
-        });
-        return out;
-      }
-
-      function prettyJSON(obj){
-        try { return JSON.stringify(obj, null, 2); } catch(e){ return String(obj); }
-      }
-
-      // Create collapsible tree DOM (simple & dependency-free)
-      function createTree(parent, data){
-        parent.innerHTML = '';
-        const root = document.createElement('div');
-        root.className = 'node';
-
-        function addNode(container, key, value){
-          const row = document.createElement('div');
-          row.className = 'node';
-
-          if(typeof value === 'object' && value !== null){
-            const opener = document.createElement('div');
-            opener.className = 'collapsible';
-            opener.innerHTML = `<span class="key">${key}</span>: <span class="muted">${Array.isArray(value)?'[Array]':'{Object}'}</span>`;
-            const children = document.createElement('div');
-            children.style.display = 'none';
-            children.style.marginLeft = '12px';
-
-            opener.addEventListener('click', ()=>{
-              children.style.display = children.style.display === 'none' ? 'block' : 'none';
-            });
-
-            container.appendChild(opener);
-            container.appendChild(children);
-
-            if(Array.isArray(value)){
-              value.forEach((v,i)=> addNode(children, i, v));
-            } else {
-              Object.keys(value).forEach(k=> addNode(children, k, value[k]));
-            }
-
-          } else {
-            const span = document.createElement('div');
-            let cls = '';
-            if(typeof value === 'string') cls='string';
-            else if(typeof value === 'number') cls='number';
-            else if(typeof value === 'boolean') cls='boolean';
-            else if(value === null) cls='null';
-
-            span.innerHTML = `<span class="key">${key}</span>: <span class="${cls}">${String(value)}</span>`;
-            container.appendChild(span);
-          }
-        }
-
-        if(typeof data === 'object' && data !== null){
-          if(Array.isArray(data)){
-            data.forEach((v,i)=> addNode(root, i, v));
-          } else {
-            Object.keys(data).forEach(k=> addNode(root, k, data[k]));
-          }
-        } else {
-          // primitive
-          const p = document.createElement('div');
-          p.textContent = String(data);
-          root.appendChild(p);
-        }
-
-        parent.appendChild(root);
-      }
-
-      form.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const url = urlEl.value.trim();
-        if(!url) return alert('Please enter an endpoint URL');
-
-        const method = methodEl.value;
-        const rawHeaders = headersEl.value;
-        const hdrs = parseHeaders(rawHeaders);
-        const body = bodyEl.value;
-
-        endpointText.textContent = url;
-        setStatus('Fetching...', true);
-        jsonRaw.textContent = 'Waiting for response...';
-        treeOut.style.display = 'none';
-        jsonRaw.style.display = 'block';
-        metaInfo.textContent = 'Status: fetching • Time: - • Size: -';
-
-        const controller = new AbortController();
-        const timeout = parseInt(document.getElementById('timeout').value || '0', 10);
-        if(timeout>0) setTimeout(()=> controller.abort(), timeout);
-
-        const start = performance.now();
-        try {
-          const opts = { method, headers: hdrs, signal: controller.signal };
-          if(method !== 'GET' && body){
-            // If Content-Type absent and body looks like JSON, auto-set
-            if(!Object.keys(hdrs).some(k=>k.toLowerCase()==='content-type')){
-              try{ JSON.parse(body); opts.headers['Content-Type'] = 'application/json'; }
-              catch(e){ /* leave as-is */ }
-            }
-            opts.body = body;
-          }
-
-          const resp = await fetch(url, opts);
-          const duration = Math.round(performance.now() - start);
-
-          const blob = await resp.clone().blob();
-          const size = blob.size;
-
-          let text = await resp.text();
-
-          // try parse JSON
-          let parsed = null;
-          try{ parsed = JSON.parse(text); } catch(e){ parsed = null; }
-
-          lastResponse = parsed !== null ? parsed : text;
-          lastIsJSON = parsed !== null;
-
-          setStatus(`HTTP ${resp.status} ${resp.statusText}`, false);
-          metaInfo.textContent = `Status: ${resp.status} ${resp.statusText} • Time: ${duration} ms • Size: ${size} bytes`;
-
-          if(parsed !== null){
-            jsonRaw.textContent = prettyJSON(parsed);
-            createTree(treeOut, parsed);
-          } else {
-            jsonRaw.textContent = text;
-            treeOut.innerHTML = '';
-          }
-
-        } catch (err){
-          setStatus('Error', false);
-          jsonRaw.textContent = 'Fetch failed: ' + (err.message || err);
-          metaInfo.textContent = `Status: error • Time: - • Size: -`;
-        }
-
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    rawOut.textContent='Loading...'; treeOut.innerHTML='';
+    try{
+      const r=await fetch(urlEl.value,{
+        method:methodEl.value,
+        headers:parseHeaders(headersEl.value),
+        body:methodEl.value!=='GET'&&bodyEl.value?bodyEl.value:undefined
       });
+      let t=await r.text(); let j=null;
+      try{j=JSON.parse(t)}catch{}
+      last=j||t; isJSON=!!j;
+      rawOut.textContent=isJSON?pretty(j):t;
+      if(isJSON) createTree(treeOut,j);
+    }catch(err){rawOut.textContent='Error: '+err}
+  }
 
-      copyBtn.addEventListener('click', ()=>{
-        const text = treeMode && lastIsJSON ? prettyJSON(lastResponse) : jsonRaw.textContent;
-        if(!text) return alert('Nothing to copy.');
-        navigator.clipboard?.writeText(text).then(()=>{
-          copyBtn.textContent = 'Copied!';
-          setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
-        }, ()=> alert('Copy failed.'));
-      });
-
-      downloadBtn.addEventListener('click', ()=>{
-        const text = treeMode && lastIsJSON ? prettyJSON(lastResponse) : jsonRaw.textContent;
-        if(!text) return alert('Nothing to download.');
-        const blob = new Blob([text], {type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'response.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-      });
-
-      toggleBtn.addEventListener('click', ()=>{
-        treeMode = !treeMode;
-        if(treeMode && lastIsJSON && lastResponse !== null){
-          jsonRaw.style.display = 'none';
-          treeOut.style.display = 'block';
-        } else {
-          jsonRaw.style.display = 'block';
-          treeOut.style.display = 'none';
-        }
-      });
-
-      exampleBtn.addEventListener('click', ()=>{
-        urlEl.value = 'https://jsonplaceholder.typicode.com/todos/1';
-        methodEl.value = 'GET';
-        headersEl.value = '';
-        bodyEl.value = '';
-      });
-
-      clearBtn.addEventListener('click', ()=>{
-        urlEl.value = '';
-        methodEl.value = 'GET';
-        headersEl.value = '';
-        bodyEl.value = '';
-        jsonRaw.textContent = 'No response yet.';
-        treeOut.innerHTML = '';
-        endpointText.textContent = '-';
-        metaInfo.textContent = 'Status: - • Time: - • Size: -';
-        setStatus('Idle', false);
-      });
-
-    })();
-  </script></body>
+  toggle.onclick=()=>{
+    treeMode=!treeMode;
+    rawOut.parentElement.style.display=treeMode?'none':'block';
+    treeOut.style.display=treeMode?'block':'none';
+  }
+})();
+</script>
+</body>
 </html>

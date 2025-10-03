@@ -3,122 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>JSON Viewer</title>
+  <title>Minimal JSON Viewer</title>
   <style>
-    body{margin:0;font-family:sans-serif;background:#f4f6fb;padding:20px}
-    .app{display:grid;grid-template-columns:350px 1fr;gap:20px}
-    .card{background:#fff;padding:16px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-    input,textarea,select,button{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
-    button{cursor:pointer;margin-top:8px;background:#1877f2;color:#fff;font-weight:600}
-    .viewer{background:#0b1220;color:#e6eef8;padding:12px;border-radius:8px;overflow:auto;font-family:monospace;font-size:13px;line-height:1.4}
-    .json-tree{color:#e6eef8;font-family:monospace;font-size:13px;line-height:1.4}
-    .node{margin-left:12px}
-    .collapsible{cursor:pointer}
-    .key{color:#9ad3ff}
-    .string{color:#c7f9a9}
-    .number{color:#ffd58a}
-    .boolean{color:#ffb86b}
-    .null{color:#f38ba8}
+    body{margin:0;font-family:sans-serif;background:#f4f6fb;display:flex;flex-direction:column;height:100vh}
+    .card{padding:12px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
+    input,select,button{width:100%;padding:12px;margin:6px 0;font-size:15px;border:1px solid #ccc;border-radius:6px}
+    button{background:#1877f2;color:#fff;font-weight:600;cursor:pointer}
+    .viewer{flex:1;background:#0b1220;color:#e6eef8;overflow:auto;padding:12px;font-family:monospace;font-size:13px;line-height:1.4}
   </style>
 </head>
 <body>
-  <div class="app">
-    <!-- Left: form -->
-    <div class="card">
-      <form id="req-form">
-        <label>URL</label>
-        <input type="text" id="url" placeholder="https://api.example.com/data" required>
-        
-        <label>Method</label>
-        <select id="method">
-          <option>GET</option>
-          <option>POST</option>
-          <option>PUT</option>
-          <option>DELETE</option>
-        </select>
-        
-        <label>Headers</label>
-        <textarea id="headers" rows="3" placeholder="key: value"></textarea>
-        
-        <label>Body</label>
-        <textarea id="body" rows="4" placeholder='{"name":"john"}'></textarea>
-        
-        <button type="submit">Send</button>
-        <button type="button" id="toggle">Raw / Tree</button>
-      </form>
-    </div>
-
-    <!-- Right: viewer -->
-    <div class="card">
-      <div id="viewer" class="viewer"><pre id="raw">No response yet.</pre></div>
-      <div id="tree" class="json-tree" style="display:none"></div>
-    </div>
+  <div class="card">
+    <form id="req-form">
+      <input type="text" id="url" placeholder="https://api.example.com/data" required>
+      <select id="method">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+      </select>
+      <button type="submit">Send</button>
+    </form>
   </div>
+  <div id="viewer" class="viewer"><pre id="output">No response yet.</pre></div>
 
 <script>
 (function(){
   const form=document.getElementById('req-form');
   const urlEl=document.getElementById('url');
   const methodEl=document.getElementById('method');
-  const headersEl=document.getElementById('headers');
-  const bodyEl=document.getElementById('body');
-  const rawOut=document.getElementById('raw');
-  const treeOut=document.getElementById('tree');
-  const toggle=document.getElementById('toggle');
-  let last=null,isJSON=false,treeMode=false;
-
-  function parseHeaders(txt){
-    const o={}; if(!txt) return o;
-    txt.split('\n').forEach(l=>{
-      const i=l.indexOf(':'); if(i>-1) o[l.slice(0,i).trim()]=l.slice(i+1).trim();
-    }); return o;
-  }
-  function pretty(o){try{return JSON.stringify(o,null,2)}catch{return String(o)}}
-
-  function createTree(p,d){
-    p.innerHTML='';
-    function addNode(c,k,v){
-      if(typeof v==='object'&&v!==null){
-        const head=document.createElement('div');
-        head.className='collapsible';
-        head.innerHTML=`<span class="key">${k}</span>: <span class="muted">${Array.isArray(v)?'[Array]':'{Object}'}</span>`;
-        const ch=document.createElement('div');ch.style.display='none';
-        head.onclick=()=>ch.style.display=ch.style.display==='none'?'block':'none';
-        c.append(head,ch);
-        (Array.isArray(v)?v:Object.entries(v)).forEach((x,i)=>addNode(ch,Array.isArray(v)?i:x[0],Array.isArray(v)?x:i[1]));
-      }else{
-        let cls=typeof v; if(v===null)cls='null';
-        const span=document.createElement('div');
-        span.innerHTML=`<span class="key">${k}</span>: <span class="${cls}">${v}</span>`;
-        c.appendChild(span);
-      }
-    }
-    const root=document.createElement('div'); 
-    (Array.isArray(d)?d:Object.entries(d)).forEach((x,i)=>addNode(root,Array.isArray(d)?i:x[0],Array.isArray(d)?x:i[1]));
-    p.appendChild(root);
-  }
+  const output=document.getElementById('output');
 
   form.onsubmit=async e=>{
     e.preventDefault();
-    rawOut.textContent='Loading...'; treeOut.innerHTML='';
+    output.textContent="Loading...";
     try{
-      const r=await fetch(urlEl.value,{
-        method:methodEl.value,
-        headers:parseHeaders(headersEl.value),
-        body:methodEl.value!=='GET'&&bodyEl.value?bodyEl.value:undefined
-      });
-      let t=await r.text(); let j=null;
-      try{j=JSON.parse(t)}catch{}
-      last=j||t; isJSON=!!j;
-      rawOut.textContent=isJSON?pretty(j):t;
-      if(isJSON) createTree(treeOut,j);
-    }catch(err){rawOut.textContent='Error: '+err}
-  }
-
-  toggle.onclick=()=>{
-    treeMode=!treeMode;
-    rawOut.parentElement.style.display=treeMode?'none':'block';
-    treeOut.style.display=treeMode?'block':'none';
+      const resp=await fetch(urlEl.value,{method:methodEl.value});
+      let text=await resp.text();
+      try{text=JSON.stringify(JSON.parse(text),null,2)}catch{}
+      output.textContent=text;
+    }catch(err){
+      output.textContent="Error: "+err.message;
+    }
   }
 })();
 </script>

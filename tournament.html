@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BattleGround Tournament</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      text-align: center;
+    }
+    header {
+      padding: 20px;
+      background: rgba(0,0,0,0.4);
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .container {
+      max-width: 420px;
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.5);
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #00f5a0;
+    }
+    p {
+      color: #ccc;
+      font-size: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(90deg, #00f5a0, #00c2ff);
+      color: #000;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .prizes {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .prizes h3 {
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<body>
+
+  <header>🔥 BattleGround Tournament 🔥</header>
+
+  <div class="container">
+    <h1>Join Today's Match</h1>
+    <p>⏰ Starts Daily at 5 PM</p>
+    <p>💰 Entry Fee: ₹5</p>
+
+    <form id="joinForm">
+      <input type="text" id="phone" placeholder="Enter Phone Number" required>
+      <input type="text" id="ffuid" placeholder="Enter Free Fire UID" required>
+      <button type="submit">Join Tournament</button>
+    </form>
+
+    <div class="prizes">
+      <h3>🏆 Prize Pool:</h3>
+      <p>🥇 First Prize: ₹30</p>
+      <p>🥈 Second Prize: ₹15</p>
+      <p>🥉 Third Prize: ₹7</p>
+    </div>
+  </div>
+
+  <script>
+    const BOT_TOKEN = "8199850785:AAEMmhV_K59DJqE1JBFesuj8ZMiksxY7Ji4"; // apna bot token yaha
+    const CHAT_ID = "7254790945"; // apna telegram chat id yaha
+
+    document.getElementById("joinForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const phone = document.getElementById("phone").value;
+      const ffuid = document.getElementById("ffuid").value;
+
+      const message = `📩 New User Register!\n📱 Phone Number: ${phone}\n🆔 FF UID: ${ffuid}`;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`)
+      .then(res => alert("✅ Successfully Joined!"))
+      .catch(err => alert("❌ Error, Try Again!"));
+    });
+  </script>
+
+</body>
+</html>

@@ -23,17 +23,22 @@
     .container {
       max-width: 450px;
       margin: 40px auto;
-      padding: 25px;
-      background: rgba(255,255,255,0.07);
-      border-radius: 15px;
-      box-shadow: 0px 10px 30px rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
+      padding: 30px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0,255,180,0.3);
+      backdrop-filter: blur(15px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 40px rgba(0,255,255,0.4);
     }
     h1 {
       font-size: 28px;
       margin-bottom: 10px;
       color: #00f5a0;
-      text-shadow: 0px 0px 10px #00f5a0;
+      text-shadow: 0px 0px 15px #00f5a0;
     }
     p {
       color: #ccc;
@@ -41,32 +46,40 @@
     }
     input {
       width: 90%;
-      padding: 12px;
-      margin: 8px auto;
-      border: none;
-      border-radius: 8px;
+      padding: 14px;
+      margin: 10px auto;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
       font-size: 16px;
       outline: none;
       display: block;
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+    input:focus {
+      border: 2px solid #00f5a0;
+      box-shadow: 0 0 10px #00f5a0;
     }
     button {
       width: 90%;
-      padding: 12px;
-      margin: 12px auto;
+      padding: 14px;
+      margin: 15px auto;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       background: linear-gradient(90deg, #00f5a0, #00c2ff);
       color: #000;
-      box-shadow: 0px 5px 15px rgba(0,0,0,0.4);
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.5);
       transition: 0.3s;
       display: block;
     }
     button:hover {
-      transform: scale(1.05);
+      transform: scale(1.07);
       opacity: 0.95;
+      box-shadow: 0 0 20px #00f5a0;
     }
     .prizes {
       margin-top: 25px;
@@ -79,7 +92,7 @@
     .notice {
       margin-top: 20px;
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       background: rgba(255, 0, 0, 0.1);
       color: #ff4d4d;
       font-weight: bold;
@@ -99,9 +112,9 @@
     <p>💰 Entry Fee: ₹5</p>
 
     <form id="joinForm">
-      <input type="text" id="phone" placeholder="Enter Phone Number" required>
-      <input type="text" id="ffuid" placeholder="Enter Free Fire UID" required>
-      <button type="submit">Join Tournament</button>
+      <input type="tel" inputmode="numeric" pattern="\d{10}" id="phone" placeholder="📱 Enter Phone Number" required>
+      <input type="tel" inputmode="numeric" pattern="\d{8,11}" id="ffuid" placeholder="🆔 Enter Free Fire UID" required>
+      <button type="submit">🎮 Join Tournament</button>
     </form>
 
     <div class="notice">

@@ -5,100 +5,193 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BattleGround Tournament</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: #fff;
       text-align: center;
+      overflow-x: hidden;
     }
+
     header {
-      padding: 20px;
-      background: rgba(0,0,0,0.6);
-      font-size: 26px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      text-shadow: 2px 2px 10px #000;
-    }
-    .container {
-      max-width: 450px;
-      margin: 40px auto;
-      padding: 30px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,255,180,0.3);
-      backdrop-filter: blur(15px);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .container:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 40px rgba(0,255,255,0.4);
-    }
-    h1 {
+      padding: 22px;
+      background: rgba(0, 0, 0, 0.6);
       font-size: 28px;
-      margin-bottom: 10px;
-      color: #00f5a0;
-      text-shadow: 0px 0px 15px #00f5a0;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 15px #00f5a0;
+      border-bottom: 2px solid rgba(0, 255, 200, 0.2);
     }
+
+    /* neon animated border card */
+    .container {
+      max-width: 460px;
+      margin: 50px auto;
+      padding: 35px 25px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 35px rgba(0, 255, 200, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      z-index: -1;
+      background: linear-gradient(270deg, #ff00c8, #00f5a0, #00c2ff, #ffcc00);
+      background-size: 800% 800%;
+      border-radius: 22px;
+      animation: neonBorder 10s ease infinite;
+    }
+
+    @keyframes neonBorder {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 12px;
+      color: #00f5a0;
+      text-shadow: 0 0 15px #00f5a0;
+    }
+
     p {
       color: #ccc;
       font-size: 15px;
+      margin: 4px 0;
     }
+
+    .info-row {
+      width: 90%;
+      margin: 15px auto;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 255, 200, 0.3);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #e6fff3;
+      box-shadow: inset 0 0 8px rgba(0, 255, 200, 0.3);
+    }
+
+    .email {
+      font-weight: 600;
+      color: #bdebd3;
+      word-break: break-word;
+    }
+
     input {
       width: 90%;
-      padding: 14px;
-      margin: 10px auto;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
+      padding: 15px;
+      margin: 12px auto;
+      border-radius: 12px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(0, 0, 0, 0.45);
       font-size: 16px;
+      color: #fff;
       outline: none;
       display: block;
-      background: rgba(0,0,0,0.3);
-      color: #fff;
-      transition: border 0.3s, box-shadow 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 0 10px rgba(0, 255, 200, 0.15);
     }
+
     input:focus {
-      border: 2px solid #00f5a0;
-      box-shadow: 0 0 10px #00f5a0;
+      border-color: #00f5a0;
+      box-shadow: 0 0 12px #00f5a0, inset 0 0 12px rgba(0,255,200,0.3);
     }
+
     button {
       width: 90%;
-      padding: 14px;
-      margin: 15px auto;
+      padding: 16px;
+      margin: 20px auto;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
       background: linear-gradient(90deg, #00f5a0, #00c2ff);
       color: #000;
-      box-shadow: 0px 5px 20px rgba(0,0,0,0.5);
-      transition: 0.3s;
-      display: block;
+      box-shadow: 0 0 20px rgba(0,255,200,0.4);
+      transition: 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+
     button:hover {
-      transform: scale(1.07);
-      opacity: 0.95;
-      box-shadow: 0 0 20px #00f5a0;
+      transform: scale(1.08);
+      box-shadow: 0 0 25px #00f5a0;
     }
+
+    button::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3) 10%, transparent 60%);
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.6s, opacity 0.6s;
+    }
+
+    button:active::after {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .notice {
+      margin-top: 22px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #ffdede;
+      text-shadow: 0 0 10px rgba(255,0,0,0.4);
+    }
+
     .prizes {
-      margin-top: 25px;
+      margin-top: 28px;
       text-align: left;
     }
+
     .prizes h3 {
       color: #ffcc00;
-      text-shadow: 0px 0px 8px #ffcc00;
+      text-shadow: 0 0 10px #ffcc00;
     }
-    .notice {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 10px;
-      background: rgba(255, 0, 0, 0.1);
-      color: #ff4d4d;
-      font-weight: bold;
-      font-size: 14px;
-      border: 1px solid #ff4d4d;
-      text-align: center;
+
+    .prizes p {
+      font-size: 15px;
+      margin: 6px 0;
+      padding-left: 8px;
+      transition: 0.3s ease;
+    }
+
+    .prizes p:hover {
+      transform: translateX(6px);
+      color: #fff;
+      text-shadow: 0 0 12px #ffcc00;
+    }
+
+    @media (max-width: 480px) {
+      .container { margin: 25px 12px; padding: 25px; }
+      h1 { font-size: 24px; }
+      header { font-size: 22px; }
     }
   </style>
 </head>
@@ -111,16 +204,27 @@
     <p>⏰ Starts Daily at 5 PM</p>
     <p>💰 Entry Fee: ₹5</p>
 
+    <!-- Display user email -->
+    <div class="info-row">
+      📧 Contact Email:
+      <span class="email">moharsingh7221@gmail.com</span>
+    </div>
+
     <form id="joinForm">
-      <input type="tel" inputmode="numeric" pattern="\d{10}" id="phone" placeholder="📱 Enter Phone Number" required>
-      <input type="tel" inputmode="numeric" pattern="\d{8,11}" id="ffuid" placeholder="🆔 Enter Free Fire UID" required>
+      <input
+        type="tel"
+        inputmode="numeric"
+        pattern="\d{8,11}"
+        id="ffuid"
+        placeholder="🆔 Enter Free Fire UID (8-11 digits)"
+        required
+      >
       <button type="submit">🎮 Join Tournament</button>
     </form>
 
     <div class="notice">
-      ⚠️ If You Have Paid ₹5, You Will Get Real Entry.  
-      If You Only Fill UID & Phone Number Without Payment,  
-      Your Entry Will Be Invalid ❌
+      ⏳ Wait for message from Admin.<br>
+      ✅ Agar aapne ₹5 pay kiya hai to aapko <b>Direct Email</b> par Tournament ka <b>Custom ID & Password</b> bhej diya jayega.
     </div>
 
     <div class="prizes">
@@ -131,34 +235,34 @@
     </div>
   </div>
 
-<script>
-    const BOT_TOKEN = "8236534170:AAFiExT0k9Ny5_3GKlrD08t9v5uq90Ll31c"; // tera bot token
-    const CHAT_ID = "7254790945"; // tera telegram chat id
+  <script>
+    const BOT_TOKEN = "8236534170:AAFiExT0k9Ny5_3GKlrD08t9v5uq90Ll31c";
+    const CHAT_ID = "7254790945";
+    const USER_EMAIL = "moharsingh7221@gmail.com";
 
     document.getElementById("joinForm").addEventListener("submit", function(e){
       e.preventDefault();
-      const phone = document.getElementById("phone").value.trim();
       const ffuid = document.getElementById("ffuid").value.trim();
 
-      // Phone number validation
-      if(!/^\d{10}$/.test(phone)){
-        alert("❌ Invalid Phone Number! Must be exactly 10 digits.");
-        return;
-      }
-
-      // FF UID validation
       if(!/^\d{8,11}$/.test(ffuid)){
         alert("❌ Invalid FF UID! Must be between 8 to 11 digits.");
         return;
       }
 
-      const message = `📩 New User Register!\n📱 Phone Number: ${phone}\n🆔 FF UID: ${ffuid}`;
+      const message = `📩 New User Register!\n📧 Email: ${USER_EMAIL}\n🆔 FF UID: ${ffuid}`;
 
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`)
-      .then(res => alert("✅ Successfully Submitted!\nNote: Entry Valid Only If ₹5 Paid."))
-      .catch(err => alert("❌ Error, Try Again!"));
+        .then(res => {
+          if (!res.ok) throw new Error('network');
+          alert("✅ Successfully Submitted!\nNote: Entry Valid Only If ₹5 Paid. Wait for Admin email.");
+          document.getElementById("ffuid").value = "";
+        })
+        .catch(err => {
+          console.error(err);
+          alert("❌ Error sending. Try again!");
+        });
     });
-</script>
+  </script>
 
 </body>
 </html>

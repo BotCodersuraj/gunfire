@@ -1,197 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BattleGround Tournament</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
+    :root{
+      --bg1: #0f0c29;
+      --bg2: #302b63;
+      --card-bg: rgba(255,255,255,0.05);
+      --accent: #00f5a0;
+      --accent-2: #00c2ff;
+      --muted: #bdbdbd;
+      --glass: rgba(0,0,0,0.45);
+    }
+
+    *{box-sizing: border-box}
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2), #24243e);
       color: #fff;
       text-align: center;
-      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     header {
-      padding: 22px;
-      background: rgba(0, 0, 0, 0.6);
-      font-size: 28px;
+      padding: 20px;
+      background: rgba(0,0,0,0.55);
+      font-size: 26px;
       font-weight: 700;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 15px #00f5a0;
-      border-bottom: 2px solid rgba(0, 255, 200, 0.2);
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px rgba(0,0,0,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
     }
 
-    /* neon animated border card */
+    /* Card */
     .container {
       max-width: 460px;
-      margin: 50px auto;
-      padding: 35px 25px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 0 35px rgba(0, 255, 200, 0.25);
+      margin: 48px auto;
+      padding: 34px 24px;
+      border-radius: 18px;
+      background: var(--card-bg);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 18px rgba(0,255,180,0.06);
+      backdrop-filter: blur(10px) saturate(120%);
+      transition: transform .28s ease, box-shadow .28s ease;
     }
 
-    .container::before {
+    .container:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.7); }
+
+    /* subtle cyan pulse glow (not rainbow) */
+    .container::after{
       content: "";
       position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      z-index: -1;
-      background: linear-gradient(270deg, #ff00c8, #00f5a0, #00c2ff, #ffcc00);
-      background-size: 800% 800%;
+      inset: -20px;
       border-radius: 22px;
-      animation: neonBorder 10s ease infinite;
+      pointer-events: none;
+      box-shadow: 0 0 40px rgba(0,197,255,0.06), 0 0 80px rgba(0,245,160,0.03);
+      animation: pulseCyan 4s ease-in-out infinite;
+      z-index: -1;
     }
-
-    @keyframes neonBorder {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes pulseCyan{
+      0% { box-shadow: 0 0 20px rgba(0,197,255,0.03), 0 0 40px rgba(0,245,160,0.01); }
+      50% { box-shadow: 0 0 48px rgba(0,197,255,0.08), 0 0 100px rgba(0,245,160,0.04); }
+      100% { box-shadow: 0 0 20px rgba(0,197,255,0.03), 0 0 40px rgba(0,245,160,0.01); }
     }
 
     h1 {
-      font-size: 30px;
-      margin-bottom: 12px;
-      color: #00f5a0;
-      text-shadow: 0 0 15px #00f5a0;
+      font-size: 28px;
+      margin: 0 0 8px;
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0,245,160,0.15);
     }
 
-    p {
-      color: #ccc;
-      font-size: 15px;
-      margin: 4px 0;
-    }
+    p.lead { margin: 0 0 8px; color: var(--muted); font-size: 14.5px; }
 
-    .info-row {
-      width: 90%;
-      margin: 15px auto;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(0, 255, 200, 0.3);
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #e6fff3;
-      box-shadow: inset 0 0 8px rgba(0, 255, 200, 0.3);
-    }
-
-    .email {
-      font-weight: 600;
-      color: #bdebd3;
-      word-break: break-word;
-    }
-
-    input {
-      width: 90%;
-      padding: 15px;
+    /* Inputs */
+    .field {
+      width: 92%;
       margin: 12px auto;
-      border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      background: rgba(0, 0, 0, 0.45);
-      font-size: 16px;
-      color: #fff;
-      outline: none;
       display: block;
-      transition: all 0.3s ease;
-      box-shadow: inset 0 0 10px rgba(0, 255, 200, 0.15);
     }
+
+    input[type="email"],
+    input[type="tel"]{
+      width: 100%;
+      padding: 14px 14px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      background: var(--glass);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: box-shadow .25s ease, border-color .25s ease, transform .12s ease;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.35);
+    }
+
+    input[type="email"]::placeholder,
+    input[type="tel"]::placeholder { color: rgba(255,255,255,0.55); }
 
     input:focus {
-      border-color: #00f5a0;
-      box-shadow: 0 0 12px #00f5a0, inset 0 0 12px rgba(0,255,200,0.3);
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(0,245,160,0.09), inset 0 0 10px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
     }
 
-    button {
-      width: 90%;
-      padding: 16px;
-      margin: 20px auto;
-      border: none;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(90deg, #00f5a0, #00c2ff);
-      color: #000;
-      box-shadow: 0 0 20px rgba(0,255,200,0.4);
-      transition: 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 25px #00f5a0;
-    }
-
-    button::after {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.3) 10%, transparent 60%);
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-      transition: transform 0.6s, opacity 0.6s;
-    }
-
-    button:active::after {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
-
-    .notice {
-      margin-top: 22px;
-      padding: 14px;
+    /* Primary button */
+    button.primary {
+      width: 92%;
+      padding: 14px 16px;
+      margin: 16px auto 8px;
+      display: block;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: none;
+      font-weight: 700;
+      font-size: 17px;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #000;
+      box-shadow: 0 8px 30px rgba(0,245,160,0.12), 0 4px 12px rgba(0,0,0,0.45);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    button.primary:active{ transform: scale(.995); }
+
+    /* Notice */
+    .notice {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      color: #ffecec;
       font-weight: 600;
       font-size: 14px;
-      line-height: 1.5;
-      color: #ffdede;
-      text-shadow: 0 0 10px rgba(255,0,0,0.4);
-    }
-
-    .prizes {
-      margin-top: 28px;
+      border: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.45;
       text-align: left;
     }
 
-    .prizes h3 {
-      color: #ffcc00;
-      text-shadow: 0 0 10px #ffcc00;
-    }
+    .prizes { margin-top: 20px; text-align: left; }
+    .prizes h3 { color: #ffcc00; margin: 0 0 6px; }
+    .prizes p { margin: 6px 0; color: #e6e6e6; font-size: 15px; }
 
-    .prizes p {
-      font-size: 15px;
-      margin: 6px 0;
-      padding-left: 8px;
-      transition: 0.3s ease;
-    }
-
-    .prizes p:hover {
-      transform: translateX(6px);
-      color: #fff;
-      text-shadow: 0 0 12px #ffcc00;
-    }
-
-    @media (max-width: 480px) {
-      .container { margin: 25px 12px; padding: 25px; }
-      h1 { font-size: 24px; }
-      header { font-size: 22px; }
+    /* small screens */
+    @media (max-width: 480px){
+      .container { margin: 18px 14px; padding: 22px; }
+      header { font-size: 20px; padding: 14px; }
+      h1 { font-size: 22px; }
     }
   </style>
 </head>
@@ -199,32 +158,47 @@
 
   <header>🔥 BattleGround Tournament 🔥</header>
 
-  <div class="container">
+  <div class="container" role="region" aria-label="Tournament join card">
     <h1>Join Today's Match</h1>
-    <p>⏰ Starts Daily at 5 PM</p>
-    <p>💰 Entry Fee: ₹5</p>
+    <p class="lead">⏰ Starts Daily at 5 PM &nbsp; • &nbsp; 💰 Entry Fee: ₹5</p>
 
-    <!-- Display user email -->
-    <div class="info-row">
-      📧 Contact Email:
-      <span class="email">moharsingh7221@gmail.com</span>
-    </div>
+    <form id="joinForm" novalidate>
+      <!-- User-provided email (editable) -->
+      <label class="field" for="userEmail" style="text-align:left; font-size:13px; color:#d7fff0; margin-left:4%;">
+        📧 Your Email (Admin will send ID & Password here)
+      </label>
+      <div style="width:92%; margin:0 auto 6px;">
+        <input
+          id="userEmail"
+          name="userEmail"
+          type="email"
+          placeholder="example@mail.com"
+          autocomplete="email"
+          required
+          aria-required="true"
+        />
+      </div>
 
-    <form id="joinForm">
-      <input
-        type="tel"
-        inputmode="numeric"
-        pattern="\d{8,11}"
-        id="ffuid"
-        placeholder="🆔 Enter Free Fire UID (8-11 digits)"
-        required
-      >
-      <button type="submit">🎮 Join Tournament</button>
+      <!-- Only UID input (numeric keypad) -->
+      <div style="width:92%; margin:0 auto;">
+        <input
+          id="ffuid"
+          name="ffuid"
+          type="tel"
+          inputmode="numeric"
+          pattern="\d{8,11}"
+          placeholder="🆔 Enter Free Fire UID (8-11 digits)"
+          required
+          aria-required="true"
+        />
+      </div>
+
+      <button class="primary" type="submit">🎮 Join Tournament</button>
     </form>
 
     <div class="notice">
       ⏳ Wait for message from Admin.<br>
-      ✅ Agar aapne ₹5 pay kiya hai to aapko <b>Direct Email</b> par Tournament ka <b>Custom ID & Password</b> bhej diya jayega.
+      ✅ Agar aapne ₹5 pay kiya hai to aapko <strong>Direct Email</strong> par Tournament ka <strong>Custom ID & Password</strong> bhej diya jayega.
     </div>
 
     <div class="prizes">
@@ -236,31 +210,47 @@
   </div>
 
   <script>
+    // tera original token & chat id
     const BOT_TOKEN = "8236534170:AAFiExT0k9Ny5_3GKlrD08t9v5uq90Ll31c";
     const CHAT_ID = "7254790945";
-    const USER_EMAIL = "moharsingh7221@gmail.com";
 
-    document.getElementById("joinForm").addEventListener("submit", function(e){
+    // form handling
+    document.getElementById("joinForm").addEventListener("submit", async function(e){
       e.preventDefault();
-      const ffuid = document.getElementById("ffuid").value.trim();
 
-      if(!/^\d{8,11}$/.test(ffuid)){
-        alert("❌ Invalid FF UID! Must be between 8 to 11 digits.");
+      const emailEl = document.getElementById("userEmail");
+      const uidEl = document.getElementById("ffuid");
+
+      const email = (emailEl.value || "").trim();
+      const ffuid = (uidEl.value || "").trim();
+
+      // email quick validation
+      const emailRegex = /^\S+@\S+\.\S+$/;
+      if(!emailRegex.test(email)){
+        alert("❌ Invalid Email! Please enter a valid email address.");
+        emailEl.focus();
         return;
       }
 
-      const message = `📩 New User Register!\n📧 Email: ${USER_EMAIL}\n🆔 FF UID: ${ffuid}`;
+      // UID validation
+      if(!/^\d{8,11}$/.test(ffuid)){
+        alert("❌ Invalid FF UID! Must be 8 to 11 digits.");
+        uidEl.focus();
+        return;
+      }
 
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`)
-        .then(res => {
-          if (!res.ok) throw new Error('network');
-          alert("✅ Successfully Submitted!\nNote: Entry Valid Only If ₹5 Paid. Wait for Admin email.");
-          document.getElementById("ffuid").value = "";
-        })
-        .catch(err => {
-          console.error(err);
-          alert("❌ Error sending. Try again!");
-        });
+      // prepare message for admin (email supplied by user)
+      const message = `📩 New User Register!\n📧 Email: ${email}\n🆔 FF UID: ${ffuid}`;
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`);
+        if(!res.ok) throw new Error("network");
+        alert("✅ Successfully Submitted!\nNote: Entry Valid Only If ₹5 Paid. Wait for Admin email.");
+        uidEl.value = "";
+      } catch (err) {
+        console.error(err);
+        alert("❌ Error sending. Try again!");
+      }
     });
   </script>
 

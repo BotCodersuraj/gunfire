@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Text to Voice Converter</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    font-family: "Poppins", sans-serif;
+    color: #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+  }
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #38bdf8;
+  }
+  textarea {
+    width: 90%;
+    max-width: 500px;
+    height: 150px;
+    background: #1e293b;
+    color: white;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    padding: 10px;
+    resize: none;
+    outline: none;
+  }
+  select, input, button {
+    border-radius: 8px;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  select, input {
+    width: 90%;
+    max-width: 500px;
+    background: #1e293b;
+    color: white;
+    border: 1px solid #334155;
+  }
+  button {
+    background: #22c55e;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    width: 160px;
+    margin: 8px;
+  }
+  button:hover { filter: brightness(1.1); }
+  .controls { margin-top: 20px; text-align: center; }
+</style>
+</head>
+<body>
+  <h1>🔊 Text to Voice Converter</h1>
+  <textarea id="text" placeholder="Type something here..."></textarea>
+
+  <br />
+  <select id="voiceList"></select>
+  <input type="text" id="apiKey" placeholder="VoiceRSS API Key (optional for download)" />
+
+  <div class="controls">
+    <button onclick="playVoice()">▶ Play</button>
+    <button onclick="stopVoice()">■ Stop</button>
+    <button onclick="downloadVoice()">⬇ Download</button>
+  </div>
+
+<script>
+let synth = window.speechSynthesis;
+let voices = [];
+
+function loadVoices() {
+  voices = synth.getVoices();
+  const voiceList = document.getElementById("voiceList");
+  voiceList.innerHTML = "";
+  voices.forEach(v => {
+    const option = document.createElement("option");
+    option.textContent = `${v.name} (${v.lang})`;
+    option.value = v.name;
+    voiceList.appendChild(option);
+  });
+}
+loadVoices();
+if (speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function playVoice() {
+  const text = document.getElementById("text").value.trim();
+  if (!text) return alert("Please type some text first!");
+
+  const utter = new SpeechSynthesisUtterance(text);
+  const selectedVoice = document.getElementById("voiceList").value;
+  utter.voice = voices.find(v => v.name === selectedVoice);
+  utter.rate = 1;
+  utter.pitch = 1;
+  synth.speak(utter);
+}
+
+function stopVoice() {
+  synth.cancel();
+}
+
+async function downloadVoice() {
+  const text = document.getElementById("text").value.trim();
+  const key = document.getElementById("apiKey").value.trim();
+  if (!text) return alert("Please type some text first!");
+  if (!key) return alert("Enter your VoiceRSS API Key for download!");
+
+  const lang = "en-us"; // You can change to hi-in for Hindi
+  const url = `https://api.voicerss.org/?key=${key}&hl=${lang}&src=${encodeURIComponent(text)}&c=MP3`;
+  const response = await fetch(url);
+  if (!response.ok) return alert("VoiceRSS API error, check key or text length!");
+
+  const blob = await response.blob();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "voice.mp3";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>

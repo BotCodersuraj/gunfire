@@ -54,14 +54,20 @@
 
     <!-- Header -->
     <header class="app-header">
-        <div class="header-left">
-            <button class="header-back-button" id="headerBackBtnEl"><i class="bi bi-arrow-left"></i></button>
-            <img src="https://ibb.co/MkF9Wb35" alt="Logo" class="header-logo" id="appLogoEl">
-            <div class="header-title" id="headerTitleContainerEl"><span id="headerUserGreetingEl">Loading...</span> </div>
-            <div class="header-game-title" id="headerGameTitleEl">Game Title</div>
-        </div>
+        <div class="logo-wrapper">
+    <img src="https://img.sanishtech.com/u/71b3836671544a408e253bbc05e8fa6b.jpg" class="header-logo main-logo">
+</div>
+<div class="header-title" id="headerTitleContainerEl"><span id="headerUserGreetingEl">Loading...</span> </div>  
+            <div class="header-game-title" id="headerGameTitleEl">Game Title</div>  
+        </div>  
+        <div class="header-right">  
+            <button class="icon" id="notificationBtnEl"> <i class="bi bi-bell-fill"></i> <span class="notification-badge" style="display: none;"></span> </button>  
+            <button class="wallet-chip" id="headerWalletChipEl" style="display: none;"> <i class="bi bi-wallet-fill"></i> ₹<span id="headerChipBalanceEl">0</span> </button>  
+        </div>  
+    </header>
+          
         <div class="header-right">
-            <button class="notification-icon" id="notificationBtnEl"> <i class="bi bi-bell-fill"></i> <span class="notification-badge" style="display: none;"></span> </button>
+       
             <button class="wallet-chip" id="headerWalletChipEl" style="display: none;"> <i class="bi bi-wallet-fill"></i> ₹<span id="headerChipBalanceEl">0</span> </button>
         </div>
     </header>

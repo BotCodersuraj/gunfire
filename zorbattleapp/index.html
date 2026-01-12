@@ -76,59 +76,26 @@ header img {
   margin: 0 auto;
 }
 
-/* Screenshots Carousel */
-.carousel-container {
-  position: relative;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-}
+/* Screenshots Stack (Vertical) */
 .screenshot-wrap {
   display: flex;
-  overflow-x: auto;
+  flex-direction: column;
   gap: 25px;
   padding: 20px 0;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-}
-.screenshot-wrap::-webkit-scrollbar {
-  display: none;
+  max-width: 320px;
+  margin: 0 auto;
 }
 .screenshot-wrap img {
-  flex-shrink: 0;
-  width: 280px;
-  height: 520px;
+  width: 100%;
+  height: auto;
   object-fit: cover;
   border-radius: 25px;
-  cursor: pointer;
   box-shadow: 0 0 35px #00ffea;
   transition: 0.3s;
 }
 .screenshot-wrap img:hover {
-  transform: scale(1.07);
+  transform: scale(1.05);
 }
-
-/* Arrows */
-.arrow-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,255,234,0.8);
-  border: none;
-  padding: 15px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 5;
-  font-size: 20px;
-  color: #000;
-  transition: 0.3s;
-}
-.arrow-btn:hover {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 25px #00ffea;
-}
-.arrow-left { left: -25px; }
-.arrow-right { right: -25px; }
 
 /* Features Section */
 .features {
@@ -204,15 +171,11 @@ header img {
   <p>ZorBattle is India’s next-gen tournament platform. Real players, real matches, real rewards.</p>
   <a href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file" target="_blank" class="download-btn">Download ZorBattle APK</a>
 
-  <!-- Screenshots Carousel -->
-  <div class="carousel-container">
-    <button class="arrow-btn arrow-left">&#10094;</button>
-    <div class="screenshot-wrap">
-      <img src="https://img.sanishtech.com/u/40563cb7eae7a166e6fac627ff789618.png" alt="Preview 1">
-      <img src="https://img.sanishtech.com/u/c998e7ec7a1e9c21422ac578d2d5c1f3.png" alt="Preview 2">
-      <img src="https://img.sanishtech.com/u/d1eba2f6bb3ab3ccd632ec902537553c.png" alt="Preview 3">
-    </div>
-    <button class="arrow-btn arrow-right">&#10095;</button>
+  <!-- Screenshots Vertical Stack -->
+  <div class="screenshot-wrap">
+    <img src="https://img.sanishtech.com/u/40563cb7eae7a166e6fac627ff789618.png" alt="Preview 1">
+    <img src="https://img.sanishtech.com/u/c998e7ec7a1e9c21422ac578d2d5c1f3.png" alt="Preview 2">
+    <img src="https://img.sanishtech.com/u/d1eba2f6bb3ab3ccd632ec902537553c.png" alt="Preview 3">
   </div>
 </section>
 
@@ -233,20 +196,6 @@ header img {
   <p>Download ZorBattle and prove your dominance.</p>
   <a href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file" target="_blank" class="download-btn">Download ZorBattle APK</a>
 </section>
-
-<script>
-// Carousel arrow functionality
-const carousel = document.querySelector('.screenshot-wrap');
-const leftBtn = document.querySelector('.arrow-left');
-const rightBtn = document.querySelector('.arrow-right');
-
-leftBtn.addEventListener('click', () => {
-  carousel.scrollBy({ left: -300, behavior: 'smooth' });
-});
-rightBtn.addEventListener('click', () => {
-  carousel.scrollBy({ left: 300, behavior: 'smooth' });
-});
-</script>
 
 </body>
 </html>

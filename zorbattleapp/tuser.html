@@ -17,8 +17,8 @@
 
     <style>
         /* --- CSS Styles (No changes needed here) --- */
-:root {
-            --primary-bg: #F8FAFC; /* Dark blue-gray */
+        :root {
+            --primary-bg: #0F172A; /* Dark blue-gray */
             --secondary-bg: #1E293B; /* Slightly lighter blue-gray */
             --card-bg: #1E293B;
             --text-primary: #E2E8F0; /* Light gray for primary text */
@@ -209,7 +209,7 @@
         // You can find these details in your Firebase project settings:
         // Project settings > General > Your apps > Web app > SDK setup and configuration > Config
         // ===============================================================
-         const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyDSCU7uFxMBi5W3OQHb55rZz3_hXROZRdI",
   authDomain: "zor-battle.firebaseapp.com",
   databaseURL: "https://zor-battle-default-rtdb.firebaseio.com",
@@ -354,7 +354,7 @@
          function populateUserInfo(user, profile) {
              if (!user || !profile) return;
              const displayName = profile.displayName || user.displayName || user.email?.split('@')[0] || 'User';
-             const photoURL = profile.photoURL || user.photoURL || https://ibb.co/0RZJd2Jt&background=0F172A&color=E2E8F0&bold=true&size=70`;
+             const photoURL = profile.photoURL || user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0F172A&color=E2E8F0&bold=true&size=70`;
              const balance = (profile.balance || 0); const winningCash = (profile.winningCash || 0); const bonusCash = (profile.bonusCash || 0);
              const totalEarnings = (profile.totalEarnings || 0); const referralEarnings = (profile.referralEarnings || 0);
              const totalMatches = profile.totalMatches || 0; const wonMatches = profile.wonMatches || 0;

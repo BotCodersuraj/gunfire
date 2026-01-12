@@ -55,7 +55,7 @@
     <!-- Header -->
     <header class="app-header">
         <div class="logo-wrapper">
-    <img src="https://img.sanishtech.com/u/71b3836671544a408e253bbc05e8fa6b.jpg" class="header-logo main-logo">
+    <img src="https://img.sanishtech.com/u/57b333728d50275e5459555a605a05d0.jpg" class="header-logo main-logo">
 </div>
 <div class="header-title" id="headerTitleContainerEl"><span id="headerUserGreetingEl">Loading...</span> </div>  
             <div class="header-game-title" id="headerGameTitleEl">Game Title</div>  
@@ -360,7 +360,7 @@
          function populateUserInfo(user, profile) {
              if (!user || !profile) return;
              const displayName = profile.displayName || user.displayName || user.email?.split('@')[0] || 'User';
-             const photoURL = profile.photoURL || user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0F172A&color=E2E8F0&bold=true&size=70`;
+             const photoURL = profile.photoURL || user.photoURL || "https://img.sanishtech.com/u/57b333728d50275e5459555a605a05d0.jpg";
              const balance = (profile.balance || 0); const winningCash = (profile.winningCash || 0); const bonusCash = (profile.bonusCash || 0);
              const totalEarnings = (profile.totalEarnings || 0); const referralEarnings = (profile.referralEarnings || 0);
              const totalMatches = profile.totalMatches || 0; const wonMatches = profile.wonMatches || 0;

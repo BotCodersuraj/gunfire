@@ -3,209 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZorBattle – Battle Starts Here</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<title>ZorBattle</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #050505;
-  color: #fff;
-  overflow-x: hidden;
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family: Arial, sans-serif;
+  background:#0e0e0e;
+  color:#fff;
 }
 
 /* Header */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 50px;
-  background: rgba(0,0,0,0.7);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#111;
 }
-header img {
-  height: 120px;
-  border-radius: 20px;
-  box-shadow: 0 0 30px #00ffea;
+header img{
+  height:50px;
 }
-.download-btn {
-  padding: 14px 36px;
-  background: linear-gradient(45deg,#00ff95,#00f2ff);
-  border: none;
-  border-radius: 15px;
-  color: #000;
-  font-weight: 800;
-  cursor: pointer;
-  font-size: 16px;
-  text-decoration: none;
-  transition: 0.3s;
-}
-.download-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px #00ffea;
+.download-btn{
+  padding:10px 20px;
+  background:#00ffcc;
+  color:#000;
+  text-decoration:none;
+  border-radius:5px;
+  font-weight:bold;
 }
 
-/* Hero Section */
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 80px 20px;
-  gap: 30px;
-  background: linear-gradient(180deg,#0a0a0a,#111);
+/* Hero */
+.hero{
+  text-align:center;
+  padding:40px 15px;
 }
-.hero h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 60px;
-  background: linear-gradient(45deg,#00ffea,#ff00f7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0;
+.hero h1{
+  font-size:32px;
+  margin-bottom:10px;
 }
-.hero p {
-  max-width: 650px;
-  color: #bbb;
-  font-size: 18px;
-  line-height: 1.6;
-  margin: 0 auto;
+.hero p{
+  color:#ccc;
+  margin-bottom:20px;
 }
 
-/* Screenshots Stack (Vertical, fixed preview size) */
-.screenshot-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 300px;
-  margin: 20px auto 0 auto;
+/* Screenshot Slider */
+.slider{
+  position:relative;
+  width:280px;
+  height:500px;
+  margin:30px auto;
+  border-radius:15px;
+  overflow:hidden;
+  border:2px solid #00ffcc;
 }
-.screenshot-box {
-  width: 100%;
-  height: 520px;
-  overflow: hidden;
-  border-radius: 25px;
-  box-shadow: 0 0 35px #00ffea;
-  transition: 0.3s;
-}
-.screenshot-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: 0.3s;
-}
-.screenshot-box:hover img {
-  transform: scale(1.05);
+.slider img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-/* Features Section */
-.features {
-  padding: 80px 40px;
-  text-align: center;
-  background: #0a0a0a;
+.arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(0,0,0,0.6);
+  color:white;
+  font-size:24px;
+  padding:8px 12px;
+  cursor:pointer;
+  border-radius:50%;
+  user-select:none;
 }
-.features h2 {
-  font-family: 'Orbitron', sans-serif;
-  color: #00ffea;
-  margin-bottom: 50px;
-  font-size: 40px;
+.arrow.left{left:10px;}
+.arrow.right{right:10px;}
+
+/* Features */
+.features{
+  padding:40px 20px;
+  text-align:center;
 }
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-  gap: 35px;
-  justify-items: center;
+.features h2{
+  margin-bottom:20px;
 }
-.card {
-  background: rgba(255,255,255,0.05);
-  border-radius: 20px;
-  padding: 35px;
-  border: 1px solid rgba(255,255,255,0.1);
-  width: 100%;
-  max-width: 300px;
-  transition: 0.3s;
-}
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 0 30px #7f00ff;
-}
-.card h3 {
-  color: #00ffea;
-  margin-bottom: 18px;
-  font-size: 22px;
-}
-.card p {
-  color: #bbb;
-  line-height: 1.6;
-  font-size: 16px;
+.card{
+  background:#151515;
+  padding:15px;
+  border-radius:8px;
+  margin:10px 0;
 }
 
-/* Final CTA */
-.final {
-  padding: 100px 20px;
-  text-align: center;
-  background: linear-gradient(180deg,#000,#090909);
-}
-.final h2 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 44px;
-  margin-bottom: 20px;
-}
-.final p {
-  color: #aaa;
-  font-size: 18px;
-  margin-bottom: 30px;
+/* Final */
+.final{
+  padding:40px 20px;
+  text-align:center;
+  background:#111;
 }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header>
-  <img src="https://img.sanishtech.com/u/cf4106ce093db5b68393114dea229931.jpg" alt="ZorBattle Logo">
-  <a href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file" target="_blank" class="download-btn">Download ZorBattle APK</a>
+  <img src="https://img.sanishtech.com/u/cf4106ce093db5b68393114dea229931.jpg">
+  <a class="download-btn" href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file">Download</a>
 </header>
 
-<!-- Hero Section -->
 <section class="hero">
   <h1>Battle. Win. Dominate.</h1>
-  <p>ZorBattle is India’s next-gen tournament platform. Real players, real matches, real rewards.</p>
-  <a href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file" target="_blank" class="download-btn">Download ZorBattle APK</a>
-
-  <!-- Screenshots Vertical Stack -->
-  <div class="screenshot-wrap">
-    <div class="screenshot-box">
-      <img src="https://img.sanishtech.com/u/40563cb7eae7a166e6fac627ff789618.png" alt="Preview 1">
-    </div>
-    <div class="screenshot-box">
-      <img src="https://img.sanishtech.com/u/c998e7ec7a1e9c21422ac578d2d5c1f3.png" alt="Preview 2">
-    </div>
-    <div class="screenshot-box">
-      <img src="https://img.sanishtech.com/u/d1eba2f6bb3ab3ccd632ec902537553c.png" alt="Preview 3">
-    </div>
-  </div>
+  <p>India’s next-gen tournament platform.</p>
 </section>
 
-<!-- Features Section -->
+<!-- Slider -->
+<div class="slider">
+  <img id="slide" src="https://img.sanishtech.com/u/40563cb7eae7a166e6fac627ff789618.png">
+  <div class="arrow left" onclick="prev()">‹</div>
+  <div class="arrow right" onclick="next()">›</div>
+</div>
+
 <section class="features">
   <h2>Why ZorBattle?</h2>
-  <div class="feature-grid">
-    <div class="card"><h3>Live Battles</h3><p>Real-time tournaments with instant results.</p></div>
-    <div class="card"><h3>Fast Withdrawals</h3><p>Quick and secure payout system.</p></div>
-    <div class="card"><h3>Fair Play</h3><p>Anti-cheat protection & manual checks.</p></div>
-    <div class="card"><h3>Pro Design</h3><p>Built for esports, not casual gaming.</p></div>
-  </div>
+  <div class="card">Live Tournaments</div>
+  <div class="card">Fast Withdrawals</div>
+  <div class="card">Fair Play</div>
+  <div class="card">Simple UI</div>
 </section>
 
-<!-- Final CTA -->
 <section class="final">
-  <h2>Ready to Rule?</h2>
-  <p>Download ZorBattle and prove your dominance.</p>
-  <a href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file" target="_blank" class="download-btn">Download ZorBattle APK</a>
+  <h2>Download Now</h2>
+  <a class="download-btn" href="https://www.mediafire.com/file/be0967qfm04hdy0/ZorBattle.apk/file">Get ZorBattle APK</a>
 </section>
+
+<script>
+let images = [
+ "https://img.sanishtech.com/u/40563cb7eae7a166e6fac627ff789618.png",
+ "https://img.sanishtech.com/u/c998e7ec7a1e9c21422ac578d2d5c1f3.png",
+ "https://img.sanishtech.com/u/d1eba2f6bb3ab3ccd632ec902537553c.png"
+];
+let index = 0;
+
+function show(){
+  document.getElementById("slide").src = images[index];
+}
+function next(){
+  index = (index + 1) % images.length;
+  show();
+}
+function prev(){
+  index = (index - 1 + images.length) % images.length;
+  show();
+}
+</script>
 
 </body>
 </html>

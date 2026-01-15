@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Gaming Tournament</title>
 
-    <!-- Icons and Fonts -->
+        <!-- Icons and Fonts -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         /* --- CSS Styles --- */
         :root {
@@ -45,6 +44,72 @@
     --danger-color: #F43F5E;
     --warning-color: #FBBF24;
     --info-color: #38BDF8;
+}
+
+/* -------------------- Background Image Layer -------------------- */
+body {
+    background-color: var(--primary-bg); /* fallback color */
+    background-image: url("https://i.ibb.co/NdQ0SgTB/1768475400697.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed; /* ye important hai scroll ke liye */
+}
+
+/* -------------------- Body & Content -------------------- */
+body {
+    background-color: var(--primary-bg); /* fallback color */
+    color: var(--text-primary);
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* -------------------- Bottom Navigation -------------------- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    background: var(--bottom-nav-bg);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
+    z-index: 100; /* image ke upar rahe */
+}
+
+.nav-item {
+    background: transparent;
+    border: none;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-item i {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+}
+
+.nav-item.active {
+    color: var(--accent-color);
+    background: rgba(124, 58, 237, 0.15);
+    box-shadow: 0 0 10px var(--accent-color);
 }
         /* ... (Rest of the CSS styles remain exactly the same) ... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -769,12 +834,32 @@
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <button class="nav-item active" data-section="home-section"><i class="bi bi-house-door-fill"></i><span>Home</span></button>
-        <button class="nav-item" data-section="wallet-section"><i class="bi bi-wallet-fill"></i><span>Wallet</span></button>
-        <button class="nav-item" data-section="leaderboard-section"><i class="bi bi-trophy-fill"></i><span>Leaderboard</span></button>
-        <button class="nav-item" data-section="earnings-section"><i class="bi bi-coin"></i><span>Earnings</span></button>
-        <button class="nav-item" data-section="profile-section"><i class="bi bi-person-fill"></i><span>Profile</span></button>
-    </nav>
+    <button class="nav-item" data-section="home-section">
+        <i class="bi bi-house-door-fill"></i>
+        <span>Home</span>
+    </button>
+
+    <button class="nav-item" data-section="wallet-section">
+        <i class="bi bi-wallet2"></i>
+        <span>Wallet</span>
+    </button>
+
+    <!-- ACTIVE = Leaderboard -->
+    <button class="nav-item active" data-section="leaderboard-section">
+        <i class="bi bi-award-fill"></i>
+        <span>Leaderboard</span>
+    </button>
+
+    <button class="nav-item" data-section="earnings-section">
+        <i class="bi bi-coin"></i>
+        <span>Earnings</span>
+    </button>
+
+    <button class="nav-item" data-section="profile-section">
+        <i class="bi bi-person-circle"></i>
+        <span>Profile</span>
+    </button>
+</nav>
 
     <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -877,7 +962,7 @@
         const showLoader = (show) => { if (elements.globalLoader) elements.globalLoader.style.display = show ? 'flex' : 'none'; };
         function showStatusMessage(element, message, type = 'danger', autohide = true) { if (!element) return; element.innerHTML = message; element.className = `alert alert-${type} mt-3`; element.style.display = 'block'; element.setAttribute('role', 'alert'); if (autohide) { setTimeout(() => { if (element.innerHTML === message) element.style.display = 'none'; }, 5000); } }
         function clearStatusMessage(element) { if (!element) return; element.style.display = 'none'; element.innerHTML = ''; element.removeAttribute('role'); }
-        function copyToClipboard(targetSelectorOrText, isText = false) { let textToCopy; if (isText) { textToCopy = targetSelectorOrText; } else { if (!targetSelectorOrText) { alert('Copy target not defined.'); return; } const targetElement = querySel(targetSelectorOrText); if (!targetElement) { alert('Element to copy from not found.'); return; } textToCopy = targetElement.textContent; } if (!textToCopy || textToCopy === 'N/A' || textToCopy.includes('placeholder')) { alert('Nothing to copy.'); return; } navigator.clipboard.writeText(textToCopy).then(() => alert('Copied!')).catch(err => { console.error('Failed to copy:', err); alert('Failed to copy.'); }); }
+        function copyToClipboard(targetSelectorOrText, isText = false) { let textToCopy; if (isText) { textToCopy = targetSelectorOrText; } else { if (!targetSelectorOrText) { alert('Copy tarnot defined.'); return; } const targetElement = querySel(targetSelectorOrText); if (!targetElement) { alert('Element to copy from not found.'); return; } textToCopy = targetElement.textContent; } if (!textToCopy || textToCopy === 'N/A' || textToCopy.includes('placeholder')) { alert('Nothing to copy.'); return; } navigator.clipboard.writeText(textToCopy).then(() => alert('Copied!')).catch(err => { console.error('Failed to copy:', err); alert('Failed to copy.'); }); }
         
         function shareReferral(code) {
             if (!code || code === 'N/A') { alert('Referral code not available.'); return; }
@@ -885,19 +970,26 @@
             const signupBonus = appSettings.signupBonus || 10;
             const referralBonus = appSettings.referralBonus || 5;
 
-            const shareText = 
-`Free Fire tournament App🚨
+            const shareText = `⚠️ WARNING ⚠️  
+Free Fire khel raha hai aur ${appName} use nahi kar raha?  
+Toh tu apna hi nuksaan kar raha hai.
 
-App Name - ${appName}
-Free Joining ✅
-Sign up Bonus - ₹${signupBonus}💸
-Per Refer - ₹${referralBonus} 🌟
-Fast Join Free
+🔥 ${appName} – Jahan Game Paisa Banata Hai 🔥  
 
-Use Code - ( ${code} ) Free ₹${signupBonus} 😀
+✅ 100% Free Joining  
+💰 ₹${signupBonus} Signup Bonus Direct Wallet  
+🌟 ₹${referralBonus} Per Refer – Unlimited Earning  
+⚡ Fast Tournaments  
+🏆 Real Cash Winning  
 
-Download 👇
-https://adixclash.wuaze.com/?i=1`;
+Code = ${code}  
+Code daalte hi turant ₹${signupBonus} confirm.
+
+📲 Download Now:  
+https://adixclash.wuaze.com/?i=1  
+
+Ya toh aaj kamaana start karega,  
+ya phir kal sochega “kaash install kar liya hota.”`;
 
             if (navigator.share) {
                  navigator.share({
@@ -1283,7 +1375,11 @@ https://adixclash.wuaze.com/?i=1`;
         async function submitWithdrawRequestHandler() { if (!currentUser || !elements.withdrawModalInstance) return; const amt = parseFloat(elements.withdrawAmountInput.value); const mtd = elements.withdrawMethodInput.value.trim(); const wc = userProfile.winningCash || 0; const minW = appSettings?.minWithdraw || 50; clearStatusMessage(elements.withdrawStatusMessage); if (isNaN(amt) || amt <= 0) { showStatusMessage(elements.withdrawStatusMessage, 'Invalid amount.', 'warning'); return; } if (amt < minW) { showStatusMessage(elements.withdrawStatusMessage, `Min withdraw ₹${minW}.`, 'warning'); return; } if (amt > wc) { showStatusMessage(elements.withdrawStatusMessage, 'Insufficient winning balance.', 'warning'); return; } if (!mtd) { showStatusMessage(elements.withdrawStatusMessage, 'Enter withdrawal method.', 'warning'); return; } elements.submitWithdrawRequestBtn.disabled = true; elements.submitWithdrawRequestBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...'; let transactionCommitted = false; try { const uRef = ref(db, `users/${currentUser.uid}`); const txResult = await runTransaction(uRef, (prof) => { if (prof) { if ((prof.winningCash || 0) >= amt) { prof.winningCash = (prof.winningCash || 0) - amt; return prof; } else { throw new Error("Insufficient winning balance (Tx)."); } } else { throw new Error("Profile missing (Tx)."); } }); if (!txResult.committed) { throw new Error("Failed to update balance. Please try again."); } transactionCommitted = true; const wrRef = ref(db, 'withdrawals'); const newReq = { userId: currentUser.uid, userName: userProfile.displayName || currentUser.email, amount: amt, methodDetails: { methodName: mtd.includes('@') ? 'UPI' : 'Bank/Other', accountInfo: mtd }, status: 'pending', requestTimestamp: serverTimestamp(), userEmail: currentUser.email || 'N/A' }; const newWithdrawalRef = await push(wrRef, newReq); await recordTransaction(currentUser.uid, 'withdraw_request', -amt, `Withdrawal Request to ${mtd}`, { withdrawalId: newWithdrawalRef.key }); showStatusMessage(elements.withdrawStatusMessage, 'Request submitted successfully!', 'success', false); setTimeout(() => { if (elements.withdrawModalInstance) elements.withdrawModalInstance.hide(); }, 2500); if (currentSectionId === 'wallet-section') loadRecentTransactions(); } catch (e) { console.error("Withdraw error:", e); showStatusMessage(elements.withdrawStatusMessage, `Error: ${e.message}`, 'danger'); if (transactionCommitted) { console.warn("Attempting to refund winning cash..."); const uRef = ref(db, `users/${currentUser.uid}`); try { await runTransaction(uRef, (prof) => { if (prof) { prof.winningCash = (prof.winningCash || 0) + amt; } return prof; }); await recordTransaction(currentUser.uid, 'withdraw_failed_refund', amt, `Refund Failed Withdrawal Request`); showStatusMessage(elements.withdrawStatusMessage, `Error: ${e.message}. Amount refunded.`, 'danger'); } catch (refundError) { console.error("CRITICAL: FAILED TO REFUND WINNING CASH!", refundError); showStatusMessage(elements.withdrawStatusMessage, `Error: ${e.message}. CRITICAL: Failed to refund amount! Contact support.`, 'danger', false); } } } finally { elements.submitWithdrawRequestBtn.disabled = false; elements.submitWithdrawRequestBtn.innerHTML = 'Submit Request'; } }
         async function handleMatchDetailsClick(event) { if (!elements.matchDetailsModalInstance) return; const tId = event.currentTarget.dataset.tournamentId; if (!tId) return; elements.matchDetailsModalTitle.textContent = 'Loading...'; elements.matchDetailsModalBody.innerHTML = '<div class="tc p-5"><div class="spinner-border spinner-border-sm"></div></div>'; elements.matchDetailsModalInstance.show(); try { const tRef = ref(db, `tournaments/${tId}`); const s = await get(tRef); if (s.exists()) { const t = s.val(); const gName = appSettings.games?.[t.gameId]?.name || t.gameId || 'N/A'; const sTimeLoc = t.startTime ? new Date(t.startTime).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short'}) : 'TBA'; let pDistHTML = ''; if (t.prizeDistribution) { let fmtDist = ''; if (typeof t.prizeDistribution === 'object') { fmtDist = Object.entries(t.prizeDistribution).map(([rank, prize]) => `Rank ${rank}: ₹${prize}`).join('\n'); } else { fmtDist = String(t.prizeDistribution).replace(/\\n/g, '\n'); } pDistHTML = `<h5>Prize Distribution:</h5><pre>${fmtDist}</pre>`; } const desc = t.description || 'Standard rules apply.'; const fmtDesc = desc.replace(/\n/g, '<br>'); elements.matchDetailsModalTitle.textContent = t.name || 'Match Details'; elements.matchDetailsModalBody.innerHTML = `<p><strong>Game:</strong> ${gName}</p><p><strong>Mode:</strong> ${t.mode || 'N/A'}</p><p><strong>Map:</strong> ${t.map || 'N/A'}</p><p><strong>Starts:</strong> ${sTimeLoc}</p><hr><p><strong>Entry:</strong> ${t.entryFee > 0 ? `₹${t.entryFee}` : 'Free'}</p><p><strong>Prize:</strong> ₹${t.prizePool || 0}</p><p><strong>Per Kill:</strong> ₹${t.perKillPrize || 0}</p><p><strong>Max Players:</strong> ${t.maxPlayers > 0 ? t.maxPlayers : 'Unlimited'}</p><hr><h5>Rules:</h5><div style="white-space: pre-wrap; line-height: 1.6;">${fmtDesc}</div>${pDistHTML}`; } else elements.matchDetailsModalBody.innerHTML = '<p class="text-danger">Details not found.</p>'; } catch (e) { console.error("Details load failed:", e); elements.matchDetailsModalBody.innerHTML = '<p class="text-danger">Error loading details.</p>'; } }
         async function handleIdPasswordClick(event) { if (!elements.idPasswordModalInstance) return; const tId = event.currentTarget.dataset.tournamentId; if (!tId) return; if (!currentUser || !userProfile?.joinedTournaments?.[tId]) { alert("Join the tournament first or refresh the page."); return; } elements.roomIdDisplay.innerHTML = '<span class="placeholder col-6"></span>'; elements.roomPasswordDisplay.innerHTML = '<span class="placeholder col-6"></span>'; elements.idPasswordModalInstance.show(); try { const tournamentRef = ref(db, `tournaments/${tId}`); const s = await get(tournamentRef); removePlaceholders(elements.roomIdDisplay.closest('.placeholder-glow')); removePlaceholders(elements.roomPasswordDisplay.closest('.placeholder-glow')); if (s.exists()) { const tournamentData = s.val(); if (tournamentData.showIdPass) { elements.roomIdDisplay.textContent = tournamentData.roomId || 'Not updated yet'; elements.roomPasswordDisplay.textContent = tournamentData.roomPassword || 'Not updated yet'; } else { elements.roomIdDisplay.textContent = 'Hidden by Admin'; elements.roomPasswordDisplay.textContent = 'Hidden by Admin'; } } else { elements.roomIdDisplay.textContent = 'Not Found'; elements.roomPasswordDisplay.textContent = 'Not Found'; } } catch (e) { console.error("ID/Pass fetch error:", e); removePlaceholders(elements.roomIdDisplay.closest('.placeholder-glow')); removePlaceholders(elements.roomPasswordDisplay.closest('.placeholder-glow')); elements.roomIdDisplay.textContent = 'Error'; elements.roomPasswordDisplay.textContent = 'Error'; alert("Error loading ID/Password."); } }
-        async function handlePolicyClick(event) { if (!elements.policyModalInstance) return; event.preventDefault(); const target = event.currentTarget; const policyType = target.dataset.policy; if (!policyType) return; let title = '', modalBodyContent = '<div class="text-center p-5"><div class="spinner-border spinner-border-sm"></div></div>'; elements.policyModalBody.innerHTML = modalBodyContent; switch (policyType) { case 'privacy': title = 'Privacy Policy'; modalBodyContent = appSettings.policyPrivacy || 'Content not available.'; break; case 'terms': title = 'Terms and Conditions'; modalBodyContent = appSettings.policyTerms || 'Content not available.'; break; case 'refund': title = 'Refund and Cancellation'; modalBodyContent = appSettings.policyRefund || 'Content not available.'; break; case 'fairPlay': title = 'Fair Play Policy'; modalBodyContent = appSettings.policyFairPlay || 'Content not available.'; break; case 'refer': title = 'Refer & Earn'; if (!currentUser) { alert("Login to view referral."); return; } const refCode = userProfile.referralCode || 'N/A'; const referralBonus = appSettings.referralBonus || 5; modalBodyContent = `<div class="text-center"><h4>Refer Friends!</h4><p class="text-secondary">Share code & earn!</p><div class="my-4 p-3" style="background: var(--primary-bg); border-radius: 8px;"><p class="small text-secondary mb-1">Your Code:</p><h3 class="text-accent referral-code" id="referralCodeDisplay">${refCode}</h3><div class="mt-3"><button class="btn btn-sm btn-custom btn-custom-secondary me-2 copy-btn" data-target="#referralCodeDisplay"><i class="bi bi-clipboard"></i> Copy</button><button class="btn btn-sm btn-custom btn-custom-secondary" id="shareReferralBtn"><i class="bi bi-share-fill"></i> Share</button></div></div><p class="mt-3 small text-secondary">Get ₹${referralBonus} when your friend joins using your code, and they get a signup bonus!</p></div>`; break; default: title = 'Info'; modalBodyContent = '<p>Content unavailable.</p>'; } elements.policyModalTitle.textContent = title; if (typeof modalBodyContent === 'string' && policyType !== 'refer') { elements.policyModalBody.innerHTML = modalBodyContent.replace(/\n/g, '<br>'); } else { elements.policyModalBody.innerHTML = modalBodyContent; } elements.policyModalInstance.show(); }
+        async function handlePolicyClick(event) { if (!elements.policyModalInstance) return; event.preventDefault(); const target = event.currentTarget; const policyType = target.dataset.policy; if (!policyType) return; let title = '', modalBodyContent = '<div class="text-center p-5"><div class="spinner-border spinner-border-sm"></div></div>'; elements.policyModalBody.innerHTML = modalBodyContent; switch (policyType) { case 'privacy': title = 'Privacy Policy'; modalBodyContent = appSettings.policyPrivacy || 'Content not available.'; break; case 'terms': title = 'Terms and Conditions'; modalBodyContent = appSettings.policyTerms || 'Content not available.'; break; case 'refund': title = 'Refund and Cancellation'; modalBodyContent = appSettings.policyRefund || 'Content not available.'; break; case 'fairPlay': title = 'Fair Play Policy'; modalBodyContent = appSettings.policyFairPlay || 'Content not available.'; break; case 'refer': title = 'Refer & Earn'; if (!currentUser) { alert("Login to view referral."); return; } const refCode = userProfile.referralCode || 'N/A'; const referralBonus = appSettings.referralBonus || 5; modalBodyContent = `<div class="text-center"><h4>Refer Friends!</h4><p class="text-secondary">Share code & earn!</p><div class="my-4 p-3" style="background: var(--primary-bg); border-radius: 8px;"><p class="small text-secondary mb-1">Your Code:</p><h3 class="text-accent referral-code" id="referralCodeDisplay">${refCode}</h3><div class="mt-3"><button class="btn btn-sm btn-custom btn-custom-secondary me-2 copy-btn" data-target="#referralCodeDisplay"><i class="bi bi-clipboard"></i> Copy</button><button class="btn btn-sm btn-custom btn-custom-secondary" id="shareReferralBtn"><i class="bi bi-share-fill"></i> Share</button></div></div><p class="mt-3 small text-secondary"><h3>Referral Rules</h3>
+        <p>Invite your friends using your referral code.</p>
+        <p><strong>Rule:</strong> New referral will count only when they join <strong>1 match</strong>. Referrer gets <strong>₹5+</strong>. (Whether the invited user plays fully or not, it still counts.)</p>
+        <p><strong>Important:</strong> Only referrals who recharge ≥ ₹10 are valid.</p>
+        <p>No other cash or reward is given. This system is only to track valid referrals.</p></div>`; break; default: title = 'Info'; modalBodyContent = '<p>Content unavailable.</p>'; } elements.policyModalTitle.textContent = title; if (typeof modalBodyContent === 'string' && policyType !== 'refer') { elements.policyModalBody.innerHTML = modalBodyContent.replace(/\n/g, '<br>'); } else { elements.policyModalBody.innerHTML = modalBodyContent; } elements.policyModalInstance.show(); }
         function setupRealtimeListeners(uid) { if (!uid || !db || !currentUser) return; detachAllDbListeners(); const uRef = ref(db, `users/${uid}`); const listFunc = onValue(uRef, (s) => { if (currentUser && currentUser.uid === uid) { if (s.exists()) { const oldProfile = userProfile; userProfile = s.val(); populateUserInfo(currentUser, userProfile); if (currentSectionId === 'home-section') loadMyContests(); if (currentSectionId === 'wallet-section') loadRecentTransactions(); if (oldProfile.lastCheckedNotifications !== userProfile.lastCheckedNotifications) { loadAndDisplayNotifications(); } } else { alert("Account data missing or deleted. Logging out."); logoutUser(); } } else { off(uRef, 'value', listFunc); } }, (e) => { console.error("Listener error (user profile):", e); }); dbListeners['userProfile'] = { path: `users/${uid}`, func: listFunc }; }
         function detachAllDbListeners() { for (const k in dbListeners) { try { const { path, func } = dbListeners[k]; if (path && func) { off(ref(db, path), 'value', func); } } catch (e) { console.error(`Detach error ${k}:`, e); } } dbListeners = {}; }
         async function checkSecurityRules() { try { if (!currentUser) { } else if (elements.securityWarning) { elements.securityWarning.style.display = 'none'; } } catch (error) { if (elements.securityWarning) elements.securityWarning.style.display = 'none'; } }

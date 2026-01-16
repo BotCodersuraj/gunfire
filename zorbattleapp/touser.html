@@ -970,41 +970,41 @@ body {
             const signupBonus = appSettings.signupBonus || 10;
             const referralBonus = appSettings.referralBonus || 5;
 
-            const shareText = `⚠️ WARNING ⚠️  
-Free Fire khel raha hai aur ${appName} use nahi kar raha?  
+            const shareText = `⚠️ WARNING ⚠️
+
+Free Fire khel raha hai aur ${appName} use nahi kar raha?
 Toh tu apna hi nuksaan kar raha hai.
 
-🔥 ${appName} – Jahan Game Paisa Banata Hai 🔥  
+🔥 ${appName} – Jahan Game Paisa Banata Hai 🔥
 
-✅ 100% Free Joining  
-💰 ₹${signupBonus} Signup Bonus Direct Wallet  
-🌟 ₹${referralBonus} Per Refer – Unlimited Earning  
-⚡ Fast Tournaments  
-🏆 Real Cash Winning  
+✅ 100% Free Joining
+💰 ₹${signupBonus} Signup Bonus Direct Wallet
+🌟 ₹${referralBonus} Per Refer – Unlimited Earning
+⚡ Fast Tournaments
+🏆 Real Cash Winning
 
-Code = ${code}  
+Code = ${code}
 Code daalte hi turant ₹${signupBonus} confirm.
 
-📲 Download Now:  
+📲 Download Now:
 https://zorbattle.vercel.app
 
-Ya toh aaj kamaana start karega,  
+Ya toh aaj kamaana start karega,
 ya phir kal sochega “kaash install kar liya hota.”`;
 
-function shareApp() {
-    if (navigator.share) {
-        navigator.share({
-            title: `Join ${appName}!`,
-            text: shareText,
-            url: "https://zorbattle.vercel.app"
-        }).catch(err => console.log("Share cancelled", err));
-    } 
-    else {
-        // Fallback: Copy to clipboard
-        navigator.clipboard.writeText(shareText).then(() => {
-            alert("Share text copy ho gaya hai.\nAb kisi bhi app me paste karke share kar de.");
-        });
-    }
+if (navigator.share) {  
+    navigator.share({  
+        title: `Join ${appName}!`,  
+        text: shareText  
+    }).catch((error) => console.log('Error sharing', error));  
+} 
+else {  
+    // WhatsApp hata, copy system laga
+    navigator.clipboard.writeText(shareText).then(() => {
+        alert("Share text copy ho gaya hai.\nAb kisi bhi chatting app me paste karke share kar de.");
+    }).catch(() => {
+        alert("Copy nahi ho paya, manually select karke copy kar.");
+    });
 }
 
         function generateReferralCode(length = 8) { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let result = ''; for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length)); return result; }

@@ -970,42 +970,37 @@ body {
             const signupBonus = appSettings.signupBonus || 10;
             const referralBonus = appSettings.referralBonus || 5;
 
-            const shareText = `⚠️ WARNING ⚠️
-
-Free Fire khel raha hai aur ${appName} use nahi kar raha?
+            const shareText = `⚠️ WARNING ⚠️  
+Free Fire khel raha hai aur ${appName} use nahi kar raha?  
 Toh tu apna hi nuksaan kar raha hai.
 
-🔥 ${appName} – Jahan Game Paisa Banata Hai 🔥
+🔥 ${appName} – Jahan Game Paisa Banata Hai 🔥  
 
-✅ 100% Free Joining
-💰 ₹${signupBonus} Signup Bonus Direct Wallet
-🌟 ₹${referralBonus} Per Refer – Unlimited Earning
-⚡ Fast Tournaments
-🏆 Real Cash Winning
+✅ 100% Free Joining  
+💰 ₹${signupBonus} Signup Bonus Direct Wallet  
+🌟 ₹${referralBonus} Per Refer – Unlimited Earning  
+⚡ Fast Tournaments  
+🏆 Real Cash Winning  
 
-Code = ${code}
+Code = ${code}  
 Code daalte hi turant ₹${signupBonus} confirm.
 
-📲 Download Now:
+📲 Download Now:  
 https://zorbattle.vercel.app
 
-Ya toh aaj kamaana start karega,
+Ya toh aaj kamaana start karega,  
 ya phir kal sochega “kaash install kar liya hota.”`;
 
-if (navigator.share) {
-navigator.share({
-title: Join ${appName}!,
-text: shareText
-}).catch((error) => console.log('Error sharing', error));
-} else {
-const whatsappUrl = https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)};
-window.open(whatsappUrl, '_blank');
-}
-}
-
-Isko all app support kr de all chating app
-
-Aur haa mera jaisa code h vaisa hi Krna mera app chalta nhi fir
+            if (navigator.share) {
+                 navigator.share({
+                    title: `Join ${appName}!`,
+                    text: shareText
+                }).catch((error) => console.log('Error sharing', error));
+            } else {
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+                window.open(whatsappUrl, '_blank');
+            }
+        }
 
         function generateReferralCode(length = 8) { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let result = ''; for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length)); return result; }
         const formatDate = (timestamp) => {

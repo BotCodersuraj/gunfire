@@ -970,7 +970,8 @@ body {
             const signupBonus = appSettings.signupBonus || 10;
             const referralBonus = appSettings.referralBonus || 5;
 
-            const shareText = `⚠️ WARNING ⚠️  
+            function shareApp() {
+    const shareText = `⚠️ WARNING ⚠️  
 Free Fire khel raha hai aur ${appName} use nahi kar raha?  
 Toh tu apna hi nuksaan kar raha hai.
 
@@ -991,16 +992,19 @@ https://zorbattle.vercel.app
 Ya toh aaj kamaana start karega,  
 ya phir kal sochega “kaash install kar liya hota.”`;
 
-            if (navigator.share) {
-                 navigator.share({
-                    title: `Join ${appName}!`,
-                    text: shareText
-                }).catch((error) => console.log('Error sharing', error));
-            } else {
-                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-                window.open(whatsappUrl, '_blank');
-            }
-        }
+    if (navigator.share) {
+        navigator.share({
+            title: `Join ${appName}!`,
+            text: shareText,
+            url: "https://zorbattle.vercel.app"
+        }).catch(err => console.log("Share Error:", err));
+    } else {
+        // Android Full Share Intent (Not only WhatsApp)
+        const intentUrl = 
+        `intent://send/#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(shareText)};end`;
+        window.location.href = intentUrl;
+    }
+}
 
         function generateReferralCode(length = 8) { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let result = ''; for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length)); return result; }
         const formatDate = (timestamp) => {

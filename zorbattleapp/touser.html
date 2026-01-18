@@ -2691,7 +2691,7 @@ if (elements.saveAvatarBtn) {
         const finalUrl = customUrl || selectedAvatarUrl;
 
         if (!finalUrl) {
-            alert("Bhai, pehle koi photo toh select karo!");
+            alert(“Please select a photo first.”);
             return;
         }
 
@@ -2712,11 +2712,11 @@ if (elements.saveAvatarBtn) {
             if (elements.profileAvatar) elements.profileAvatar.src = finalUrl;
             
             elements.avatarModalInstance.hide();
-            alert("Profile Photo Update Ho Gayi!");
+            alert("The profile photo has been updated!");
 
         } catch (error) {
             console.error(error);
-            alert("Error: Photo save nahi hui.");
+            alert("Error: Failed to save the photo.");
         } finally {
             elements.saveAvatarBtn.disabled = false;
             elements.saveAvatarBtn.innerText = "Save Photo";

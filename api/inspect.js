@@ -3,15 +3,14 @@ const MASTER_KEY = "ZOVAXO_MASTER_2026";
 const OWNER_KEY = "ZOVAXO_OWNER_2026";
 const DEFAULT_LIMIT = 100;
 
-// Persistent in-memory store (reset on redeploy)
 global.apiKeys = global.apiKeys || {};
 
 export default async function handler(req, res) {
 
-  const { action, key, url, target } = req.query;
+  const { action, key, url, target, limit } = req.query;
 
   // ==============================
-  // 🔑 CREATE NEW KEY
+  // 🔑 CREATE KEY (CUSTOM LIMIT)
   // ==============================
   if (action === "create") {
 
@@ -22,11 +21,13 @@ export default async function handler(req, res) {
       });
     }
 
+    const customLimit = parseInt(limit) || DEFAULT_LIMIT;
+
     const newKey = "ZK_" + Math.random().toString(36).substring(2, 10);
 
     global.apiKeys[newKey] = {
       used: 0,
-      limit: DEFAULT_LIMIT,
+      limit: customLimit,
       active: true,
       createdAt: Date.now()
     };
@@ -34,12 +35,13 @@ export default async function handler(req, res) {
     return res.json({
       success: true,
       apiKey: newKey,
-      limit: DEFAULT_LIMIT
+      limit: customLimit,
+      message: "Key created successfully"
     });
   }
 
   // ==============================
-  // 👑 ADMIN STATS / BAN
+  // 👑 ADMIN PANEL
   // ==============================
   if (action === "admin") {
 
@@ -85,36 +87,58 @@ export default async function handler(req, res) {
     });
   }
 
-  // OWNER KEY = unlimited
-  if (key !== OWNER_KEY) {
+  let keyInfo = null;
 
-    const keyData = global.apiKeys[key];
+  // OWNER KEY (Unlimited)
+  if (key === OWNER_KEY) {
 
-    if (!keyData) {
+    keyInfo = {
+      type: "OWNER",
+      used: "Unlimited",
+      remaining: "Unlimited",
+      totalLimit: "Unlimited",
+      active: true
+    };
+
+  } else {
+
+    const data = global.apiKeys[key];
+
+    if (!data) {
       return res.status(403).json({
         success: false,
         error: "INVALID_KEY"
       });
     }
 
-    if (!keyData.active) {
+    if (!data.active) {
       return res.status(403).json({
         success: false,
-        error: "KEY_BANNED_OR_EXPIRED"
+        error: "KEY_EXPIRED_OR_BANNED"
       });
     }
 
-    if (keyData.used >= keyData.limit) {
-      keyData.active = false;
+    if (data.used >= data.limit) {
+      data.active = false;
 
       return res.status(403).json({
         success: false,
         error: "KEY_EXPIRED",
-        message: "100 request limit reached"
+        used: data.used,
+        totalLimit: data.limit,
+        remaining: 0
       });
     }
 
-    keyData.used++;
+    data.used++;
+
+    keyInfo = {
+      type: "NORMAL",
+      used: data.used,
+      totalLimit: data.limit,
+      remaining: data.limit - data.used,
+      active: true
+    };
   }
 
   if (!url) {
@@ -129,7 +153,7 @@ export default async function handler(req, res) {
     const start = Date.now();
 
     const response = await fetch(url, {
-      headers: { "User-Agent": "ZovaxoOneFile/1.0" }
+      headers: { "User-Agent": "ZovaxoOneFile/2.0" }
     });
 
     const html = await response.text();
@@ -141,6 +165,9 @@ export default async function handler(req, res) {
       responseTime: time + "ms",
       length: html.length,
       title: html.match(/<title>(.*?)<\/title>/i)?.[1] || null,
+
+      usage: keyInfo,
+
       raw: html
     });
 
@@ -149,7 +176,8 @@ export default async function handler(req, res) {
     return res.status(500).json({
       success: false,
       error: "FETCH_FAILED",
-      message: err.message
+      message: err.message,
+      usage: keyInfo
     });
   }
 }

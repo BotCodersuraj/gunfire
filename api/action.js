@@ -2,7 +2,19 @@ let songsDB = [];
 
 export default async function handler(req, res) {
   try {
-    const { type, query, title, is_list, mode } = req.query;
+    const {
+      type,
+      query,
+      title,
+      singer,
+      writer,
+      composer,
+      album,
+      year,
+      genre,
+      is_list,
+      mode
+    } = req.query;
 
     // SEARCH SONG
     if (type === "search") {
@@ -25,18 +37,24 @@ export default async function handler(req, res) {
       });
     }
 
-    // ADD SONG
+    // ADD SONG WITH FULL DETAILS
     if (type === "add") {
-      if (!title) {
+      if (!title || !singer) {
         return res.status(400).json({
           success: false,
-          message: "Title missing"
+          message: "Title and Singer required"
         });
       }
 
       const newSong = {
         id: songsDB.length + 1,
-        title: title,
+        title,
+        singer,
+        writer: writer || null,
+        composer: composer || null,
+        album: album || null,
+        year: year ? Number(year) : null,
+        genre: genre || null,
         is_list: is_list === "true",
         created_at: Date.now()
       };
@@ -45,12 +63,11 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        message: "Song added",
+        message: "Song added successfully",
         data: newSong
       });
     }
 
-    // DEFAULT RESPONSE
     return res.status(400).json({
       success: false,
       message: "Invalid action type"

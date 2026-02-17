@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nebula Cloud | Pro Control Panel</title>
+    <title>Nebula Cloud | Live Hosting</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -24,171 +23,84 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            height: 100vh; 
-            overflow: hidden; 
-            touch-action: manipulation; /* Prevents double-tap zoom */
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; touch-action: manipulation; }
         .hidden { display: none !important; }
 
-        /* --- LOADER --- */
-        #loading { 
-            position: fixed; inset: 0; background: var(--bg); z-index: 10000; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-        }
-        .loader-bar { width: 200px; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 20px; }
-        .loader-progress { height: 100%; width: 0%; background: var(--accent); animation: load 3s linear forwards; }
+        /* --- LOADING --- */
+        #loading { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .loader-bar { width: 180px; height: 3px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 20px; }
+        .loader-p { height: 100%; width: 0%; background: var(--accent); animation: load 3s linear forwards; }
         @keyframes load { to { width: 100%; } }
 
-        /* --- HEADER --- */
-        header { 
-            padding: 15px 20px; border-bottom: 1px solid var(--border); 
-            display: flex; justify-content: space-between; align-items: center; background: var(--surface);
-        }
-        .logo { font-weight: 800; color: var(--accent); font-size: 1.2rem; }
-
-        /* --- DASHBOARD GRID --- */
-        .main-container { padding: 20px; height: calc(100vh - 65px); overflow-y: auto; }
+        /* --- UI COMPONENTS --- */
+        header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
+        .main-content { padding: 20px; height: calc(100vh - 65px); overflow-y: auto; }
         
-        .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--surface); padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
-        .stat-card small { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; }
-        .stat-card p { font-weight: 700; font-size: 1.1rem; margin-top: 5px; }
+        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+        .btn-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 15px 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .btn-tile:active { background: var(--accent); }
 
-        .action-grid { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; 
-        }
-        .action-btn { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 12px; 
-            padding: 15px 10px; display: flex; flex-direction: column; align-items: center; 
-            gap: 8px; cursor: pointer; transition: 0.2s;
-        }
-        .action-btn:active { transform: scale(0.95); background: var(--accent); }
-        .action-btn i { font-size: 1.2rem; }
-        .action-btn span { font-size: 0.75rem; font-weight: 600; text-align: center; }
+        /* --- EDITOR & PREVIEW --- */
+        #editor { position: fixed; inset: 0; background: var(--bg); z-index: 900; display: flex; flex-direction: column; }
+        textarea { flex: 1; width: 100%; background: #000; color: #10b981; border: none; padding: 15px; font-family: 'Fira Code'; font-size: 13px; outline: none; }
+        
+        #public-view { position: fixed; inset: 0; background: white; z-index: 2000; }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        /* --- PROJECT LIST --- */
-        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-dim); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .project-card { 
-            background: var(--surface); border: 1px solid var(--border); padding: 15px; 
-            border-radius: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); }
-
-        /* --- EDITOR --- */
-        #editor { position: fixed; inset: 0; background: var(--bg); z-index: 500; display: flex; flex-direction: column; }
-        .editor-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
-        .file-explorer { background: var(--surface); padding: 10px; display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
-        .file-tab { padding: 5px 15px; border-radius: 20px; border: 1px solid var(--border); font-size: 0.8rem; background: var(--bg); }
-        .file-tab.active { border-color: var(--accent); color: var(--accent); }
-        textarea { flex: 1; width: 100%; background: #000; color: #10b981; border: none; padding: 15px; font-family: 'Fira Code', monospace; font-size: 14px; outline: none; }
-
-        /* --- CONSOLE --- */
-        #console-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; display: flex; align-items: center; }
-        .terminal { background: #000; width: 100%; border-radius: 10px; border: 1px solid #333; height: 70vh; display: flex; flex-direction: column; }
-        .term-body { flex: 1; padding: 15px; font-family: 'Fira Code', monospace; color: #10b981; font-size: 0.8rem; overflow-y: auto; line-height: 1.6; }
-
-        /* --- AUTH --- */
-        #auth { height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 30px; }
-        input { width: 100%; padding: 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none; }
-        .btn-primary { background: var(--accent); color: white; padding: 15px; border-radius: 12px; border: none; font-weight: 700; width: 100%; }
+        .project-card { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { padding: 8px 15px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.75rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="loading">
-    <div class="logo">NEBULA CLOUD</div>
-    <div class="loader-bar"><div class="loader-progress"></div></div>
+    <h2 style="font-weight:800; letter-spacing:2px;">NEBULA CLOUD</h2>
+    <div class="loader-bar"><div class="loader-p"></div></div>
 </div>
 
-<div id="auth" class="hidden">
-    <h1 style="margin-bottom: 10px; font-weight: 800;">Welcome.</h1>
-    <p style="color: var(--text-dim); margin-bottom: 30px;">Login to manage your cloud.</p>
-    <input id="email" type="email" placeholder="Email Address">
-    <input id="password" type="password" placeholder="Password">
-    <button class="btn-primary" onclick="handleAuth()">Authorize Access</button>
-</div>
-
-<div id="home" class="hidden">
-    <header>
-        <div class="logo">NEBULA.</div>
-        <button onclick="auth.signOut()" style="background:none; border:none; color:var(--danger); font-weight:700;">EXIT</button>
-    </header>
-
-    <div class="main-container">
-        <div class="stats-row">
-            <div class="stat-card">
-                <small>Instances</small>
-                <p id="stat-count">0</p>
-            </div>
-            <div class="stat-card">
-                <small>Network</small>
-                <p>99.9%</p>
-            </div>
-        </div>
-
-        <div class="section-title">QUICK ACTIONS</div>
-        <div class="action-grid">
-            <div class="action-btn" onclick="createProject()">
-                <span style="font-size:1.5rem;">➕</span>
-                <span>New Host</span>
-            </div>
-            <div class="action-btn" onclick="alert('SQL Databases coming soon')">
-                <span style="font-size:1.5rem;">🗄️</span>
-                <span>Databases</span>
-            </div>
-            <div class="action-btn" onclick="alert('SSL Certificates Active')">
-                <span style="font-size:1.5rem;">🔒</span>
-                <span>SSL/TLS</span>
-            </div>
-            <div class="action-btn" onclick="alert('Node.js V18 Running')">
-                <span style="font-size:1.5rem;">⚡</span>
-                <span>Runtime</span>
-            </div>
-            <div class="action-btn" onclick="alert('Daily backups enabled')">
-                <span style="font-size:1.5rem;">💾</span>
-                <span>Backups</span>
-            </div>
-            <div class="action-btn" onclick="alert('Settings loaded')">
-                <span style="font-size:1.5rem;">⚙️</span>
-                <span>Settings</span>
-            </div>
-        </div>
-
-        <div class="section-title">LIVE PROJECTS</div>
-        <div id="projects"></div>
+<div id="public-view" class="hidden">
+    <div style="position:fixed; bottom:20px; right:20px; z-index:3000;">
+        <button onclick="location.reload()" class="btn" style="background:rgba(0,0,0,0.5); color:white; backdrop-filter:blur(5px);">Refresh</button>
+        <button onclick="window.location.href=window.location.pathname" class="btn" style="background:var(--danger); color:white;">Exit Preview</button>
     </div>
+    <iframe id="output-frame"></iframe>
 </div>
 
-<div id="editor" class="hidden">
-    <div class="editor-header">
-        <button onclick="closeEditor()" style="background:none; border:none; color:var(--accent); font-weight:700;">← CLOSE</button>
-        <button onclick="deployProject()" style="background:var(--accent); border:none; color:white; padding:5px 15px; border-radius:8px; font-weight:700;">🚀 DEPLOY</button>
+<div id="app-root" class="hidden">
+    <div id="auth" class="hidden" style="padding:40px; height:100vh; display:flex; flex-direction:column; justify-content:center;">
+        <h1 style="margin-bottom:20px;">Nebula Login</h1>
+        <input id="email" type="email" placeholder="Email" style="width:100%; padding:15px; margin-bottom:10px; background:var(--surface); border:1px solid var(--border); color:white; border-radius:10px;">
+        <input id="password" type="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; background:var(--surface); border:1px solid var(--border); color:white; border-radius:10px;">
+        <button onclick="handleAuth()" class="btn" style="background:var(--accent); color:white; padding:15px;">LOGIN / REGISTER</button>
     </div>
-    <div class="file-explorer">
-        <div class="file-tab active" id="current-file-label">index.html</div>
-        <div class="file-tab" onclick="addFile()">+ New File</div>
-    </div>
-    <textarea id="code-editor" spellcheck="false" oninput="saveLocal()"></textarea>
-</div>
 
-<div id="console-overlay" class="hidden">
-    <div class="terminal">
-        <div style="background:#222; padding:8px; display:flex; gap:5px; border-radius:10px 10px 0 0;">
-            <div style="width:10px; height:10px; background:red; border-radius:50%;"></div>
-            <div style="width:10px; height:10px; background:green; border-radius:50%;"></div>
+    <div id="home" class="hidden">
+        <header>
+            <div style="font-weight:800; color:var(--accent);">NEBULA.SH</div>
+            <button onclick="auth.signOut()" class="btn" style="color:var(--danger); background:none;">LOGOUT</button>
+        </header>
+        <div class="main-content">
+            <div class="action-grid">
+                <div class="btn-tile" onclick="createProject()"><span>🚀</span><small>New Site</small></div>
+                <div class="btn-tile"><span>📦</span><small>Data</small></div>
+                <div class="btn-tile"><span>⚙️</span><small>Config</small></div>
+            </div>
+            <h3 style="font-size:0.8rem; color:var(--text-dim); margin-bottom:15px;">ACTIVE URLS</h3>
+            <div id="project-list"></div>
         </div>
-        <div id="logs" class="term-body"></div>
+    </div>
+
+    <div id="editor" class="hidden">
+        <div style="padding:15px; background:var(--surface); display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
+            <button onclick="closeEditor()" class="btn" style="background:none; color:var(--text-dim);">BACK</button>
+            <button onclick="pasteCode()" class="btn" style="background:#334155; color:white;">📋 PASTE</button>
+            <button onclick="deploy()" class="btn" style="background:var(--accent); color:white;">🚀 HOST LIVE</button>
+        </div>
+        <textarea id="code-area" spellcheck="false"></textarea>
     </div>
 </div>
 
 <script>
-// --- FIREBASE CONFIG ---
 const firebaseConfig = {
     apiKey: "AIzaSyDSCU7uFxMBi5W3OQHb55rZz3_hXROZRdI",
     authDomain: "zor-battle.firebaseapp.com",
@@ -203,87 +115,91 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-let currentProject = "";
-let currentFiles = {};
+let currentProj = "";
 
-// --- INIT ---
+// --- URL LOGIC ---
+const urlParams = new URLSearchParams(window.location.search);
+const publicProject = urlParams.get('project');
+const ownerId = urlParams.get('u');
+
 window.onload = () => {
+    // Agar URL mein ?project=... hai, toh direct web view dikhao
+    if(publicProject && ownerId) {
+        document.getElementById("loading").classList.add("hidden");
+        loadPublicSite(ownerId, publicProject);
+        return;
+    }
+
     setTimeout(() => {
         document.getElementById("loading").classList.add("hidden");
-        checkUser();
+        document.getElementById("app-root").classList.remove("hidden");
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                document.getElementById("auth").classList.add("hidden");
+                document.getElementById("home").classList.remove("hidden");
+                loadProjects();
+            } else {
+                document.getElementById("auth").classList.remove("hidden");
+                document.getElementById("home").classList.add("hidden");
+            }
+        });
     }, 3000);
 };
 
-function checkUser() {
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            document.getElementById("auth").classList.add("hidden");
-            document.getElementById("home").classList.remove("hidden");
-            loadProjects();
+// --- PREVIEW SYSTEM ---
+function loadPublicSite(uid, name) {
+    db.ref(`projects/${uid}/${name}`).once('value', snap => {
+        const data = snap.val();
+        if(data) {
+            document.getElementById("public-view").classList.remove("hidden");
+            document.getElementById("output-frame").srcdoc = data.files['index.html'];
         } else {
-            document.getElementById("auth").classList.remove("hidden");
-            document.getElementById("home").classList.add("hidden");
+            document.body.innerHTML = "<h1>404: Site Not Found</h1>";
         }
     });
 }
 
-async function handleAuth() {
-    const e = document.getElementById("email").value;
-    const p = document.getElementById("password").value;
-    try {
-        await auth.signInWithEmailAndPassword(e, p);
-    } catch {
-        await auth.createUserWithEmailAndPassword(e, p);
-    }
-}
-
-// --- CORE FUNCTIONS ---
 function loadProjects() {
     db.ref(`projects/${auth.currentUser.uid}`).on("value", snap => {
         const data = snap.val();
-        const container = document.getElementById("projects");
-        const statCount = document.getElementById("stat-count");
-        container.innerHTML = "";
-        
-        if (!data) {
-            statCount.innerText = "0";
-            container.innerHTML = "<div style='text-align:center; padding:40px; color:var(--text-dim);'>No Projects Active.</div>";
-            return;
-        }
-
-        const keys = Object.keys(data);
-        statCount.innerText = keys.length;
-        
-        keys.forEach(name => {
-            const card = document.createElement("div");
-            card.className = "project-card";
-            card.innerHTML = `
+        const list = document.getElementById("project-list");
+        list.innerHTML = "";
+        if(!data) return;
+        Object.keys(data).forEach(name => {
+            const div = document.createElement("div");
+            div.className = "project-card";
+            // Yahan humne "View Live" button add kiya jo direct URL banayega
+            div.innerHTML = `
+                <div><b>${name}</b></div>
                 <div>
-                    <div style="font-weight:700;">${name}</div>
-                    <div style="font-size:0.7rem; color:var(--text-dim);">nebula.cloud/${name}</div>
-                </div>
-                <div class="status-dot"></div>
-            `;
-            card.onclick = () => openEditor(name, data[name].files);
-            container.appendChild(card);
+                    <button class="btn" style="background:var(--success); color:white; margin-right:5px;" onclick="openLive('${name}')">VIEW URL</button>
+                    <button class="btn" style="background:var(--surface); color:var(--accent);" onclick="editProj('${name}', '${btoa(data[name].files['index.html'])}')">EDIT</button>
+                </div>`;
+            list.appendChild(div);
         });
     });
 }
 
-function createProject() {
-    const name = prompt("Enter Unique Host Name (No spaces):");
-    if (!name || name.includes(" ")) return;
-    currentProject = name;
-    currentFiles = { "index.html": "<h1>Hello Nebula Cloud</h1>" };
-    openEditor(name, currentFiles);
+function openLive(name) {
+    // Yeh URL user ko share kiya ja sakta hai
+    const publicUrl = `${window.location.pathname}?project=${name}&u=${auth.currentUser.uid}`;
+    window.location.href = publicUrl;
 }
 
-function openEditor(name, files) {
-    currentProject = name;
-    currentFiles = files;
+function editProj(name, code64) {
+    currentProj = name;
     document.getElementById("home").classList.add("hidden");
     document.getElementById("editor").classList.remove("hidden");
-    document.getElementById("code-editor").value = currentFiles["index.html"];
+    document.getElementById("code-area").value = atob(code64);
+}
+
+function createProject() {
+    const n = prompt("Enter Project Name:");
+    if(!n) return;
+    currentProj = n;
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("editor").classList.remove("hidden");
+    document.getElementById("code-area").value = "<h1>New Project</h1>";
 }
 
 function closeEditor() {
@@ -291,47 +207,24 @@ function closeEditor() {
     document.getElementById("home").classList.remove("hidden");
 }
 
-function saveLocal() {
-    currentFiles["index.html"] = document.getElementById("code-editor").value;
+async function pasteCode() {
+    const text = await navigator.clipboard.readText();
+    document.getElementById("code-area").value = text;
 }
 
-async function deployProject() {
-    const logs = document.getElementById("logs");
-    const overlay = document.getElementById("console-overlay");
-    overlay.classList.remove("hidden");
-    logs.innerHTML = "";
-
-    const steps = [
-        "Connecting to Nebula Cluster...",
-        "Allocating Virtual Node...",
-        "Checking index.html integrity...",
-        "Mounting Storage Engine...",
-        "Applying SSL/TLS Layer...",
-        "Warming up server...",
-        "DEPLOYMENT SUCCESSFUL 🚀"
-    ];
-
-    for (let step of steps) {
-        const wait = Math.floor(Math.random() * 2000) + 500;
-        await new Promise(r => setTimeout(r, wait));
-        logs.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${step}</div>`;
-        logs.scrollTop = logs.scrollHeight;
-    }
-
-    await db.ref(`projects/${auth.currentUser.uid}/${currentProject}`).set({
-        files: currentFiles,
-        timestamp: Date.now()
+async function deploy() {
+    const code = document.getElementById("code-area").value;
+    await db.ref(`projects/${auth.currentUser.uid}/${currentProj}`).set({
+        files: { "index.html": code }
     });
-
-    setTimeout(() => {
-        overlay.classList.add("hidden");
-        closeEditor();
-    }, 2000);
+    alert("Deployed! Click 'VIEW URL' on dashboard to see it live.");
+    closeEditor();
 }
 
-function addFile() {
-    const f = prompt("Filename (e.g. style.css):");
-    if(f) alert("File creation enabled in next cluster update.");
+async function handleAuth() {
+    const e = email.value, p = password.value;
+    try { await auth.signInWithEmailAndPassword(e, p); }
+    catch { await auth.createUserWithEmailAndPassword(e, p); }
 }
 </script>
 

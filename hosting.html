@@ -3,339 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nebula Cloud | Advanced Hosting Panel</title>
+    <title>Nebula Cloud | Web Hosting Panel</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <style>
         :root {
+            --bg: #ffffff;
+            --text: #0f172a;
             --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.3);
-            --bg: #0b0f1a;
-            --surface: #161b2c;
-            --border: rgba(255, 255, 255, 0.1);
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --success: #10b981;
-            --error: #ef4444;
+            --card: #f8fafc;
+            --border: #e2e8f0;
+            --console-bg: #000000;
+            --console-text: #10b981;
         }
 
-        @media (prefers-color-scheme: light) {
+        @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #f8fafc;
-                --surface: #ffffff;
-                --border: #e2e8f0;
-                --text: #0f172a;
-                --text-dim: #64748b;
+                --bg: #0b0f1a;
+                --text: #f8fafc;
+                --card: #161b2c;
+                --border: rgba(255, 255, 255, 0.1);
             }
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-        /* --- LOADER --- */
-        #loading-screen { 
-            position: fixed; inset: 0; background: var(--bg); 
-            z-index: 9999; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
-            transition: 0.8s ease-in-out;
-        }
-        .loader-track { width: 280px; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 20px; }
-        .loader-fill { width: 0%; height: 100%; background: var(--accent); animation: load 3s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
-        @keyframes load { 0% { width: 0%; } 100% { width: 100%; } }
-
-        /* --- LAYOUTS --- */
+        /* --- UI UTILS --- */
         .hidden { display: none !important; }
-        header { padding: 1rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
-        
-        /* Dashboard */
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; padding: 2rem; overflow-y: auto; height: calc(100vh - 70px); }
-        .card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 16px; transition: 0.3s; cursor: pointer; }
-        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        button { cursor: pointer; border: none; font-weight: 600; transition: 0.3s; border-radius: 8px; }
+        input, textarea { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 8px; outline: none; }
+        input:focus { border-color: var(--accent); }
 
-        /* Editor */
-        #editor-view { display: grid; grid-template-columns: 260px 1fr 1fr; height: calc(100vh - 70px); }
-        .sidebar { border-right: 1px solid var(--border); background: var(--surface); padding: 1rem; display: flex; flex-direction: column; }
-        .file-item { padding: 8px 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px; font-family: 'Fira Code'; font-size: 0.85rem; display: flex; justify-content: space-between; }
-        .file-item:hover { background: rgba(255,255,255,0.05); }
-        .file-item.active { background: var(--accent); color: white; }
+        /* --- LOADING SCREEN --- */
+        #loading { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .nebula-logo { font-size: 2.5rem; font-weight: 800; background: linear-gradient(to right, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+        .loader-track { width: 250px; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .loader-fill { height: 100%; width: 0%; background: var(--accent); animation: load 3s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        .code-container { display: flex; flex-direction: column; border-right: 1px solid var(--border); }
-        textarea { flex: 1; background: transparent; color: var(--text); border: none; padding: 20px; font-family: 'Fira Code'; font-size: 0.9rem; resize: none; outline: none; line-height: 1.5; }
-        
-        .preview-container { background: #fff; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; background: #fff; }
+        /* --- AUTH --- */
+        #auth { height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent); }
+        .auth-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+
+        /* --- DASHBOARD --- */
+        #home { padding: 30px; height: 100vh; overflow-y: auto; }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .project-card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 16px; cursor: pointer; transition: 0.4s; }
+        .project-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+
+        /* --- EDITOR --- */
+        #editor { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
+        .sidebar { background: var(--card); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
+        .editor-main { display: flex; flex-direction: column; padding: 20px; gap: 15px; }
+        textarea { flex: 1; font-family: 'Fira Code', monospace; font-size: 14px; background: #000; color: #fff; }
+        .file-pill { background: var(--bg); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-family: 'Fira Code'; font-size: 12px; }
 
         /* --- CONSOLE --- */
-        #console-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .terminal { width: 100%; max-width: 700px; background: #000; border-radius: 12px; border: 1px solid #333; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .term-body { padding: 20px; height: 400px; overflow-y: auto; color: var(--success); font-family: 'Fira Code'; font-size: 0.85rem; white-space: pre-wrap; }
+        #console-view { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .terminal { width: 100%; max-width: 700px; height: 450px; background: var(--console-bg); border-radius: 12px; border: 1px solid #333; display: flex; flex-direction: column; overflow: hidden; }
+        .term-header { background: #222; padding: 10px; display: flex; gap: 8px; }
+        .term-body { flex: 1; padding: 20px; color: var(--console-text); font-family: 'Fira Code', monospace; font-size: 13px; overflow-y: auto; line-height: 1.5; white-space: pre-wrap; }
 
         /* --- BUTTONS --- */
-        .btn { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: white; font-size: 1.5rem; border: none; cursor: pointer; box-shadow: 0 10px 20px var(--accent-glow); }
-        
-        /* Auth */
-        .auth-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, var(--accent-glow), transparent); }
-        .auth-box { background: var(--surface); padding: 3rem; border-radius: 24px; border: 1px solid var(--border); width: 100%; max-width: 400px; }
-        input { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; color: #fff; margin-bottom: 1rem; }
+        .btn-primary { background: var(--accent); color: white; padding: 12px 20px; }
+        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
+        .fab { position: fixed; bottom: 30px; right: 30px; background: var(--accent); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <h1 style="letter-spacing: -1px; font-weight: 800;">NEBULA<span style="color: var(--accent);">CLOUD</span></h1>
-        <div class="loader-track"><div class="loader-fill"></div></div>
-    </div>
+<div id="loading">
+    <div class="nebula-logo">NEBULA</div>
+    <div class="loader-track"><div class="loader-fill"></div></div>
+    <p style="margin-top: 15px; color: gray; font-size: 0.8rem; letter-spacing: 2px;">INITIALIZING CLOUD</p>
+</div>
 
-    <div id="auth-view" class="hidden auth-screen">
-        <div class="auth-box">
-            <h2 id="auth-title" style="margin-bottom: 2rem;">Welcome Back</h2>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button class="btn btn-primary" style="width: 100%;" onclick="handleAuth()">Continue</button>
-            <p onclick="toggleAuth()" style="text-align:center; margin-top:1.5rem; cursor:pointer; color:var(--text-dim); font-size:0.85rem;">Toggle Login / Register</p>
+<div id="auth" class="hidden">
+    <div class="auth-card">
+        <h2 style="margin-bottom: 25px; font-weight: 800;">Get Started</h2>
+        <input id="email" placeholder="Email Address" style="width: 100%; margin-bottom: 15px;">
+        <input id="password" type="password" placeholder="Password" style="width: 100%; margin-bottom: 25px;">
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" style="flex: 1;" onclick="login()">Login</button>
+            <button class="btn-primary" style="flex: 1; background: #222;" onclick="register()">Register</button>
         </div>
     </div>
+</div>
 
-    <div id="dashboard-view" class="hidden">
-        <header>
-            <div style="font-weight: 800; color: var(--accent);">NEBULA.</div>
-            <button class="btn btn-ghost" onclick="auth.signOut()">Logout</button>
-        </header>
-        <div id="project-list" class="project-grid"></div>
-        <button class="fab" onclick="initNewProject()">+</button>
+<div id="home" class="hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-weight: 800; font-size: 1.8rem;">Your Cluster</h2>
+        <button onclick="auth.signOut()" style="background:none; color: #ef4444;">Sign Out</button>
     </div>
-
-    <div id="editor-view" class="hidden">
-        <div class="sidebar">
-            <button class="btn btn-ghost" style="margin-bottom: 1rem;" onclick="showView('dashboard-view')">← Back</button>
-            <div style="font-weight: 600; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-dim);">FILES</div>
-            <div id="file-list" style="flex: 1;"></div>
-            <button class="btn btn-primary" style="font-size: 0.75rem;" onclick="addNewFile()">+ Add File</button>
-        </div>
-        <div class="code-container">
-            <div style="padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                <span id="active-file-name" style="font-family: 'Fira Code'; font-size: 0.8rem;">index.html</span>
-                <button class="btn btn-primary" style="padding: 5px 15px; font-size: 0.75rem;" onclick="triggerHost()">🚀 START HOST</button>
-            </div>
-            <textarea id="editor-ctrl" spellcheck="false" oninput="syncCode()"></textarea>
-        </div>
-        <div class="preview-container">
-            <iframe id="preview-frame"></iframe>
-        </div>
+    <div id="noProject" style="margin-top: 50px; text-align: center; color: gray;">
+        <p style="font-size: 1.2rem;">No projects added yet 🚀</p>
     </div>
+    <div id="projects" class="project-grid"></div>
+    <div class="fab" onclick="createProject()">+</div>
+</div>
 
-    <div id="console-overlay" class="hidden">
-        <div class="terminal">
-            <div style="padding: 10px; background: #222; display: flex; gap: 5px;">
-                <div style="width:10px; height:10px; border-radius:50%; background:#ff5f56"></div>
-                <div style="width:10px; height:10px; border-radius:50%; background:#27c93f"></div>
-            </div>
-            <div id="console-logs" class="term-body"></div>
-        </div>
+<div id="editor" class="hidden">
+    <div class="sidebar">
+        <button onclick="backHome()" style="background: none; color: var(--accent); text-align: left; margin-bottom: 20px;">← Back to Cluster</button>
+        <h3 id="projectTitle" style="margin-bottom: 20px; font-weight: 800;"></h3>
+        <div id="fileList" style="flex: 1; overflow-y: auto;"></div>
+        <button class="btn-primary" style="margin-top: 10px;" onclick="startHostingFlow()">🚀 START HOST</button>
     </div>
+    <div class="editor-main">
+        <div style="display: flex; gap: 10px;">
+            <input id="fileName" placeholder="index.html" style="flex: 1;">
+            <button class="btn-primary" style="background: #222;" onclick="addFile()">+ Add File</button>
+        </div>
+        <textarea id="fileCode" placeholder="// Write code here..."></textarea>
+    </div>
+</div>
 
-    <script>
-        // --- CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyDSCU7uFxMBi5W3OQHb55rZz3_hXROZRdI",
-            authDomain: "zor-battle.firebaseapp.com",
-            databaseURL: "https://zor-battle-default-rtdb.firebaseio.com",
-            projectId: "zor-battle",
-            storageBucket: "zor-battle.firebasestorage.app",
-            messagingSenderId: "305211042481",
-            appId: "1:305211042481:web:6ebef4c35e2abd80bb9090"
-        };
+<div id="console-view" class="hidden">
+    <div class="terminal">
+        <div class="term-header">
+            <div style="width:12px; height:12px; border-radius:50%; background:#ff5f56"></div>
+            <div style="width:12px; height:12px; border-radius:50%; background:#ffbd2e"></div>
+            <div style="width:12px; height:12px; border-radius:50%; background:#27c93f"></div>
+        </div>
+        <div id="term-content" class="term-body"></div>
+    </div>
+</div>
 
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.database();
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDSCU7uFxMBi5W3OQHb55rZz3_hXROZRdI",
+  authDomain: "zor-battle.firebaseapp.com",
+  databaseURL: "https://zor-battle-default-rtdb.firebaseio.com",
+  projectId: "zor-battle",
+  storageBucket: "zor-battle.firebasestorage.app",
+  messagingSenderId: "305211042481",
+  appId: "1:305211042481:web:6ebef4c35e2abd80bb9090"
+};
 
-        let currentProjectName = null;
-        let projectData = { files: {} };
-        let activeFile = 'index.html';
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
 
-        // --- INITIALIZATION ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loading-screen').style.display = 'none';
-                    checkUser();
-                }, 800);
-            }, 3000);
+let currentProject = "";
+let files = {};
+
+// 1. LOADING SCREEN LOGIC
+setTimeout(() => {
+    document.getElementById("loading").style.opacity = "0";
+    setTimeout(() => {
+        document.getElementById("loading").classList.add("hidden");
+        checkAuthState();
+    }, 500);
+}, 3000);
+
+function checkAuthState() {
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById("auth").classList.add("hidden");
+            document.getElementById("home").classList.remove("hidden");
+            loadProjects();
+        } else {
+            document.getElementById("auth").classList.remove("hidden");
+            document.getElementById("home").classList.add("hidden");
+            document.getElementById("editor").classList.add("hidden");
+        }
+    });
+}
+
+function login() { auth.signInWithEmailAndPassword(email.value, password.value).catch(e => alert(e.message)); }
+function register() { auth.createUserWithEmailAndPassword(email.value, password.value).catch(e => alert(e.message)); }
+
+// 3. DASHBOARD LOGIC
+function loadProjects() {
+    db.ref("projects/" + auth.currentUser.uid).on("value", snap => {
+        const data = snap.val();
+        const container = document.getElementById("projects");
+        const empty = document.getElementById("noProject");
+        container.innerHTML = "";
+        if (!data) { empty.classList.remove("hidden"); return; }
+        empty.classList.add("hidden");
+        Object.keys(data).forEach(name => {
+            const div = document.createElement("div");
+            div.className = "project-card";
+            div.innerHTML = `<h3 style="margin-bottom:5px;">${name}</h3><p style="font-size:0.8rem; color:gray;">nebula-host.io/${name}</p>`;
+            div.onclick = () => openProject(name, data[name]);
+            container.appendChild(div);
         });
+    });
+}
 
-        function checkUser() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    showView('dashboard-view');
-                    loadProjects(user.uid);
-                } else {
-                    showView('auth-view');
-                }
-            });
-        }
+function createProject() {
+    const name = prompt("Project Name (slug-only, no spaces):");
+    if (!name || !/^[a-z0-9-]+$/.test(name)) return alert("Invalid name! Use lowercase and dashes only.");
+    currentProject = name;
+    files = { "index.html": "<h1>Welcome to Nebula Cloud</h1>" };
+    showEditor();
+}
 
-        // --- AUTH ---
-        let isLogin = true;
-        function toggleAuth() { isLogin = !isLogin; document.getElementById('auth-title').innerText = isLogin ? 'Welcome Back' : 'Create Account'; }
-        async function handleAuth() {
-            const e = document.getElementById('email').value, p = document.getElementById('password').value;
-            try { isLogin ? await auth.signInWithEmailAndPassword(e, p) : await auth.createUserWithEmailAndPassword(e, p); } catch(err) { alert(err.message); }
-        }
+function openProject(name, data) {
+    currentProject = name;
+    files = data.files || {};
+    showEditor();
+}
 
-        // --- DASHBOARD ---
-        function showView(id) {
-            ['auth-view', 'dashboard-view', 'editor-view'].forEach(v => document.getElementById(v).classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
+function showEditor() {
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("editor").classList.remove("hidden");
+    document.getElementById("projectTitle").innerText = currentProject;
+    renderFiles();
+}
 
-        function loadProjects(uid) {
-            db.ref(`projects/${uid}`).on('value', snap => {
-                const list = document.getElementById('project-list');
-                list.innerHTML = '';
-                const data = snap.val();
-                if (!data) { list.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--text-dim);">No project added yet.</div>'; return; }
-                
-                Object.keys(data).forEach(name => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `<h3>${name}</h3><p style="font-size:0.8rem; color:var(--text-dim); margin-top:5px;">${Object.keys(data[name].files).length} Files</p>`;
-                    card.onclick = () => openEditor(name, data[name]);
-                    list.appendChild(card);
-                });
-            });
-        }
+function addFile() {
+    const fname = fileName.value.trim();
+    const code = fileCode.value;
+    if (!fname.includes(".") || fname.includes(" ")) return alert("Invalid file name (must include extension)");
+    files[fname] = code;
+    fileName.value = "";
+    fileCode.value = "";
+    renderFiles();
+}
 
-        async function initNewProject() {
-            const name = prompt("Project Name (slug-only):");
-            if (!name || !/^[a-z0-9-]+$/.test(name)) return alert("Invalid Name: Use only lowercase, numbers, and dashes.");
-            const uid = auth.currentUser.uid;
-            const initialData = { files: { "index.html": "<h1>Hello Nebula</h1>", "style.css": "body { background: #f0f0f0; font-family: sans-serif; }", "script.js": "console.log('Live!');" } };
-            await db.ref(`projects/${uid}/${name}`).set(initialData);
-        }
-
-        // --- EDITOR LOGIC ---
-        function openEditor(name, data) {
-            currentProjectName = name;
-            projectData = data;
-            activeFile = Object.keys(data.files)[0] || 'index.html';
-            showView('editor-view');
-            renderFileList();
-            loadActiveFile();
-        }
-
-        function renderFileList() {
-            const container = document.getElementById('file-list');
-            container.innerHTML = '';
-            Object.keys(projectData.files).forEach(file => {
-                const div = document.createElement('div');
-                div.className = `file-item ${file === activeFile ? 'active' : ''}`;
-                div.innerHTML = `<span>${file}</span><span onclick="deleteFile(event, '${file}')">×</span>`;
-                div.onclick = () => { activeFile = file; renderFileList(); loadActiveFile(); };
-                container.appendChild(div);
-            });
-        }
-
-        function loadActiveFile() {
-            document.getElementById('active-file-name').innerText = activeFile;
-            document.getElementById('editor-ctrl').value = projectData.files[activeFile] || '';
-            updatePreview();
-        }
-
-        function syncCode() {
-            projectData.files[activeFile] = document.getElementById('editor-ctrl').value;
-            updatePreview();
-        }
-
-        function addNewFile() {
-            const f = prompt("Filename (e.g. about.html):");
-            if (!f || !f.includes('.')) return alert("Include extension!");
-            projectData.files[f] = "";
-            activeFile = f;
-            renderFileList();
-            loadActiveFile();
-        }
-
-        function deleteFile(e, f) {
-            e.stopPropagation();
-            if (f === 'index.html') return alert("Cannot delete index!");
-            delete projectData.files[f];
-            activeFile = 'index.html';
-            renderFileList();
-            loadActiveFile();
-        }
-
-        // --- PREVIEW SYSTEM ---
-        function updatePreview() {
-            const frame = document.getElementById('preview-frame');
-            let html = projectData.files['index.html'] || '';
-            
-            // Inject CSS
-            Object.keys(projectData.files).forEach(f => {
-                if (f.endsWith('.css')) {
-                    html = html.replace(`<link rel="stylesheet" href="${f}">`, `<style>${projectData.files[f]}</style>`);
-                    html = html.replace(`<link rel="stylesheet" href="./${f}">`, `<style>${projectData.files[f]}</style>`);
-                }
-            });
-
-            // Inject JS
-            Object.keys(projectData.files).forEach(f => {
-                if (f.endsWith('.js')) {
-                    const scriptTag = `<script src="${f}"><\/script>`;
-                    const inline = `<script>${projectData.files[f]}<\/script>`;
-                    html = html.replace(scriptTag, inline).replace(`./${f}`, '');
-                }
-            });
-
-            frame.srcdoc = html;
-        }
-
-        // --- START HOSTING ---
-        async function triggerHost() {
-            // Validation
-            if (!projectData.files['index.html']) {
-                if (!confirm("Errors detected (Missing index.html). Still continue hosting?")) return;
+function renderFiles() {
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
+    Object.keys(files).forEach(f => {
+        const div = document.createElement("div");
+        div.className = "file-pill";
+        div.innerHTML = `<span>${f}</span> <button onclick='deleteFile("${f}")' style="background:none; color:#ef4444;">Delete</button>`;
+        div.onclick = (e) => {
+            if(e.target.tagName !== 'BUTTON') {
+                fileName.value = f;
+                fileCode.value = files[f];
             }
+        };
+        list.appendChild(div);
+    });
+}
 
-            const logsDiv = document.getElementById('console-logs');
-            const overlay = document.getElementById('console-overlay');
-            overlay.classList.remove('hidden');
-            logsDiv.innerHTML = '';
+function deleteFile(f) {
+    delete files[f];
+    renderFiles();
+}
 
-            const steps = [
-                "Initializing Hosting Engine...",
-                "Allocating Cloud Resources...",
-                "Checking Dependencies...",
-                "Validating Files...",
-                "Building Project Assets...",
-                "Deploying to Edge Node...",
-                "Finalizing Configuration...",
-                "Hosting Started Successfully! 🚀"
-            ];
+// 5. START HOSTING SYSTEM (PROFESSIONAL CONSOLE)
+async function startHostingFlow() {
+    // 6. Validation
+    if (!files["index.html"]) {
+        if (!confirm("Errors detected: missing 'index.html'. Do you still want to continue hosting?")) return;
+    }
 
-            for (let i = 0; i < steps.length; i++) {
-                // Random cooldown between 1-3s for some steps
-                const wait = (i === 4 || i === 5) ? Math.random() * 5000 + 1000 : 500;
-                await new Promise(r => setTimeout(r, wait));
-                logsDiv.innerHTML += `> ${steps[i]}\n`;
-                logsDiv.scrollTop = logsDiv.scrollHeight;
-            }
+    const consoleView = document.getElementById("console-view");
+    const term = document.getElementById("term-content");
+    consoleView.classList.remove("hidden");
+    term.innerHTML = "";
 
-            // Save to DB
-            const uid = auth.currentUser.uid;
-            await db.ref(`projects/${uid}/${currentProjectName}`).set(projectData);
+    const logs = [
+        "Initializing Hosting Engine...",
+        "Allocating Cloud Resources...",
+        "Checking Dependencies...",
+        "Validating Files...",
+        "Checking syntax: " + (files["index.html"] ? "OK" : "WARNING: No index.html"),
+        "Building Project...",
+        "Deploying to Cloud Node...",
+        "Finalizing Configuration...",
+        "Hosting Started Successfully! 🚀",
+        "Your project is live at: nebula-host.io/" + currentProject
+    ];
 
-            setTimeout(() => overlay.classList.add('hidden'), 2000);
-        }
-    </script>
+    for (let i = 0; i < logs.length; i++) {
+        // Random cooldown between stages
+        const delay = Math.floor(Math.random() * 2000) + 500;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+        const line = document.createElement("div");
+        line.textContent = `[${new Date().toLocaleTimeString()}] nebula@cloud:~$ ` + logs[i];
+        term.appendChild(line);
+        term.scrollTop = term.scrollHeight;
+    }
+
+    // Save to Firebase
+    db.ref("projects/" + auth.currentUser.uid + "/" + currentProject).set({ files });
+
+    // Hide console after success
+    setTimeout(() => {
+        consoleView.classList.add("hidden");
+        alert("Project Deployed Successfully!");
+    }, 2000);
+}
+
+function backHome() {
+    document.getElementById("editor").classList.add("hidden");
+    document.getElementById("home").classList.remove("hidden");
+}
+
+</script>
 </body>
 </html>

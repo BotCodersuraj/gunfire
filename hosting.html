@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mini Host API</title>
+<style>
+body{
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  text-align:center;
+}
+.container{
+  width:90%;
+  max-width:900px;
+  margin:auto;
+  margin-top:30px;
+}
+textarea{
+  width:100%;
+  height:120px;
+  margin-top:10px;
+  background:#1e293b;
+  color:#00ffcc;
+  border:none;
+  padding:10px;
+}
+input{
+  padding:10px;
+  width:60%;
+  margin-top:10px;
+}
+button{
+  padding:12px 20px;
+  margin-top:15px;
+  background:#00ffcc;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+}
+iframe{
+  width:100%;
+  height:300px;
+  margin-top:20px;
+  background:white;
+}
+.linkBox{
+  margin-top:15px;
+  color:#00ffcc;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>🚀 Mini Hosting API</h1>
+
+<input id="projectName" placeholder="Enter Project Name">
+
+<h3>HTML</h3>
+<textarea id="htmlCode"><h1>Hello World</h1></textarea>
+
+<h3>CSS</h3>
+<textarea id="cssCode">body{background:black;color:white;text-align:center;}</textarea>
+
+<h3>JavaScript</h3>
+<textarea id="jsCode">console.log("Hosted Successfully");</textarea>
+
+<button onclick="createHost()">Create Host</button>
+
+<div class="linkBox" id="linkBox"></div>
+
+<iframe id="preview"></iframe>
+
+</div>
+
+<script>
+
+function createHost(){
+  let name = document.getElementById("projectName").value.trim();
+  if(!name){
+    alert("Enter Project Name");
+    return;
+  }
+
+  let html = document.getElementById("htmlCode").value;
+  let css = document.getElementById("cssCode").value;
+  let js = document.getElementById("jsCode").value;
+
+  let fullPage = `
+  <html>
+  <head>
+  <style>${css}</style>
+  </head>
+  <body>
+  ${html}
+  <script>${js}<\/script>
+  </body>
+  </html>
+  `;
+
+  localStorage.setItem("host_"+name, fullPage);
+
+  let link = window.location.href + "?host=" + name;
+  document.getElementById("linkBox").innerHTML =
+  "Hosted Link: <br><a style='color:#00ffcc' href='"+link+"' target='_blank'>"+link+"</a>";
+
+  document.getElementById("preview").srcdoc = fullPage;
+}
+
+function loadHost(){
+  let params = new URLSearchParams(window.location.search);
+  let host = params.get("host");
+  if(host){
+    let data = localStorage.getItem("host_"+host);
+    if(data){
+      document.body.innerHTML = data;
+    } else {
+      document.body.innerHTML = "<h1>Host Not Found</h1>";
+    }
+  }
+}
+
+loadHost();
+
+</script>
+
+</body>
+</html>

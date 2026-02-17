@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nebula Cloud | Fix Undefined</title>
+    <title>Nebula Cloud | Clean Hosting</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -12,87 +12,61 @@
 
     <style>
         :root {
-            --bg: #0b0f1a;
-            --surface: #161b2c;
-            --accent: #6366f1;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
-            --success: #10b981;
-            --danger: #ef4444;
+            --bg: #0b0f1a; --surface: #161b2c; --accent: #6366f1;
+            --text: #f8fafc; --border: rgba(255,255,255,0.1);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; touch-action: manipulation; }
+        body, html { height: 100%; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
         .hidden { display: none !important; }
 
-        /* --- LOADER --- */
-        #loading { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .loader-bar { width: 180px; height: 3px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 20px; }
-        .loader-p { height: 100%; width: 0%; background: var(--accent); animation: load 3s linear forwards; }
-        @keyframes load { to { width: 100%; } }
-
-        /* --- UI --- */
+        /* --- DASHBOARD UI --- */
         header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
         .main-content { padding: 20px; height: calc(100vh - 65px); overflow-y: auto; }
-        
         .project-card { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; }
-        .btn-accent { background: var(--accent); color: white; }
         
+        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.75rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+        .btn-accent { background: var(--accent); color: white; }
+
         /* --- EDITOR --- */
         #editor { position: fixed; inset: 0; background: var(--bg); z-index: 900; display: flex; flex-direction: column; }
         .editor-header { padding: 12px 15px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        textarea { flex: 1; width: 100%; background: #000; color: #10b981; border: none; padding: 15px; font-family: 'Fira Code', monospace; font-size: 13px; outline: none; resize: none; }
+        textarea { flex: 1; width: 100%; background: #000; color: #10b981; border: none; padding: 15px; font-family: 'Fira Code', monospace; font-size: 13px; outline: none; }
 
-        #public-view { position: fixed; inset: 0; background: white; z-index: 3000; display: flex; flex-direction: column; }
+        /* --- PURE HOSTING VIEW --- */
+        #host-view { position: fixed; inset: 0; width: 100%; height: 100%; border: none; background: white; z-index: 10000; }
     </style>
 </head>
 <body>
 
-<div id="loading">
-    <h2 style="font-weight:800; letter-spacing:3px;">NEBULA</h2>
-    <div class="loader-bar"><div class="loader-p"></div></div>
-</div>
+<iframe id="host-view" class="hidden"></iframe>
 
-<div id="public-view" class="hidden">
-    <div style="padding:10px; background:#222; display:flex; justify-content:space-between;">
-        <span id="view-title" style="color:white; font-size:0.8rem; align-self:center;">Live Preview</span>
-        <button onclick="window.location.href=window.location.pathname" class="btn" style="background:var(--danger); color:white;">EXIT</button>
-    </div>
-    <iframe id="output-frame" style="flex:1; border:none; width:100%;"></iframe>
-</div>
-
-<div id="app-root" class="hidden">
+<div id="app-ui">
     <div id="auth" class="hidden" style="padding:40px; height:100vh; display:flex; flex-direction:column; justify-content:center;">
-        <h1 style="margin-bottom:20px;">Cloud Login</h1>
+        <h1 style="margin-bottom:20px; font-weight:800;">Nebula Host</h1>
         <input id="email" type="email" placeholder="Email" style="width:100%; padding:15px; margin-bottom:12px; background:var(--surface); border:1px solid var(--border); color:white; border-radius:12px;">
         <input id="password" type="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:25px; background:var(--surface); border:1px solid var(--border); color:white; border-radius:12px;">
-        <button onclick="handleAuth()" class="btn btn-accent" style="padding:15px; justify-content:center;">LOGIN / REGISTER</button>
+        <button onclick="handleAuth()" class="btn btn-accent" style="padding:15px; justify-content:center;">LOGIN / START</button>
     </div>
 
     <div id="home" class="hidden">
         <header>
-            <div style="font-weight:800; color:var(--accent);">NEBULA.SH</div>
-            <button onclick="auth.signOut()" class="btn" style="color:var(--danger); background:none;">LOGOUT</button>
+            <div style="font-weight:800; color:var(--accent);">NEBULA CLOUD</div>
+            <button onclick="auth.signOut()" class="btn" style="color:#ef4444; background:none;">LOGOUT</button>
         </header>
         <div class="main-content">
-            <button class="btn btn-accent" onclick="createProject()" style="width:100%; margin-bottom:20px; justify-content:center; padding:15px;">+ NEW PROJECT</button>
-            <h3 style="font-size:0.75rem; color:var(--text-dim); margin-bottom:15px; font-weight:800;">DEPLOYED URLS</h3>
+            <button class="btn btn-accent" onclick="createProject()" style="width:100%; margin-bottom:20px; justify-content:center; padding:15px;">+ CREATE PROJECT</button>
             <div id="project-list"></div>
         </div>
     </div>
 
     <div id="editor" class="hidden">
         <div class="editor-header">
-            <button onclick="closeEditor()" class="btn" style="background:#444; color:white;">CANCEL</button>
-            <div id="edit-title" style="font-family:'Fira Code'; font-size:0.8rem;">EDITOR</div>
-            <button onclick="deploy()" class="btn btn-accent">SAVE LIVE</button>
+            <button onclick="closeEditor()" class="btn" style="background:#444; color:white;">BACK</button>
+            <div id="edit-title" style="font-size:0.8rem; font-weight:800; font-family:'Fira Code';">INDEX.HTML</div>
+            <button onclick="deploy()" class="btn btn-accent">DEPLOY LIVE</button>
         </div>
-        <div style="padding:8px; background:#1e293b; display:flex; gap:10px;">
-            <button onclick="pasteCode()" class="btn" style="background:#334155; color:white; flex:1; justify-content:center;">PASTE CODE</button>
-        </div>
-        <textarea id="code-area" spellcheck="false" placeholder="Write HTML here..."></textarea>
+        <div style="padding:8px; background:#1e293b;"><button onclick="pasteCode()" class="btn" style="background:#334155; color:white; width:100%; justify-content:center;">PASTE CODE</button></div>
+        <textarea id="code-area" spellcheck="false"></textarea>
     </div>
 </div>
 
@@ -112,91 +86,83 @@ const auth = firebase.auth();
 const db = firebase.database();
 
 let currentId = "";
-
-// Anti-Undefined Router
 const urlParams = new URLSearchParams(window.location.search);
-const qProject = urlParams.get('project');
-const qUser = urlParams.get('u');
+const hostParam = urlParams.get('host'); // Ab sirf ?host= mangega
 
-window.onload = () => {
-    // Check if we are in Live View mode
-    if(qProject && qUser) {
-        document.getElementById("loading").classList.add("hidden");
-        loadLiveView(qUser, qProject);
-        return;
-    }
-
-    // Normal App Start
-    setTimeout(() => {
-        document.getElementById("loading").classList.add("hidden");
-        document.getElementById("app-root").classList.remove("hidden");
-        
-        auth.onAuthStateChanged(user => {
-            if(user) {
-                document.getElementById("auth").classList.add("hidden");
-                document.getElementById("home").classList.remove("hidden");
-                loadProjects();
-            } else {
-                document.getElementById("auth").classList.remove("hidden");
-                document.getElementById("home").classList.add("hidden");
-                document.getElementById("editor").classList.add("hidden");
-            }
-        });
-    }, 3000);
-};
-
-// FIXED: Undefined check for live view
-function loadLiveView(uid, name) {
-    db.ref(`projects/${uid}/${name}`).once('value').then(s => {
-        const d = s.val();
-        if(d && d.code) {
-            document.getElementById("public-view").classList.remove("hidden");
-            document.getElementById("output-frame").srcdoc = d.code;
+// --- 1. CLEAN HOSTING LOGIC ---
+if (hostParam) {
+    // Bina User ID ke database se project dhoondhna
+    db.ref('global_registry/' + hostParam).once('value').then(snap => {
+        const data = snap.val();
+        if (data && data.code) {
+            const view = document.getElementById('host-view');
+            view.classList.remove('hidden');
+            document.getElementById('app-ui').classList.add('hidden');
+            view.srcdoc = data.code; // Direct HTML load
         } else {
-            document.body.innerHTML = "<h2 style='color:white; padding:20px;'>Project Not Found or Empty.</h2>";
+            document.body.innerHTML = "<h1 style='color:white; padding:40px;'>404: Host Not Found</h1>";
         }
-    }).catch(e => {
-        document.body.innerHTML = "<h2 style='color:white; padding:20px;'>Error Loading Site.</h2>";
+    });
+} else {
+    initDashboard();
+}
+
+function initDashboard() {
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById("auth").classList.add("hidden");
+            document.getElementById("home").classList.remove("hidden");
+            loadProjects();
+        } else {
+            document.getElementById("auth").classList.remove("hidden");
+            document.getElementById("home").classList.add("hidden");
+        }
     });
 }
 
-// FIXED: Undefined check for project list
 function loadProjects() {
-    const user = auth.currentUser;
-    if(!user) return;
-
-    db.ref(`projects/${user.uid}`).on('value', s => {
+    const uid = auth.currentUser.uid;
+    db.ref(`users/${uid}/projects`).on('value', s => {
         const list = document.getElementById("project-list");
         list.innerHTML = "";
         const data = s.val();
-        
-        if(!data) {
-            list.innerHTML = "<div style='color:var(--text-dim); text-align:center;'>No projects live.</div>";
-            return;
-        }
+        if(!data) return;
 
-        Object.keys(data).forEach(k => {
+        Object.keys(data).forEach(name => {
             const div = document.createElement("div");
             div.className = "project-card";
             div.innerHTML = `
-                <div style="font-weight:700;">${k}</div>
+                <div style="font-weight:700; font-family:'Fira Code';">${name}</div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn btn-accent" onclick="window.location.href='?project=${k}&u=${user.uid}'">VIEW</button>
-                    <button class="btn" style="background:#444; color:white;" onclick="openEditor('${k}')">EDIT</button>
+                    <button class="btn btn-accent" onclick="window.open('?host=${name}', '_blank')">VIEW URL</button>
+                    <button class="btn" style="background:#444; color:white;" onclick="openEditor('${name}')">EDIT</button>
                 </div>`;
             list.appendChild(div);
         });
     });
 }
 
-function openEditor(name) {
-    const user = auth.currentUser;
-    if(!user) return;
+async function deploy() {
+    const code = document.getElementById("code-area").value;
+    const uid = auth.currentUser.uid;
+    
+    // Save 1: User's Private Area
+    await db.ref(`users/${uid}/projects/${currentId}`).set({ code: code });
+    
+    // Save 2: Global Registry (Isi wajah se ?host= kaam karega bina &u= ke)
+    await db.ref(`global_registry/${currentId}`).set({ 
+        code: code,
+        owner: uid 
+    });
 
+    alert("Host Active! Check ?host=" + currentId);
+    closeEditor();
+}
+
+function openEditor(name) {
     currentId = name;
-    db.ref(`projects/${user.uid}/${name}`).once('value').then(s => {
-        const d = s.val();
-        document.getElementById("code-area").value = d ? d.code : "";
+    db.ref(`users/${auth.currentUser.uid}/projects/${name}`).once('value').then(s => {
+        document.getElementById("code-area").value = s.val().code;
         document.getElementById("home").classList.add("hidden");
         document.getElementById("editor").classList.remove("hidden");
         document.getElementById("edit-title").innerText = name.toUpperCase();
@@ -204,13 +170,12 @@ function openEditor(name) {
 }
 
 function createProject() {
-    const n = prompt("Unique Project Name (No Spaces):");
-    if(!n || n.trim() === "" || n.includes(" ")) return;
-    currentId = n.trim();
-    document.getElementById("code-area").value = "<h1>New Site Ready</h1>";
+    const n = prompt("Enter Unique Site Name (No spaces):");
+    if(!n || n.includes(" ")) return;
+    currentId = n;
+    document.getElementById("code-area").value = "<h1>Site is Live</h1>";
     document.getElementById("home").classList.add("hidden");
     document.getElementById("editor").classList.remove("hidden");
-    document.getElementById("edit-title").innerText = currentId.toUpperCase();
 }
 
 function closeEditor() {
@@ -218,46 +183,15 @@ function closeEditor() {
     document.getElementById("home").classList.remove("hidden");
 }
 
-async function deploy() {
-    const user = auth.currentUser;
-    const code = document.getElementById("code-area").value;
-    
-    if(!user || !currentId) return alert("Session Error");
-
-    // Direct Sync to avoid undefined state
-    try {
-        await db.ref(`projects/${user.uid}/${currentId}`).set({
-            code: code,
-            updated: Date.now()
-        });
-        alert("Deployed Successfully!");
-        closeEditor();
-    } catch(e) {
-        alert("Upload Failed: " + e.message);
-    }
-}
-
 async function handleAuth() {
-    const e = document.getElementById("email").value;
-    const p = document.getElementById("password").value;
-    if(!e || !p) return alert("Fill all fields");
-    
-    try {
-        await auth.signInWithEmailAndPassword(e, p);
-    } catch(err) {
-        try {
-            await auth.createUserWithEmailAndPassword(e, p);
-        } catch(err2) {
-            alert(err2.message);
-        }
-    }
+    const e = email.value, p = password.value;
+    try { await auth.signInWithEmailAndPassword(e, p); }
+    catch { await auth.createUserWithEmailAndPassword(e, p); }
 }
 
 async function pasteCode() {
-    try {
-        const t = await navigator.clipboard.readText();
-        document.getElementById("code-area").value = t;
-    } catch(e) { alert("Enable clipboard in browser"); }
+    const t = await navigator.clipboard.readText();
+    document.getElementById("code-area").value = t;
 }
 </script>
 </body>

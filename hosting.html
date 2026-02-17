@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nebula Cloud | Fix Build</title>
+    <title>Nebula Cloud | Fix Undefined</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -36,11 +36,8 @@
         header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
         .main-content { padding: 20px; height: calc(100vh - 65px); overflow-y: auto; }
         
-        .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-        .btn-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 5px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-
         .project-card { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 700; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; }
         .btn-accent { background: var(--accent); color: white; }
         
         /* --- EDITOR --- */
@@ -48,12 +45,7 @@
         .editor-header { padding: 12px 15px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         textarea { flex: 1; width: 100%; background: #000; color: #10b981; border: none; padding: 15px; font-family: 'Fira Code', monospace; font-size: 13px; outline: none; resize: none; }
 
-        /* --- CONSOLE --- */
-        #console { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; display: flex; align-items: center; }
-        .term { background: #000; width: 100%; border-radius: 12px; border: 1px solid #333; min-height: 40vh; padding: 15px; font-family: 'Fira Code'; color: #10b981; font-size: 0.8rem; line-height: 1.5; overflow-y: auto; }
-
         #public-view { position: fixed; inset: 0; background: white; z-index: 3000; display: flex; flex-direction: column; }
-        iframe { flex: 1; border: none; width: 100%; }
     </style>
 </head>
 <body>
@@ -65,18 +57,18 @@
 
 <div id="public-view" class="hidden">
     <div style="padding:10px; background:#222; display:flex; justify-content:space-between;">
-        <button onclick="location.reload()" class="btn" style="background:#444; color:white;">Refresh</button>
-        <button onclick="closePublic()" class="btn" style="background:var(--danger); color:white;">Exit</button>
+        <span id="view-title" style="color:white; font-size:0.8rem; align-self:center;">Live Preview</span>
+        <button onclick="window.location.href=window.location.pathname" class="btn" style="background:var(--danger); color:white;">EXIT</button>
     </div>
-    <iframe id="output-frame"></iframe>
+    <iframe id="output-frame" style="flex:1; border:none; width:100%;"></iframe>
 </div>
 
 <div id="app-root" class="hidden">
     <div id="auth" class="hidden" style="padding:40px; height:100vh; display:flex; flex-direction:column; justify-content:center;">
-        <h1 style="margin-bottom:25px;">Cloud Login</h1>
+        <h1 style="margin-bottom:20px;">Cloud Login</h1>
         <input id="email" type="email" placeholder="Email" style="width:100%; padding:15px; margin-bottom:12px; background:var(--surface); border:1px solid var(--border); color:white; border-radius:12px;">
         <input id="password" type="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:25px; background:var(--surface); border:1px solid var(--border); color:white; border-radius:12px;">
-        <button onclick="handleAuth()" class="btn btn-accent" style="padding:15px; justify-content:center;">LOG IN / REGISTER</button>
+        <button onclick="handleAuth()" class="btn btn-accent" style="padding:15px; justify-content:center;">LOGIN / REGISTER</button>
     </div>
 
     <div id="home" class="hidden">
@@ -85,36 +77,26 @@
             <button onclick="auth.signOut()" class="btn" style="color:var(--danger); background:none;">LOGOUT</button>
         </header>
         <div class="main-content">
-            <div class="action-grid">
-                <div class="btn-tile" onclick="createProject()">
-                    <svg width="24" height="24" fill="var(--accent)" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                    <span>New Host</span>
-                </div>
-            </div>
-            <h3 style="font-size:0.75rem; color:var(--text-dim); margin-bottom:15px; font-weight:800;">YOUR LIVE PROJECTS</h3>
+            <button class="btn btn-accent" onclick="createProject()" style="width:100%; margin-bottom:20px; justify-content:center; padding:15px;">+ NEW PROJECT</button>
+            <h3 style="font-size:0.75rem; color:var(--text-dim); margin-bottom:15px; font-weight:800;">DEPLOYED URLS</h3>
             <div id="project-list"></div>
         </div>
     </div>
 
     <div id="editor" class="hidden">
         <div class="editor-header">
-            <button onclick="closeEditor()" class="btn" style="background:#444; color:white;">BACK</button>
-            <div id="edit-title" style="font-family:'Fira Code'; font-size:0.8rem;">INDEX.HTML</div>
-            <button onclick="deploy()" class="btn btn-accent">SAVE & HOST</button>
+            <button onclick="closeEditor()" class="btn" style="background:#444; color:white;">CANCEL</button>
+            <div id="edit-title" style="font-family:'Fira Code'; font-size:0.8rem;">EDITOR</div>
+            <button onclick="deploy()" class="btn btn-accent">SAVE LIVE</button>
         </div>
         <div style="padding:8px; background:#1e293b; display:flex; gap:10px;">
-            <button onclick="pasteCode()" class="btn" style="background:#334155; color:white;">PASTE</button>
+            <button onclick="pasteCode()" class="btn" style="background:#334155; color:white; flex:1; justify-content:center;">PASTE CODE</button>
         </div>
-        <textarea id="code-area" spellcheck="false"></textarea>
+        <textarea id="code-area" spellcheck="false" placeholder="Write HTML here..."></textarea>
     </div>
 </div>
 
-<div id="console" class="hidden">
-    <div class="term" id="logs"></div>
-</div>
-
 <script>
-// --- CONFIG CHECK ---
 const firebaseConfig = {
     apiKey: "AIzaSyDSCU7uFxMBi5W3OQHb55rZz3_hXROZRdI",
     authDomain: "zor-battle.firebaseapp.com",
@@ -131,19 +113,24 @@ const db = firebase.database();
 
 let currentId = "";
 
-// URL Router
-const params = new URLSearchParams(window.location.search);
-const pName = params.get('project'), pUser = params.get('u');
+// Anti-Undefined Router
+const urlParams = new URLSearchParams(window.location.search);
+const qProject = urlParams.get('project');
+const qUser = urlParams.get('u');
 
 window.onload = () => {
-    if(pName && pUser) {
+    // Check if we are in Live View mode
+    if(qProject && qUser) {
         document.getElementById("loading").classList.add("hidden");
-        loadLive(pUser, pName);
+        loadLiveView(qUser, qProject);
         return;
     }
+
+    // Normal App Start
     setTimeout(() => {
         document.getElementById("loading").classList.add("hidden");
         document.getElementById("app-root").classList.remove("hidden");
+        
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById("auth").classList.add("hidden");
@@ -152,40 +139,50 @@ window.onload = () => {
             } else {
                 document.getElementById("auth").classList.remove("hidden");
                 document.getElementById("home").classList.add("hidden");
+                document.getElementById("editor").classList.add("hidden");
             }
         });
     }, 3000);
 };
 
-function loadLive(uid, name) {
-    db.ref(`projects/${uid}/${name}`).once('value', s => {
+// FIXED: Undefined check for live view
+function loadLiveView(uid, name) {
+    db.ref(`projects/${uid}/${name}`).once('value').then(s => {
         const d = s.val();
-        if(d) {
+        if(d && d.code) {
             document.getElementById("public-view").classList.remove("hidden");
             document.getElementById("output-frame").srcdoc = d.code;
         } else {
-            document.body.innerHTML = "<h1 style='color:white; padding:20px;'>Error: Project Not Found</h1>";
+            document.body.innerHTML = "<h2 style='color:white; padding:20px;'>Project Not Found or Empty.</h2>";
         }
+    }).catch(e => {
+        document.body.innerHTML = "<h2 style='color:white; padding:20px;'>Error Loading Site.</h2>";
     });
 }
 
-function closePublic() { window.location.href = window.location.pathname; }
-
+// FIXED: Undefined check for project list
 function loadProjects() {
-    db.ref(`projects/${auth.currentUser.uid}`).on('value', s => {
+    const user = auth.currentUser;
+    if(!user) return;
+
+    db.ref(`projects/${user.uid}`).on('value', s => {
         const list = document.getElementById("project-list");
         list.innerHTML = "";
         const data = s.val();
-        if(!data) return;
+        
+        if(!data) {
+            list.innerHTML = "<div style='color:var(--text-dim); text-align:center;'>No projects live.</div>";
+            return;
+        }
+
         Object.keys(data).forEach(k => {
             const div = document.createElement("div");
             div.className = "project-card";
             div.innerHTML = `
                 <div style="font-weight:700;">${k}</div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn btn-accent" onclick="window.location.href='?project=${k}&u=${auth.currentUser.uid}'">VIEW</button>
+                    <button class="btn btn-accent" onclick="window.location.href='?project=${k}&u=${user.uid}'">VIEW</button>
                     <button class="btn" style="background:#444; color:white;" onclick="openEditor('${k}')">EDIT</button>
-                    <button class="btn" style="background:var(--danger); color:white;" onclick="deleteP('${k}')">DEL</button>
                 </div>`;
             list.appendChild(div);
         });
@@ -193,21 +190,27 @@ function loadProjects() {
 }
 
 function openEditor(name) {
+    const user = auth.currentUser;
+    if(!user) return;
+
     currentId = name;
-    db.ref(`projects/${auth.currentUser.uid}/${name}`).once('value', s => {
-        document.getElementById("code-area").value = s.val().code;
+    db.ref(`projects/${user.uid}/${name}`).once('value').then(s => {
+        const d = s.val();
+        document.getElementById("code-area").value = d ? d.code : "";
         document.getElementById("home").classList.add("hidden");
         document.getElementById("editor").classList.remove("hidden");
+        document.getElementById("edit-title").innerText = name.toUpperCase();
     });
 }
 
 function createProject() {
-    const n = prompt("Unique Project Name:");
-    if(!n || n.includes(" ")) return;
-    currentId = n;
-    document.getElementById("code-area").value = "<h1>New Site</h1>";
+    const n = prompt("Unique Project Name (No Spaces):");
+    if(!n || n.trim() === "" || n.includes(" ")) return;
+    currentId = n.trim();
+    document.getElementById("code-area").value = "<h1>New Site Ready</h1>";
     document.getElementById("home").classList.add("hidden");
     document.getElementById("editor").classList.remove("hidden");
+    document.getElementById("edit-title").innerText = currentId.toUpperCase();
 }
 
 function closeEditor() {
@@ -216,39 +219,45 @@ function closeEditor() {
 }
 
 async function deploy() {
+    const user = auth.currentUser;
     const code = document.getElementById("code-area").value;
-    const con = document.getElementById("console");
-    const l = document.getElementById("logs");
-    con.classList.remove("hidden");
-    l.innerHTML = "";
+    
+    if(!user || !currentId) return alert("Session Error");
 
-    const steps = ["Validating...", "Writing to DB...", "Cloud Sync...", "DONE"];
-    for(let s of steps) {
-        await new Promise(r => setTimeout(r, 600));
-        l.innerHTML += `> ${s}<br>`;
-    }
-
-    // Direct Database Write
+    // Direct Sync to avoid undefined state
     try {
-        await db.ref(`projects/${auth.currentUser.uid}/${currentId}`).set({ code: code });
-        setTimeout(() => { con.classList.add("hidden"); closeEditor(); }, 1000);
+        await db.ref(`projects/${user.uid}/${currentId}`).set({
+            code: code,
+            updated: Date.now()
+        });
+        alert("Deployed Successfully!");
+        closeEditor();
     } catch(e) {
-        alert("Hosting Error: Check Firebase Rules");
-        con.classList.add("hidden");
+        alert("Upload Failed: " + e.message);
     }
 }
 
 async function handleAuth() {
-    const e = email.value, p = password.value;
-    try { await auth.signInWithEmailAndPassword(e, p); }
-    catch { await auth.createUserWithEmailAndPassword(e, p); }
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    if(!e || !p) return alert("Fill all fields");
+    
+    try {
+        await auth.signInWithEmailAndPassword(e, p);
+    } catch(err) {
+        try {
+            await auth.createUserWithEmailAndPassword(e, p);
+        } catch(err2) {
+            alert(err2.message);
+        }
+    }
 }
 
-function deleteP(n) { if(confirm("Delete?")) db.ref(`projects/${auth.currentUser.uid}/${n}`).remove(); }
-
 async function pasteCode() {
-    const t = await navigator.clipboard.readText();
-    document.getElementById("code-area").value = t;
+    try {
+        const t = await navigator.clipboard.readText();
+        document.getElementById("code-area").value = t;
+    } catch(e) { alert("Enable clipboard in browser"); }
 }
 </script>
 </body>

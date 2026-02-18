@@ -1,130 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Text to Voice Converter</title>
+<meta charset="UTF-8">
+<title>24/7 Smart Web</title>
 <style>
-  body {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    font-family: "Poppins", sans-serif;
-    color: #f1f5f9;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px;
-  }
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    color: #38bdf8;
-  }
-  textarea {
-    width: 90%;
-    max-width: 500px;
-    height: 150px;
-    background: #1e293b;
-    color: white;
-    border: 2px solid #334155;
-    border-radius: 10px;
-    padding: 10px;
-    resize: none;
-    outline: none;
-  }
-  select, input, button {
-    border-radius: 8px;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-    margin-top: 8px;
-  }
-  select, input {
-    width: 90%;
-    max-width: 500px;
-    background: #1e293b;
-    color: white;
-    border: 1px solid #334155;
-  }
-  button {
-    background: #22c55e;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    width: 160px;
-    margin: 8px;
-  }
-  button:hover { filter: brightness(1.1); }
-  .controls { margin-top: 20px; text-align: center; }
+body{
+  background:#0f0f0f;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+}
+.box{
+  background:#1c1c1c;
+  padding:20px;
+  margin:20px auto;
+  width:90%;
+  max-width:500px;
+  border-radius:12px;
+}
+input,button{
+  padding:10px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+}
+button{cursor:pointer;background:lime;color:black;font-weight:bold;}
 </style>
 </head>
 <body>
-  <h1>🔊 Text to Voice Converter</h1>
-  <textarea id="text" placeholder="Type something here..."></textarea>
 
-  <br />
-  <select id="voiceList"></select>
-  <input type="text" id="apiKey" placeholder="VoiceRSS API Key (optional for download)" />
+<h1>🔥 24/7 Smart Web Dashboard</h1>
 
-  <div class="controls">
-    <button onclick="playVoice()">▶ Play</button>
-    <button onclick="stopVoice()">■ Stop</button>
-    <button onclick="downloadVoice()">⬇ Download</button>
-  </div>
+<div class="box">
+<h2>Status: <span style="color:lime;">ONLINE</span></h2>
+<h3>⏳ Page Uptime: <span id="uptime">0</span> sec</h3>
+<h3>👁 This Device Open Count: <span id="count">0</span></h3>
+<h3>🕒 Last Open: <span id="lastOpen">-</span></h3>
+<h3>📍 Your Location: <span id="location">Detecting...</span></h3>
+</div>
+
+<div class="box">
+<h2>🧮 Calculator</h2>
+<input type="text" id="calcInput" placeholder="Enter expression">
+<button onclick="calculate()">=</button>
+<h3 id="result"></h3>
+</div>
 
 <script>
-let synth = window.speechSynthesis;
-let voices = [];
+/* UPTIME COUNTER */
+let seconds = 0;
+setInterval(()=>{
+  seconds++;
+  document.getElementById("uptime").innerText = seconds;
+},1000);
 
-function loadVoices() {
-  voices = synth.getVoices();
-  const voiceList = document.getElementById("voiceList");
-  voiceList.innerHTML = "";
-  voices.forEach(v => {
-    const option = document.createElement("option");
-    option.textContent = `${v.name} (${v.lang})`;
-    option.value = v.name;
-    voiceList.appendChild(option);
+/* OPEN COUNT (PER DEVICE) */
+let count = localStorage.getItem("openCount");
+if(!count){ count = 0; }
+count++;
+localStorage.setItem("openCount", count);
+document.getElementById("count").innerText = count;
+
+/* LAST OPEN TIME */
+let last = localStorage.getItem("lastOpen");
+if(last){
+  document.getElementById("lastOpen").innerText = last;
+}
+let now = new Date().toLocaleString();
+localStorage.setItem("lastOpen", now);
+
+/* LOCATION */
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    let lat = pos.coords.latitude.toFixed(2);
+    let lon = pos.coords.longitude.toFixed(2);
+    document.getElementById("location").innerText = 
+      "Lat: "+lat+" , Lon: "+lon;
+  },()=>{
+    document.getElementById("location").innerText="Permission Denied";
   });
-}
-loadVoices();
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = loadVoices;
+}else{
+  document.getElementById("location").innerText="Not Supported";
 }
 
-function playVoice() {
-  const text = document.getElementById("text").value.trim();
-  if (!text) return alert("Please type some text first!");
-
-  const utter = new SpeechSynthesisUtterance(text);
-  const selectedVoice = document.getElementById("voiceList").value;
-  utter.voice = voices.find(v => v.name === selectedVoice);
-  utter.rate = 1;
-  utter.pitch = 1;
-  synth.speak(utter);
-}
-
-function stopVoice() {
-  synth.cancel();
-}
-
-async function downloadVoice() {
-  const text = document.getElementById("text").value.trim();
-  const key = document.getElementById("apiKey").value.trim();
-  if (!text) return alert("Please type some text first!");
-  if (!key) return alert("Enter your VoiceRSS API Key for download!");
-
-  const lang = "en-us"; // You can change to hi-in for Hindi
-  const url = `https://api.voicerss.org/?key=${key}&hl=${lang}&src=${encodeURIComponent(text)}&c=MP3`;
-  const response = await fetch(url);
-  if (!response.ok) return alert("VoiceRSS API error, check key or text length!");
-
-  const blob = await response.blob();
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "voice.mp3";
-  a.click();
-  URL.revokeObjectURL(a.href);
+/* CALCULATOR */
+function calculate(){
+  try{
+    let val = document.getElementById("calcInput").value;
+    document.getElementById("result").innerText = eval(val);
+  }catch{
+    document.getElementById("result").innerText = "Error";
+  }
 }
 </script>
+
 </body>
 </html>

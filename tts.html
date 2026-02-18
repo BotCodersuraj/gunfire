@@ -1,97 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>24/7 Smart Web</title>
+<title>Web 1 Monitor</title>
 <style>
-body{
-  background:#0f0f0f;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-}
-.box{
-  background:#1c1c1c;
-  padding:20px;
-  margin:20px auto;
-  width:90%;
-  max-width:500px;
-  border-radius:12px;
-}
-input,button{
-  padding:10px;
-  margin:5px;
-  border:none;
-  border-radius:6px;
-}
-button{cursor:pointer;background:lime;color:black;font-weight:bold;}
+body{background:#111;color:white;text-align:center;font-family:Arial;}
+.box{margin:40px;padding:20px;background:#222;border-radius:10px;}
 </style>
 </head>
 <body>
 
-<h1>🔥 24/7 Smart Web Dashboard</h1>
+<h1>🔥 WEB 1</h1>
 
 <div class="box">
-<h2>Status: <span style="color:lime;">ONLINE</span></h2>
-<h3>⏳ Page Uptime: <span id="uptime">0</span> sec</h3>
-<h3>👁 This Device Open Count: <span id="count">0</span></h3>
-<h3>🕒 Last Open: <span id="lastOpen">-</span></h3>
-<h3>📍 Your Location: <span id="location">Detecting...</span></h3>
-</div>
-
-<div class="box">
-<h2>🧮 Calculator</h2>
-<input type="text" id="calcInput" placeholder="Enter expression">
-<button onclick="calculate()">=</button>
-<h3 id="result"></h3>
+<h2>Web 2 Status: <span id="status">Checking...</span></h2>
+<h3>Last Check: <span id="time">-</span></h3>
 </div>
 
 <script>
-/* UPTIME COUNTER */
-let seconds = 0;
-setInterval(()=>{
-  seconds++;
-  document.getElementById("uptime").innerText = seconds;
-},1000);
+const web2 = "https://YOUR-WEB2-URL.vercel.app";
 
-/* OPEN COUNT (PER DEVICE) */
-let count = localStorage.getItem("openCount");
-if(!count){ count = 0; }
-count++;
-localStorage.setItem("openCount", count);
-document.getElementById("count").innerText = count;
-
-/* LAST OPEN TIME */
-let last = localStorage.getItem("lastOpen");
-if(last){
-  document.getElementById("lastOpen").innerText = last;
-}
-let now = new Date().toLocaleString();
-localStorage.setItem("lastOpen", now);
-
-/* LOCATION */
-if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(pos=>{
-    let lat = pos.coords.latitude.toFixed(2);
-    let lon = pos.coords.longitude.toFixed(2);
-    document.getElementById("location").innerText = 
-      "Lat: "+lat+" , Lon: "+lon;
-  },()=>{
-    document.getElementById("location").innerText="Permission Denied";
-  });
-}else{
-  document.getElementById("location").innerText="Not Supported";
-}
-
-/* CALCULATOR */
-function calculate(){
+async function check(){
   try{
-    let val = document.getElementById("calcInput").value;
-    document.getElementById("result").innerText = eval(val);
+    await fetch(web2,{mode:"no-cors"});
+    document.getElementById("status").innerText="ONLINE";
+    document.getElementById("status").style.color="lime";
   }catch{
-    document.getElementById("result").innerText = "Error";
+    document.getElementById("status").innerText="OFFLINE";
+    document.getElementById("status").style.color="red";
   }
+  document.getElementById("time").innerText=new Date().toLocaleTimeString();
 }
+
+check();
+setInterval(check,30000);
 </script>
 
 </body>

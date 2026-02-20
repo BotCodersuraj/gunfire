@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web 1 Monitor</title>
+<style>
+body{background:#111;color:white;text-align:center;font-family:Arial;}
+.box{margin:40px;padding:20px;background:#222;border-radius:10px;}
+</style>
+</head>
+<body>
+
+<h1>🔥 WEB 1</h1>
+
+<div class="box">
+<h2>Web 2 Status: <span id="status">Checking...</span></h2>
+<h3>Last Check: <span id="time">-</span></h3>
+</div>
+
+<script>
+const web2 = "https://dc6555a4-5d70-48ad-92e5-7378a56e6ebd-00-2fax2dipkrah6.riker.replit.dev/";
+
+async function check(){
+  try{
+    await fetch(web2,{mode:"no-cors"});
+    document.getElementById("status").innerText="ONLINE";
+    document.getElementById("status").style.color="lime";
+  }catch{
+    document.getElementById("status").innerText="OFFLINE";
+    document.getElementById("status").style.color="red";
+  }
+  document.getElementById("time").innerText=new Date().toLocaleTimeString();
+}
+
+check();
+setInterval(check,30000);
+</script>
+
+</body>
+</html>

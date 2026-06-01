@@ -1,57 +1,37 @@
-const express = require("express");
-const multer = require("multer");
-const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
+<input type="file" id="fileInput">
+<button onclick="uploadImage()">UPLOAD</button>
 
-const app = express();
-app.use(cors());
+<p id="result"></p>
 
-// Create uploads folder if not exists
-if (!fs.existsSync("uploads")) {
-    fs.mkdirSync("uploads");
+<script>
+async function uploadImage() {
+    const file = document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("SELECT FILE FIRST");
+        return;
+    }
+
+    const fileName = Date.now() + "_" + file.name;
+    const ref = storage.ref("images/" + fileName);
+
+    const uploadTask = ref.put(file);
+
+    uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("UPLOAD " + progress + "%");
+        },
+        (error) => {
+            console.log(error);
+        },
+        () => {
+            uploadTask.snapshot.ref.getDownloadURL().then((url) => {
+                document.getElementById("result").innerText = url;
+                console.log("IMAGE URL:", url);
+            });
+        }
+    );
 }
-
-// Serve uploaded files
-app.use("/uploads", express.static("uploads"));
-
-// Multer setup
-const storage = multer.diskStorage({
-    destination: "uploads/",
-    filename: (req, file, cb) => {
-        const uniqueName = Date.now() + "-" + file.originalname;
-        cb(null, uniqueName);
-    }
-});
-
-const upload = multer({ storage });
-
-// HOME ROUTE
-app.get("/", (req, res) => {
-    res.send("IMAGE UPLOADER API IS RUNNING 🚀");
-});
-
-// UPLOAD API (ImgBB style)
-app.post("/upload", upload.single("image"), (req, res) => {
-
-    if (!req.file) {
-        return res.json({
-            success: false,
-            message: "NO FILE SELECTED"
-        });
-    }
-
-    const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-
-    res.json({
-        success: true,
-        url: url
-    });
-
-});
-
-// START SERVER
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log("SERVER RUNNING ON PORT", PORT);
-});
+</script>
